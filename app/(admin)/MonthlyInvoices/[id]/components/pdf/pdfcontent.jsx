@@ -10,6 +10,8 @@ export default function MyDocument({ datesRange, invoices, user }) {
   const { totalPrice, totalGst, totalTolls, totalUnloading } =
     getTotalInvoicePrice(invoices);
 
+  console.log({ totalPrice, totalGst, totalTolls, totalUnloading });
+
   const restrictLength = (str, maxLength) =>
     str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
 

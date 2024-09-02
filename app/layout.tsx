@@ -1,20 +1,12 @@
-"use client";
-
 import { Footer, Navbar } from "@/components/Index";
 import Providers from "./Provider";
 import "./globals.css";
-import { useEffect } from "react";
-import { verifyAuthNotNav } from "@/api/firebase/functions/auth";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  useEffect(() => {
-    verifyAuthNotNav();
-  }, []);
-
   return (
     <html lang="en">
       <head>

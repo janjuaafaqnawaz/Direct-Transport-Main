@@ -7,17 +7,17 @@ export default function getTotalInvoicePrice(invoices) {
     return accumulator + invoice.gst;
   }, 0);
   const totalTolls = invoices.reduce((accumulator, invoice) => {
-    return accumulator + invoice.totalTollsCost || 0;
+    return accumulator + Number(invoice.totalTollsCost || 0) || 0;
   }, 0);
   const totalUnloading = invoices.reduce((accumulator, invoice) => {
     return accumulator + invoice.unloading || 0;
   }, 0);
-  console.log({ totalPrice, totalGst, totalTolls, totalUnloading });
+  console.log(Number(totalTolls).toFixed(2));
 
   return {
     totalPrice: totalPrice.toFixed(2),
     totalGst: totalGst.toFixed(2),
-    totalTolls: totalTolls.toFixed(2),
+    totalTolls: Number(totalTolls).toFixed(2),
     totalUnloading: totalUnloading.toFixed(2),
   };
 }

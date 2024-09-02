@@ -1,5 +1,7 @@
 "use client";
 
+import { verifyAuthNotNav } from "@/api/firebase/functions/auth";
+
 import { MantineProvider } from "@mantine/core";
 import { NextUIProvider } from "@nextui-org/react";
 import NextTopLoader from "nextjs-toploader";
@@ -11,8 +13,13 @@ import "@mantine/code-highlight/styles.css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-photo-view/dist/react-photo-view.css";
 import "./globals.css";
+import { useEffect } from "react";
 
 export default function Providers({ children }) {
+  useEffect(() => {
+    verifyAuthNotNav();
+  }, []);
+
   return (
     <NextUIProvider>
       <MantineProvider>
