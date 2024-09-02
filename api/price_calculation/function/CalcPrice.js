@@ -2,6 +2,7 @@ import distanceValueKm from "./helper/distance_in_km";
 import calculateItemsVolume from "./helper/item_volume";
 import countItemsByType from "./helper/items_count";
 import calculateBasePrice from "./helper/calculateBasePrice";
+import isPointInGeofence from "./helper/isPointInGeofence";
 import ServiceCharges from "./helper/service_charges";
 import GstCharges from "./helper/gst_charges";
 import determineReturnAndServiceTypes from "./helper/determineReturnAndServiceTypes";
@@ -20,7 +21,7 @@ export default async function CalcPrice({
   destinationStr,
   formData,
 }) {
-  const { items, service } = formData;
+  const { items, service, address } = formData;
 
   let price = 0;
   let tolls = 0;
@@ -35,6 +36,14 @@ export default async function CalcPrice({
   const itemCounts = await countItemsByType(items);
   const { Ladder, Rack, Pipes, Pallet, Skid } = itemCounts;
 
+  const { isOriginInside, isDestinationInside } = await isPointInGeofence(
+    address
+  );
+
+  // if (!isOriginInside || !isDestinationInside) {
+  //   price = distance * (max_volume <= 1000 ? 2.1 : 2.5);
+  //   returnType = "LD";
+  // }
   if (distance >= 87) {
     price = distance * (max_volume <= 1000 ? 2.1 : 2.5);
     returnType = "LD";

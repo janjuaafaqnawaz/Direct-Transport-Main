@@ -34,6 +34,8 @@ const Page = () => {
   const checkAddress = (coords) => {
     setNewAddressCoords(coords);
     const inside = isPointInGeofence(coords, geofenceCoords);
+    console.log(inside);
+    
     setIsInside(inside);
   };
 

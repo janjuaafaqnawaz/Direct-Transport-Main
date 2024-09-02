@@ -1,6 +1,5 @@
 "use client";
 
-// src/utils/geofenceUtils.js
 import * as turf from "@turf/turf";
 
 export const isPointInGeofence = (point, geofenceCoords) => {
