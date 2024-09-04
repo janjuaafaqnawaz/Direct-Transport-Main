@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
-export default function NotifyUser(subID, title, message) {
-  const res = axios.post(
+export default async function NotifyUser(subID, title, message) {
+  const res = await axios.post(
     `https://app.nativenotify.com/api/indie/notification`,
     {
       subID: subID,
