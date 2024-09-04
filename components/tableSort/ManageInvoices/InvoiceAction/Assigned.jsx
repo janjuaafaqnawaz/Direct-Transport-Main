@@ -20,6 +20,7 @@ import {
   TableCell,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import NotifyUser from "@/api/NotifyUser";
 
 export default function App({ booking }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -52,13 +53,15 @@ export default function App({ booking }) {
       };
       await updateDoc("place_bookings", booking.docId, updatedBooking);
 
+      NotifyUser(email, "Direct Transport Solution", "New Bookings");
+
       onClose();
     } catch (error) {
       console.error("Error assigning booking to driver:", error);
     }
   };
 
-  return (
+  return ( 
     <>
       <ActionIcon mx={1} bg={"lime"} onClick={onOpen} size="xl">
         <DriveEta />
