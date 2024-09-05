@@ -53,7 +53,11 @@ export default function App({ booking }) {
       };
       await updateDoc("place_bookings", booking.docId, updatedBooking);
 
-      await NotifyUser(email, "Direct Transport Solution", "New Bookings");
+      await NotifyUser(
+        email,
+        `Direct Transport Solution`,
+        `New Bookings ${booking.docId}`
+      );
 
       onClose();
     } catch (error) {
