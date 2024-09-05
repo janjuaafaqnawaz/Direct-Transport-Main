@@ -1,7 +1,5 @@
 "use server";
 
-import { headers } from "next/headers";
-
 export async function calculateDistance(origin, destination) {
   const key = "AIzaSyBwepwcfkMunudUU-GVoc3AlSR-fTSOXAQ";
 
@@ -11,8 +9,7 @@ export async function calculateDistance(origin, destination) {
 
   try {
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&units=imperial&key=${key}`,
-      { headers: headers() }
+      `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&units=imperial&key=${key}`
     );
 
     if (!response.ok) {
