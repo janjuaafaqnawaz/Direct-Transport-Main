@@ -5,8 +5,8 @@ export default async function NotifyUser(subID, title, message) {
     `https://app.nativenotify.com/api/indie/notification`,
     {
       subID: subID,
-      appId: 23360,
-      appToken: "EDyy2v4fu4kYBij5jdIdYd",
+      appId: 23374,
+      appToken: "hZawrJYXBzBbQZgTgLVsZP",
       title: title,
       message: message,
     }
