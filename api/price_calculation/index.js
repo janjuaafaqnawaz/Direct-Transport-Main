@@ -19,7 +19,9 @@ export default async function ProcessPrice(formData) {
   const destinationStr = `${formData?.address?.Destination?.coordinates.lat},${formData?.address?.Destination?.coordinates.lng}`;
 
   const distance = await calculateDistance(originStr, destinationStr);
-  const distanceData = distance?.rows[0]?.elements[0].distance;
+  const distanceData = distance?.rows[0]?.elements[0]?.distance;
+
+  console.log({ distance, distanceData });
 
   const booking = await CalcPrice({
     distanceData,

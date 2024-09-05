@@ -174,7 +174,7 @@ export default function ManageInvoices({ invoice, hideAction }) {
 
   return (
     <div className="w-[95vw]  overflow-hidden flex justify-center">
-      <Script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhY9LbIHmQUmjDsSfqYjRORMiiK133u1Y&libraries=places" />
+      <Script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwepwcfkMunudUU-GVoc3AlSR-fTSOXAQ&libraries=places" />
       <div className="max-w-[95vw]">
         <DataGrid
           rows={rowsWithIds}

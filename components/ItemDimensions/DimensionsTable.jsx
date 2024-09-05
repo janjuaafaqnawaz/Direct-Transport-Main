@@ -72,7 +72,7 @@ export default function DimensionsTable({
           <Table.Tr>
             <Table.Th style={tableHeaderCellStyle}>Weight</Table.Th>
             <Table.Th style={tableHeaderCellStyle}>Dimensions</Table.Th>
-            {(items[0]?.dimensionsAD || admin) && (
+            {((items?.length > 0 && items[0]?.dimensionsAD) || admin) && (
               <Table.Th style={tableHeaderCellStyle}>
                 Correct dimensions
                 {!input.saved && (
@@ -161,7 +161,11 @@ export default function DimensionsTable({
             onChange={(value) => handleChange("height", value)}
             min={1}
           />
-          <Button color="primary" variant="flat" onClick={handleAddNewDimensions}>
+          <Button
+            color="primary"
+            variant="flat"
+            onClick={handleAddNewDimensions}
+          >
             Add new dimensions for item {input.index + 1}
           </Button>
         </>

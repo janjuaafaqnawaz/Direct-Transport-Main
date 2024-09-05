@@ -9,30 +9,34 @@ export default function PlacesAutocomplete({
   pickup,
   width,
 }) {
-  const apiKey = "AIzaSyBhY9LbIHmQUmjDsSfqYjRORMiiK133u1Y";
+  const apiKey = "AIzaSyBwepwcfkMunudUU-GVoc3AlSR-fTSOXAQ";
 
   const handleLocationSelect = async (selected) => {
-    console.log(selected);
+    try {
+      console.log(selected);
 
-    const results = await geocodeByAddress(selected.label);
-    const latLng = await getLatLng(results[0]);
+      const results = await geocodeByAddress(selected.label);
+      const latLng = await getLatLng(results[0]);
 
-    // Extract the suburb from the address components
-    const addressComponents = results[0].address_components;
-    let suburb = "";
+      // Extract the suburb from the address components
+      const addressComponents = results[0].address_components;
+      let suburb = "";
 
-    addressComponents.forEach((component) => {
-      if (
-        component.types.includes("sublocality") ||
-        component.types.includes("locality")
-      ) {
-        suburb = component.long_name;
-      }
-    });
+      addressComponents.forEach((component) => {
+        if (
+          component.types.includes("sublocality") ||
+          component.types.includes("locality")
+        ) {
+          suburb = component.long_name;
+        }
+      });
 
-    const vals = { coordinates: latLng, label: selected.label, suburb };
+      const vals = { coordinates: latLng, label: selected.label, suburb };
 
-    onLocationSelect(vals);
+      onLocationSelect(vals);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
