@@ -56,7 +56,7 @@ export default function App({ booking }) {
       await NotifyUser(
         email,
         `Direct Transport Solution`,
-        `New Bookings ${booking.docId}`
+        `New Booking ${booking.docId}`
       );
 
       onClose();
