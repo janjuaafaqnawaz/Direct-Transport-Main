@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 const SYDNEY_TIMEZONE = "Australia/Sydney";
 
 export default function useAutoRefresh() {
-  const [nextRefresh, setNextRefresh] = (useState < Date) | (null > null);
+  const [nextRefresh, setNextRefresh] = useState(null > null);
 
   useEffect(() => {
     function calculateNextRefresh() {
