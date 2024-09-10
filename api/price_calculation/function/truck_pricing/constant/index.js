@@ -1,5 +1,5 @@
 const rateTypesForWeightOfLadderRackPipesItems = [
-  { minWeight: 450, maxWeight: 1800, type: "2T" },
+  { minWeight: 350, maxWeight: 1800, type: "2T" },
   { minWeight: 1800, maxWeight: 3800, type: "4T" },
   { minWeight: 3800, maxWeight: 6000, type: "6T" },
   { minWeight: 6000, maxWeight: 8000, type: "8T" },

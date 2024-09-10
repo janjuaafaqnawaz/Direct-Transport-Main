@@ -34,7 +34,7 @@ export default async function determineLadderRackPipesPrice(
         price = calculateBasePrice(distance, rate["1T"], min_rate["1T"]);
         returnType = "1T";
       }
-  } else if (total_weight >= 100 && total_weight < 450) {
+  } else if (total_weight >= 100 && total_weight < 350) {
       price = calculateBasePrice(distance, rate["1T"], min_rate["1T"]);
       returnType = "1T";
     } else {
