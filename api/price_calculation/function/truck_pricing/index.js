@@ -20,6 +20,8 @@ export default async function TruckPricing(distance, items) {
   const minute_rate = MinuteRate(distance);
 
   const priceSettings = await userPriceSettings();
+  console.log({ priceSettings });
+
   const resRate = priceSettings?.truckServices;
   const rate = Object.fromEntries(
     Object.entries(resRate).map(([key, value]) => [key, Number(value)])
