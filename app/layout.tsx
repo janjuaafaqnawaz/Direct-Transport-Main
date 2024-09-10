@@ -1,6 +1,7 @@
 import { Footer, Navbar } from "@/components/Index";
 import Providers from "./Provider";
 import "./globals.css";
+import { AutoRefresh } from "@/components/AutoRefresh";
 
 export default function RootLayout({
   children,
@@ -16,6 +17,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <section className="min-h-[70vh]">{children}</section>
+          <AutoRefresh />
           <Footer />
         </Providers>
       </body>

@@ -93,29 +93,3 @@ export default async function TruckPricing(distance, items) {
 
   return { cost: maxPriceResult.price, costType: maxPriceResult.returnType };
 }
-
-// if (Pallet.exist) {
-// }
-
-// const { price: price1, returnType: returnType1 } = await determinePalletPrice(
-//   items,
-//   Pallet,
-//   minute_rate,
-//   rate
-// );
-// const { price: price2, returnType: returnType2 } =
-//   await determineOtherItemsPriceByWeight(
-//     items,
-//     total_weight,
-//     longest_length,
-//     minute_rate,
-//     rate
-//   );
-// const { price: price3, returnType: returnType3 } =
-//   await determineOtherItemsPriceByLength(
-//     items,
-//     total_weight,
-//     longest_length,
-//     minute_rate,
-//     rate
-//   );
