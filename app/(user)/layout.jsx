@@ -3,7 +3,6 @@
 import Loading from "@/components/Loading";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import "../globals.css"
 
 export default function RootLayout({ children }) {
   const nav = useRouter();
