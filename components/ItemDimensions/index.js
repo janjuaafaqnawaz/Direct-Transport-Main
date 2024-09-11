@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { TextField, InputAdornment, Box, MenuItem } from "@mui/material";
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Table } from "@mantine/core";
+import { Modal } from "@mantine/core";
 import { goodsDescriptionOption } from "../static";
 import DimensionsTable from "./DimensionsTable";
 import { Button } from "@nextui-org/react";

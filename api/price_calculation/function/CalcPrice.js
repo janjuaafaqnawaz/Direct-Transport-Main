@@ -34,7 +34,25 @@ export default async function CalcPrice({
   const { max_volume, total_weight, longest_length, palletSpaces } =
     await calculateItemsVolume(items);
   const itemCounts = await countItemsByType(items);
-  const { Ladder, Rack, Pipes, Pallet, Skid } = itemCounts;
+  const {
+    Ladder,
+    Rack,
+    Pipes,
+    Pallet,
+    Skid,
+    Timber,
+    Rolls,
+    Coil,
+    Crate,
+    Drum,
+    Pail,
+    Steel,
+    Aluminum,
+    Bags,
+    Conduit,
+    Tubes,
+    Hoses,
+  } = itemCounts;
 
   const { isOriginInside, isDestinationInside } = await isPointInGeofence(
     address
@@ -47,7 +65,23 @@ export default async function CalcPrice({
   if (distance >= 87) {
     price = distance * (max_volume <= 1000 ? 2.1 : 2.5);
     returnType = "LD";
-  } else if (Ladder.exist || Rack.exist || Pipes.exist) {
+  } else if (
+    Ladder.exist ||
+    Rack.exist ||
+    Pipes.exist ||
+    Timber ||
+    Rolls ||
+    Coil ||
+    Crate ||
+    Drum ||
+    Pail ||
+    Steel ||
+    Aluminum ||
+    Bags ||
+    Conduit ||
+    Tubes ||
+    Hoses
+  ) {
     ({ price, returnType } = await determineLadderRackPipesPrice(
       distance,
       total_weight,
