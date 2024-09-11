@@ -1,13 +1,16 @@
-export default function determineReturnAndServiceTypes(
-  serviceType,
-  returnType
-) {
-  const job = returnType === "Courier" ? "C" : returnType;
-
-  if (["G", "X", "D", "AF", "W"].includes(returnType)) {
+export default function determineReturnAndServiceTypes(serviceType, returnType) {
+  // Check if returnType already contains any of the service codes
+  const serviceCodes = ["G", "X", "D", "AF", "W"];
+  
+  // If returnType already includes any of the service codes, return it as is
+  if (serviceCodes.some(code => returnType.includes(code))) {
     return returnType;
   }
 
+  // Determine the job based on returnType
+  const job = returnType === "Courier" ? "C" : returnType;
+
+  // Add the appropriate service code based on serviceType
   if (serviceType === "Standard") {
     return `${job}G`;
   } else if (serviceType === "Express") {
