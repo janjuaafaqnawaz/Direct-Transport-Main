@@ -3,6 +3,11 @@ export default function determineReturnAndServiceTypes(
   returnType
 ) {
   const job = returnType === "Courier" ? "C" : returnType;
+
+  if (["G", "X", "D", "AF", "W"].includes(returnType)) {
+    return returnType;
+  }
+
   if (serviceType === "Standard") {
     return `${job}G`;
   } else if (serviceType === "Express") {
@@ -14,5 +19,6 @@ export default function determineReturnAndServiceTypes(
   } else if (serviceType === "Weekend Deliveries") {
     return `${job}W`;
   } else {
+    return returnType;
   }
 }

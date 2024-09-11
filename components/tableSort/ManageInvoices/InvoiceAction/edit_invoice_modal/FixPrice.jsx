@@ -2,10 +2,19 @@
 
 import { fetchDocById } from "@/api/firebase/functions/fetch";
 import { updateDoc } from "@/api/firebase/functions/upload";
-import { Group, Input, NumberInput, rem, Text } from "@mantine/core";
-import { Button } from "@nextui-org/react";
+import { Group, Input, NumberInput, rem } from "@mantine/core";
+import {
+  Button,
+  Chip,
+  Divider,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
 import { IconClock12 } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
+import determineReturnAndServiceTypes from "@/api/price_calculation/function/helper/determineReturnAndServiceTypes";
 
 export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   const [invoice, setInvoice] = useState({});
@@ -49,6 +58,11 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
       const gst = (charges_sum * gstVal) / 100;
       const totalPriceWithGST = charges_sum + gst;
 
+      const returnType = determineReturnAndServiceTypes(
+        invoice.service,
+        invoice.returnType
+      );
+
       const updatedInvoice = {
         ...invoice,
         totalPrice,
@@ -56,10 +70,14 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         gst: Number(gst.toFixed(2)),
         WaitingTimeAtPickup,
         WaitingTimeAtDrop,
+        returnType: returnType,
       };
 
       setInvoice(updatedInvoice);
       setBooking(updatedInvoice);
+
+      console.log(updatedInvoice);
+
       // console.log({
       //   totalPrice,
       //   totalPriceWithGST: Number(totalPriceWithGST.toFixed(2)),
@@ -75,7 +93,7 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
       console.error("Error updating invoice:", error);
     } finally {
       setLoad(false);
-      toggleShowPrice();
+      // toggleShowPrice();
     }
   };
 
@@ -133,7 +151,6 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
           }
         />
       </Group>
-
       <Group grow wrap="nowrap" align="flex-end">
         <NumberInput
           min={0}
@@ -164,6 +181,51 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         value={invoice.totalPrice}
         onChange={(value) => setInvoice({ ...invoice, totalPrice: value })}
       />
+
+      <p className="mb-2">Select new service or Job Type</p>
+
+      <div className="flex gap-1">
+        <Dropdown>
+          <DropdownTrigger>
+            <Button fullWidth color="primary" className="mb-2" variant="flat">
+              Job Type <Chip color="primary">{invoice?.returnType}</Chip>
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            onAction={(e) => setInvoice({ ...invoice, returnType: e })}
+            aria-label="Static Actions"
+          >
+            <DropdownItem key="Courier">Courier</DropdownItem>
+            <DropdownItem key="HT">HT</DropdownItem>
+            <DropdownItem key="1T">1T</DropdownItem>
+            <DropdownItem key="2T">2T</DropdownItem>
+            <DropdownItem key="4T">4T</DropdownItem>
+            <DropdownItem key="6T">6T</DropdownItem>
+            <DropdownItem key="8">8</DropdownItem>
+            <DropdownItem key="10">10</DropdownItem>
+            <DropdownItem key="12T">12T</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+        <Dropdown>
+          <DropdownTrigger>
+            <Button fullWidth color="primary" className="mb-2" variant="flat">
+              Service <Chip color="primary">{invoice?.service}</Chip>
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            onAction={(e) => setInvoice({ ...invoice, service: e })}
+            aria-label="Static Actions"
+          >
+            <DropdownItem key="Standard">Standard</DropdownItem>
+            <DropdownItem key="Express">Express</DropdownItem>
+            <DropdownItem key="Direct">Direct</DropdownItem>
+            <DropdownItem key="After Hours">After Hours</DropdownItem>
+            <DropdownItem key="Weekend Deliveries">
+              Weekend Deliveries
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
 
       <br />
       <Button fullWidth color="primary" onClick={handleSubmit} disabled={load}>
