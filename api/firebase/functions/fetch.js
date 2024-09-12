@@ -293,6 +293,33 @@ async function getBookingsBetweenDates(
   }
 }
 
+async function getBookingsOnlyBetweenDates(fromDateString, toDateString) {
+  const collectionRef = collection(db, "place_bookings");
+  try {
+    const fromDate = new Date(fromDateString);
+    fromDate.setHours(0, 0, 0, 0);
+    const toDate = new Date(toDateString);
+    toDate.setHours(23, 59, 59, 999);
+
+    // Query Firestore to get bookings within the date range
+    const baseQuery = query(
+      collectionRef,
+      where("createdAt", ">=", fromDate),
+      where("createdAt", "<=", toDate)
+    );
+
+    const querySnapshot = await getDocs(baseQuery);
+    const docs = [];
+
+    querySnapshot.forEach((doc) => docs.push(doc.data()));
+
+    return docs;
+  } catch (error) {
+    console.error("Error:", error);
+    return [];
+  }
+}
+
 async function fetchAllFirstNames() {
   try {
     const q = query(collection(db, "users"));
@@ -413,4 +440,5 @@ export {
   getDrivers,
   getDriverBookings,
   fetchMyPdfsOfDoc,
+  getBookingsOnlyBetweenDates,
 };

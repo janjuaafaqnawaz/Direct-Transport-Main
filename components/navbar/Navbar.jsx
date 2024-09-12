@@ -4,10 +4,13 @@ import Link from "next/link";
 import { adminPages, authPages, businessPages, userPages } from "../static";
 import { Hidden, Menu, MenuItem } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Button } from "@mantine/core";
+import Reports from "./Reports";
+import { Button, ButtonGroup } from "@mantine/core";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const router = useRouter();
   const [userPagesToRender, setUserPagesToRender] = useState([]);
 
   useEffect(() => {
@@ -56,13 +59,19 @@ export default Navbar;
 
 const ButtonsSection = ({ userPagesToRender }) => (
   <div>
-    {userPagesToRender.map((val, ind) => (
-      <Link key={ind} href={val.link}>
-        <Button variant="light" color="#1384e1" style={{ margin: "2px" }}>
+    <ButtonGroup className="gap-[2px]">
+      {userPagesToRender.map((val, ind) => (
+        <Button
+          key={ind}
+          onClick={() => router.push(val.link)}
+          variant="light"
+          color="#1384e1"
+        >
           {val.label}
         </Button>
-      </Link>
-    ))}
+      ))}
+      <Reports />
+    </ButtonGroup>
   </div>
 );
 
