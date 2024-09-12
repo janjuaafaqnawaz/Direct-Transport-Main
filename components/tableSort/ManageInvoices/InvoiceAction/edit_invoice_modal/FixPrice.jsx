@@ -97,6 +97,13 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
     }
   };
 
+  const handleAutoCalcSubmit = async () => {
+    try {
+      const finaleData = await ProcessPrice(invoice);
+      console.log({ finaleData });
+    } catch (error) {}
+  };
+
   const icon = (
     <IconClock12 style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
   );
@@ -182,6 +189,16 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         onChange={(value) => setInvoice({ ...invoice, totalPrice: value })}
       />
 
+      <Button
+        fullWidth
+        isLoading={load}
+        color="primary"
+        onClick={handleSubmit}
+        disabled={load}
+      >
+        Calculate & Update
+      </Button>
+
       <p className="mb-2">Select new service or Job Type</p>
 
       <div className="flex gap-1">
@@ -227,10 +244,15 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         </Dropdown>
       </div>
 
-      <br />
-      <Button fullWidth color="primary" onClick={handleSubmit} disabled={load}>
-        {load ? "Calculating Please Wait" : "Calculate & Update"}
+      <Button
+        fullWidth
+        color="primary"
+        onClick={handleAutoCalcSubmit}
+      >
+        Auto Calculate Price
       </Button>
+
+      <br />
     </div>
   );
 }
