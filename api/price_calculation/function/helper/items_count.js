@@ -18,6 +18,18 @@ export default async function countItemsByType(items) {
     "Satchel",
     "Ladder",
     "Rack",
+    "Timber",
+    "Rolls",
+    "Coil",
+    "Crate",
+    "Drum",
+    "Pail",
+    "Steel",
+    "Aluminum",
+    "Bags",
+    "Conduit",
+    "Tubes",
+    "Hoses",
   ];
 
   const result = {};

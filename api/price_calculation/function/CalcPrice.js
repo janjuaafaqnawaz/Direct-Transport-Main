@@ -69,18 +69,18 @@ export default async function CalcPrice({
     Ladder.exist ||
     Rack.exist ||
     Pipes.exist ||
-    Timber ||
-    Rolls ||
-    Coil ||
-    Crate ||
-    Drum ||
-    Pail ||
-    Steel ||
-    Aluminum ||
-    Bags ||
-    Conduit ||
-    Tubes ||
-    Hoses
+    Timber.exist ||
+    Rolls.exist ||
+    Coil.exist ||
+    Crate.exist ||
+    Drum.exist ||
+    Pail.exist ||
+    Steel.exist ||
+    Aluminum.exist ||
+    Bags.exist ||
+    Conduit.exist ||
+    Tubes.exist ||
+    Hoses.exist
   ) {
     ({ price, returnType } = await determineLadderRackPipesPrice(
       distance,
