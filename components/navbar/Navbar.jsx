@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 const Navbar = () => {
   const router = useRouter();
   const [userPagesToRender, setUserPagesToRender] = useState([]);
+  const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
+  const role = userDoc.role || null;
 
   useEffect(() => {
     const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
@@ -46,10 +48,10 @@ const Navbar = () => {
         />
       </Link>
       <Hidden mdDown>
-        <ButtonsSection userPagesToRender={userPagesToRender} />
+        <ButtonsSection role={role} userPagesToRender={userPagesToRender} />
       </Hidden>
       <Hidden mdUp>
-        <MenuSection userPagesToRender={userPagesToRender} />
+        <MenuSection role={role} userPagesToRender={userPagesToRender} />
       </Hidden>
     </nav>
   );
@@ -57,7 +59,7 @@ const Navbar = () => {
 
 export default Navbar;
 
-const ButtonsSection = ({ userPagesToRender }) => (
+const ButtonsSection = ({ userPagesToRender, role }) => (
   <div>
     <ButtonGroup className="gap-[2px]">
       {userPagesToRender.map((val, ind) => (
@@ -70,7 +72,7 @@ const ButtonsSection = ({ userPagesToRender }) => (
           {val.label}
         </Button>
       ))}
-      <Reports />
+      {role === "admin" ? <Reports /> : null}
     </ButtonGroup>
   </div>
 );
