@@ -63,8 +63,8 @@ function CustomModal({ isOpen, onClose, children }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center h-[120vh] bg-slate-600 shadow-black rounded-lg backdrop-blur-md bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3">
+    <div className="fixed inset-0 z-50 flex items-center justify-center    h-full bg-slate-600 shadow-black rounded-lg backdrop-blur-md bg-opacity-50">
+      <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/2 ">
         <div className="p-4">
           <button
             className="text-gray-600 hover:text-gray-900 float-right"

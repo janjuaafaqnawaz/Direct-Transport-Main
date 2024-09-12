@@ -34,6 +34,7 @@ export default function BookCheckout({
   payment,
   fetchTolls,
   selectedEmail,
+  setShowCheckout,
 }) {
   const nav = useRouter();
 
@@ -211,7 +212,6 @@ export default function BookCheckout({
           value: invoice?.deliveryIns,
         },
       ])}
-
       {invoice.requestQuote
         ? renderDetails("Prices", [
             {
@@ -256,14 +256,12 @@ export default function BookCheckout({
                 ).toFixed(2),
             },
           ])}
-
       <DimensionsTable
         items={invoice?.items}
         handleDelete={null}
         diseble={true}
         invoice={invoice}
       />
-
       <br />
       <br />
       <br />
@@ -290,6 +288,17 @@ export default function BookCheckout({
           Back
         </Button>
       ) : null}
+      <Button
+        fullWidth
+        variant="filled"
+        color="cyan"
+        mt={2}
+        marginTop="lg"
+        style={{ borderRadius: "8px" }}
+        onClick={() => setShowCheckout(false)}
+      >
+        Back
+      </Button>
     </Container>
   );
 }

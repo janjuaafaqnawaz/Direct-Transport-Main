@@ -25,6 +25,7 @@ export default async function ProcessPrice(formData) {
 
   const booking = await CalcPrice({
     distanceData,
+    distance,
     rate,
     min_rate,
     gst,
@@ -32,6 +33,7 @@ export default async function ProcessPrice(formData) {
     destinationStr,
     formData,
     priceSettings,
+    
   });
 
   return booking;

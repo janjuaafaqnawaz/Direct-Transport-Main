@@ -15,6 +15,7 @@ import {
 import { IconClock12 } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 import determineReturnAndServiceTypes from "@/api/price_calculation/function/helper/determineReturnAndServiceTypes";
+import ProcessPrice from "./calc_price_by_job_and_service/index";
 
 export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   const [invoice, setInvoice] = useState({});
@@ -99,9 +100,13 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
 
   const handleAutoCalcSubmit = async () => {
     try {
-      const finaleData = await ProcessPrice(invoice);
-      console.log({ finaleData });
-    } catch (error) {}
+      const updatedInvoice = await ProcessPrice(invoice);
+      setInvoice(updatedInvoice);
+      setBooking(updatedInvoice);
+      await updateDoc("place_bookings", invoice.docId, updatedInvoice);
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   const icon = (
@@ -109,7 +114,7 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   );
 
   return (
-    <div className="bg-slate-100 rounded-lg p-8 my-6">
+    <div className="bg-slate-100 rounded-lg p-2 my-6">
       <Group grow wrap="nowrap" align="flex-end">
         <NumberInput
           precision={0}
@@ -188,7 +193,10 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         value={invoice.totalPrice}
         onChange={(value) => setInvoice({ ...invoice, totalPrice: value })}
       />
-
+      <p className="mt-2 text-sm text-gray-600">
+        Click this button to recalculate the total price, including service
+        charges and GST, and update the invoice accordingly.
+      </p>
       <Button
         fullWidth
         isLoading={load}
@@ -196,10 +204,15 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         onClick={handleSubmit}
         disabled={load}
       >
-        Calculate & Update
+        Update
       </Button>
 
-      <p className="mb-2">Select new service or Job Type</p>
+      <p className="mt-4 text-sm text-gray-600">
+        Alternatively, you can use the Auto Calculate Price button to
+        automatically recalculate the price based on the current settings.
+      </p>
+
+      <Divider className="my-2" />
 
       <div className="flex gap-1">
         <Dropdown>
@@ -218,8 +231,8 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
             <DropdownItem key="2T">2T</DropdownItem>
             <DropdownItem key="4T">4T</DropdownItem>
             <DropdownItem key="6T">6T</DropdownItem>
-            <DropdownItem key="8">8</DropdownItem>
-            <DropdownItem key="10">10</DropdownItem>
+            <DropdownItem key="8T">8T</DropdownItem>
+            <DropdownItem key="10T">10T</DropdownItem>
             <DropdownItem key="12T">12T</DropdownItem>
           </DropdownMenu>
         </Dropdown>
@@ -244,14 +257,13 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         </Dropdown>
       </div>
 
-      <Button
-        fullWidth
-        color="primary"
-        onClick={handleAutoCalcSubmit}
-      >
+      <Button fullWidth color="primary" onClick={handleAutoCalcSubmit}>
         Auto Calculate Price
       </Button>
-
+      <p className="mt-2 text-sm text-gray-600">
+        Use this button to automatically recalculate the total price based on
+        the provided booking details and settings.
+      </p>
       <br />
     </div>
   );
