@@ -5,9 +5,18 @@ import { useMemo } from "react";
 import { startOfDay, isFuture, parse } from "date-fns";
 import { isToday } from "date-fns";
 import useAdminContext from "@/context/AdminProvider";
+import { Button } from "@mantine/core";
 
 export default function App() {
-  const { allBookings } = useAdminContext();
+  const {
+    allBookings,
+    fetchNextBookingsPage,
+    totalBookings,
+    totalUsers,
+    totalDrivers,
+  } = useAdminContext();
+
+  console.log({ totalBookings, totalUsers, totalDrivers });
 
   const parseDate = (dateString) => {
     try {
@@ -97,6 +106,7 @@ export default function App() {
           </Card>
         </Tab>
       </Tabs>
+      <Button onClick={fetchNextBookingsPage}>Load Bookings</Button>
     </div>
   );
 }

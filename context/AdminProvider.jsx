@@ -7,6 +7,7 @@ import {
   limit,
   startAfter,
   orderBy,
+  getCountFromServer,
 } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -19,25 +20,34 @@ const AdminProvider = ({ children }) => {
   const [allBookings, setAllBookings] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [allDrivers, setAllDrivers] = useState([]);
-  const [lastBookingDoc, setLastBookingDoc] = useState(null); // For pagination
-  const [lastUserDoc, setLastUserDoc] = useState(null); // For pagination
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [lastBookingDoc, setLastBookingDoc] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const BOOKINGS_LIMIT = 10; // Number of docs per page
-  const USERS_LIMIT = 10; // Number of docs per page
+  const [totalBookings, setTotalBookings] = useState(0); // Store total bookings count
+  const BOOKINGS_LIMIT = 20;
 
-  // Function to fetch bookings with real-time listener and pagination
+  // Function to fetch total document counts in Firestore collection
+  const fetchDocumentCounts = async () => {
+    try {
+      const bookingsRef = collection(db, "place_bookings");
+      const bookingsSnapshot = await getCountFromServer(query(bookingsRef));
+      setTotalBookings(bookingsSnapshot.data().count);
+    } catch (error) {
+      console.error("Error counting documents:", error);
+    }
+  };
+
+  // Function to fetch bookings with pagination and real-time updates
   const fetchBookingsWithPagination = (isInitial = false) => {
     setIsLoading(true);
     try {
       const bookingsRef = collection(db, "place_bookings");
       let bookingsQuery = query(
         bookingsRef,
-        orderBy("createdAt", "desc"), // Order by newest first
+        orderBy("createdAt", "desc"),
         limit(BOOKINGS_LIMIT)
       );
 
-      // If not the first load, start after the last fetched doc for pagination
       if (!isInitial && lastBookingDoc) {
         bookingsQuery = query(bookingsQuery, startAfter(lastBookingDoc));
       }
@@ -58,73 +68,51 @@ const AdminProvider = ({ children }) => {
         setIsLoading(false);
       });
 
-      // Clean up the listener
-      return unsubscribe;
+      return unsubscribe; // Unsubscribe from the listener when done
     } catch (error) {
       console.error("Error fetching bookings:", error);
       setIsLoading(false);
     }
   };
 
-  // Function to fetch users with real-time listener and pagination
-  const fetchUsersWithPagination = (isInitial = false) => {
+  // Function to fetch users and drivers with real-time updates
+  const fetchUsers = () => {
     setIsLoading(true);
     try {
       const usersRef = collection(db, "users");
-      let usersQuery = query(
-        usersRef,
-        orderBy("createdAt", "desc"), // Order by newest first
-        limit(USERS_LIMIT)
-      );
+      const usersQuery = query(usersRef);
 
-      // If not the first load, start after the last fetched doc for pagination
-      if (!isInitial && lastUserDoc) {
-        usersQuery = query(usersQuery, startAfter(lastUserDoc));
-      }
-
-      const unsubscribe = onSnapshot(usersQuery, (querySnapshot) => {
+      const unsubscribeUsers = onSnapshot(usersQuery, (querySnapshot) => {
         const documents = [];
         querySnapshot.forEach((doc) => {
           documents.push({ id: doc.id, ...doc.data() });
         });
 
-        if (querySnapshot.docs.length > 0) {
-          setLastUserDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        }
-
-        setAllUsers((prevUsers) =>
-          isInitial ? documents : [...prevUsers, ...documents]
-        );
-        setAllDrivers((prevDrivers) =>
-          isInitial
-            ? documents.filter((user) => user.role === "driver")
-            : [
-                ...prevDrivers,
-                ...documents.filter((user) => user.role === "driver"),
-              ]
-        );
-        setIsLoading(false);
+        // Separate drivers from the user list
+        setAllUsers(documents);
+        setAllDrivers(documents.filter((user) => user.role === "driver"));
+        setIsLoading(false); // Reset loading state after fetching
       });
 
-      // Clean up the listener
-      return unsubscribe;
+      return unsubscribeUsers; // Return the unsubscribe function
     } catch (error) {
       console.error("Error fetching users:", error);
-      setIsLoading(false);
+      setIsLoading(false); // Reset loading state on error
     }
   };
 
   useEffect(() => {
     // Initial fetch for bookings and users
     const unsubscribeBookings = fetchBookingsWithPagination(true);
-    const unsubscribeUsers = fetchUsersWithPagination(true);
+    const unsubscribeUsers = fetchUsers(); // Corrected fetchUsers call
+    fetchDocumentCounts(); // Fetch the total bookings count
 
     // Clean up listeners on component unmount
     return () => {
       if (unsubscribeBookings) unsubscribeBookings();
-      if (unsubscribeUsers) unsubscribeUsers();
+      if (unsubscribeUsers) unsubscribeUsers(); // Unsubscribe from users snapshot listener
     };
-  }, []);
+  }, []); // Run once on component mount
 
   return (
     <AdminContext.Provider
@@ -132,9 +120,9 @@ const AdminProvider = ({ children }) => {
         allBookings,
         allUsers,
         allDrivers,
-        fetchNextBookingsPage: () => fetchBookingsWithPagination(false), // Function to fetch next page
-        fetchNextUsersPage: () => fetchUsersWithPagination(false), // Function to fetch next page
+        fetchNextBookingsPage: () => fetchBookingsWithPagination(false),
         isLoading,
+        totalBookings, // Provide total bookings count to the context
       }}
     >
       {children}

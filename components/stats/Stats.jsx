@@ -8,7 +8,8 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 export default function StatsGridIcons() {
-  const { allBookings, allUsers, allDrivers } = useAdminContext();
+  const { allBookings, allUsers, allDrivers, totalBookings } =
+    useAdminContext();
 
   // Get the current date and time in Australian Eastern Standard Time (AEST)
   const currentDate = new Date(
@@ -41,30 +42,20 @@ export default function StatsGridIcons() {
       );
     }).length;
   }, [allBookings, currentMonthStartDate, nextMonthStartDate]);
-  // const dsa = useMemo(() => {
-  //   return allBookings.filter((booking) => {
-  //     const bookingDate = new Date(booking.createdAt.seconds * 1000);
-  //     return (
-  //       bookingDate >= currentMonthStartDate && bookingDate < nextMonthStartDate
-  //     );
-  //   });
-  // }, [allBookings, currentMonthStartDate, nextMonthStartDate]);
-  // dsa.forEach((b) => {
-  //   console.log(new Date(b.createdAt.seconds * 1000));
-  // });
+
   const data = [
     {
       title: "Bookings",
-      value: allBookings.length,
+      value: totalBookings,
       diff: 34,
       href: "/admin/ManageBookings",
     },
-    {
-      title: getCurrentMonthName(),
-      value: getCurrentMonthBookings,
-      diff: 18,
-      href: "/admin/ManageBookings",
-    },
+    // {
+    //   title: getCurrentMonthName(),
+    //   value: getCurrentMonthBookings,
+    //   diff: 18,
+    //   href: "/admin/ManageBookings",
+    // },
     {
       title: "Users",
       value: allUsers.length,

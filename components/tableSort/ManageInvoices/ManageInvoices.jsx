@@ -2,7 +2,6 @@
 
 import { DataGrid } from "@mui/x-data-grid";
 import { Tooltip } from "@mantine/core";
-import getSuburbByLatLng from "@/api/getSuburbByLatLng";
 import { format } from "date-fns";
 import StatusDropdown from "./InvoiceAction/StatusDropdown";
 import DeleteInvoice from "./InvoiceAction/DeleteInvoice";
@@ -18,36 +17,36 @@ export default function ManageInvoices({ invoice, hideAction }) {
 
   useEffect(() => {
     const fetchSuburbs = async () => {
-      const updatedInvoices = await Promise.all(
-        invoice.map(async (inv) => {
-          const pickupSuburb =
-            inv.address?.Origin?.suburb ||
-            (await getSuburbByLatLng(
-              inv.address?.Origin?.coordinates?.lat,
-              inv.address?.Origin?.coordinates?.lng
-            ));
+      // const updatedInvoices = await Promise.all(
+      //   invoice.map(async (inv) => {
+      //     const pickupSuburb =
+      //       inv.address?.Origin?.suburb ||
+      //       (await getSuburbByLatLng(
+      //         inv.address?.Origin?.coordinates?.lat,
+      //         inv.address?.Origin?.coordinates?.lng
+      //       ));
 
-          const deliverySuburb =
-            inv.address?.Destination?.suburb ||
-            (await getSuburbByLatLng(
-              inv.address?.Destination?.coordinates?.lat,
-              inv.address?.Destination?.coordinates?.lng
-            ));
+      //     const deliverySuburb =
+      //       inv.address?.Destination?.suburb ||
+      //       (await getSuburbByLatLng(
+      //         inv.address?.Destination?.coordinates?.lat,
+      //         inv.address?.Destination?.coordinates?.lng
+      //       ));
 
-          return {
-            ...inv,
-            pickupSuburb,
-            deliverySuburb,
-          };
-        })
-      );
-      setInvoicesWithSuburbs(updatedInvoices);
+      //     return {
+      //       ...inv,
+      //       pickupSuburb,
+      //       deliverySuburb,
+      //     };
+      //   })
+      // );
+      // setInvoicesWithSuburbs(updatedInvoices);
     };
 
     fetchSuburbs();
   }, [invoice, hideAction]);
 
-  const sortedInvoices = [...invoicesWithSuburbs].sort(
+  const sortedInvoices = [...invoice].sort(
     (a, b) => b.createdAt.seconds - a.createdAt.seconds
   );
 

@@ -48,10 +48,18 @@ const Navbar = () => {
         />
       </Link>
       <Hidden mdDown>
-        <ButtonsSection role={role} userPagesToRender={userPagesToRender} />
+        <ButtonsSection
+          router={router}
+          role={role}
+          userPagesToRender={userPagesToRender}
+        />
       </Hidden>
       <Hidden mdUp>
-        <MenuSection role={role} userPagesToRender={userPagesToRender} />
+        <MenuSection
+          router={router}
+          role={role}
+          userPagesToRender={userPagesToRender}
+        />
       </Hidden>
     </nav>
   );
@@ -59,7 +67,7 @@ const Navbar = () => {
 
 export default Navbar;
 
-const ButtonsSection = ({ userPagesToRender, role }) => (
+const ButtonsSection = ({ userPagesToRender, role, router }) => (
   <div>
     <ButtonGroup className="gap-[2px]">
       {userPagesToRender.map((val, ind) => (
