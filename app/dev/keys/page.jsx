@@ -1,61 +1,60 @@
 "use client";
 
-import { useState, useEffect } from "react"; // Import missing hooks
-import { Input } from "@mantine/core";
+import React, { useState } from "react";
+import { Input, Button, Stack, Loader, Center } from "@mantine/core";
 import { ApiRounded } from "@mui/icons-material";
-import React from "react";
-import { fetchDocById } from "@/api/firebase/functions/fetch";
 import { updateDoc } from "@/api/firebase/functions/upload";
+import { useFirebase } from "@/context/FirebaseContext";
 
 export default function Page() {
-  const [priceSettings, setPriceSettings] = useState({});
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const res = await fetchDocById("dev", "data");
-        console.log(res);
-        setPriceSettings(res);
-      } catch (error) {
-        console.error("Error fetching price settings:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSettings();
-  }, []);
+  const { loading, priceSettings, setPriceSettings } = useFirebase();
+  const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
-    setLoading(true);
+    setSaving(true);
     try {
-      await updateDoc("data", "dev", priceSettings);
+      await updateDoc("data", "dev", priceSettings); // Save the entire priceSettings object
     } catch (error) {
       console.error("Failed to save settings:", error);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  const handleChange = (field, value) => {
-    setPriceSettings((prev) => ({
-      ...prev,
-      [field]: value,
+  const handleChange = (value) => {
+    setPriceSettings((prevSettings) => ({
+      ...prevSettings,
+      GOOGLE_MAPS_API: value, // Update the GOOGLE_MAPS_API key in priceSettings
     }));
   };
 
   return (
-    <div>
-      <Input
-        value={priceSettings.GOOGLE_MAPS_API || ""}
-        onChange={(e) => handleChange("GOOGLE_MAPS_API", e.target.value)}
-        placeholder="GOOGLE MAPS API"
-        leftSection={<ApiRounded size={16} />}
-      />
-      {/* Add a save button */}
-      <button onClick={handleSave} disabled={loading}>
-        {loading ? "Saving..." : "Save"}
-      </button>
-    </div>
+    <Center style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
+      {loading ? (
+        <Loader />
+      ) : (
+        <Stack
+          spacing="md"
+          sx={{
+            width: 400,
+            padding: 20,
+            backgroundColor: "#fff",
+            borderRadius: 8,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Input
+            value={priceSettings.GOOGLE_MAPS_API || ""}
+            onChange={(e) => handleChange(e.target.value)} // Update priceSettings directly
+            placeholder="Enter GOOGLE MAPS API Key"
+            icon={<ApiRounded />}
+            size="md"
+          />
+          <Button onClick={handleSave} loading={saving} fullWidth>
+            Save
+          </Button>
+        </Stack>
+      )}
+    </Center>
   );
 }

@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 export default function RootLayout({ children }) {
   const nav = useRouter();
-  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,7 +13,6 @@ export default function RootLayout({ children }) {
       try {
         const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
         const userRole = userDoc.role || null;
-        setRole(userRole);
 
         if (!userRole) {
           nav.push("/Signin");
@@ -34,9 +32,5 @@ export default function RootLayout({ children }) {
     return <Loading />;
   }
 
-  return (
-    <>
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
