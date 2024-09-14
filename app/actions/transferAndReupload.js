@@ -11,7 +11,7 @@ import {
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // Function to fetch images with retry logic
-async function fetchWithRetry(url: string, retries = 3): Promise<Blob> {
+async function fetchWithRetry(url, retries = 3) {
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, {
@@ -20,7 +20,7 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Blob> {
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
       return await response.blob(); // Convert the response to blob
-    } catch (error: any) {
+    } catch (error) {
       // Explicitly typing error as any
       if (attempt < retries - 1) {
         console.warn(`Fetch failed (${error.message}), retrying...`);
@@ -33,15 +33,15 @@ async function fetchWithRetry(url: string, retries = 3): Promise<Blob> {
   }
 }
 
-export async function transferCollectionAndReuploadImages(formData: FormData) {
-  const sourceApiKey = formData.get("sourceApiKey") as string;
-  const sourceProjectId = formData.get("sourceProjectId") as string;
-  const targetApiKey = formData.get("targetApiKey") as string;
-  const targetProjectId = formData.get("targetProjectId") as string;
-  const sourceCollection = formData.get("sourceCollection") as string;
-  const targetCollection = formData.get("targetCollection") as string;
-  const targetStorageBucket = formData.get("targetStorageBucket") as string;
-  const imageField = formData.get("imageField") as string;
+export async function transferCollectionAndReuploadImages(formData) {
+  const sourceApiKey = formData.get("sourceApiKey");
+  const sourceProjectId = formData.get("sourceProjectId");
+  const targetApiKey = formData.get("targetApiKey");
+  const targetProjectId = formData.get("targetProjectId");
+  const sourceCollection = formData.get("sourceCollection");
+  const targetCollection = formData.get("targetCollection");
+  const targetStorageBucket = formData.get("targetStorageBucket");
+  const imageField = formData.get("imageField");
 
   // Firebase configuration for source and target projects
   const firebaseConfig1 = {
@@ -80,9 +80,9 @@ export async function transferCollectionAndReuploadImages(formData: FormData) {
         docData[imageField] &&
         Array.isArray(docData[imageField])
       ) {
-        let updatedImages: string[] = [];
+        let updatedImages;
 
-        for (const imageUrl of docData[imageField] as string[]) {
+        for (const imageUrl of docData[imageField]) {
           try {
             // Fetch image as blob with retry logic
             const blob = await fetchWithRetry(imageUrl);
@@ -103,7 +103,7 @@ export async function transferCollectionAndReuploadImages(formData: FormData) {
 
             // Append the new image URL to the updated images array
             updatedImages.push(newImageUrl);
-          } catch (error: any) {
+          } catch (error) {
             // Explicitly typing error as any
             console.error(
               `Failed to process image for document ${docId}: ${error.message}`,
@@ -128,7 +128,7 @@ export async function transferCollectionAndReuploadImages(formData: FormData) {
       success: true,
       message: "Collection transfer and image re-upload complete.",
     };
-  } catch (error: any) {
+  } catch (error) {
     // Explicitly typing error as any
     console.error(
       "Error transferring collection and re-uploading images:",
