@@ -93,10 +93,6 @@ function Form({
     }
   };
 
-  const handleBack = () => {
-    setShowCheckout(false);
-  };
-  
   const handleDateChange = (name, val) =>
     setFormData({ ...formData, [name]: val });
 
@@ -109,7 +105,6 @@ function Form({
         payment={payment}
         fetchTolls={fetchTolls}
         selectedEmail={selectedEmail}
-        setShowCheckout={handleBack}
       />
     );
   }

@@ -57,9 +57,7 @@ export default function BookingTracker() {
         padding: 2,
       }}
     >
-      <Card
-        sx={{ maxWidth: 500, width: "100%", boxShadow: 3, borderRadius: 2 }}
-      >
+      <Card sx={{ maxWidth: 500, width: "100%", boxShadow: 3, borderRadius: 2 }}>
         <CardContent>
           <Typography
             variant="h4"
@@ -93,8 +91,7 @@ export default function BookingTracker() {
               >
                 <CalendarMonth sx={{ width: 24, height: 24, mr: 1 }} />
                 <Typography variant="body1">
-                  <strong>Booked:</strong> {bookingData?.date || ""}
-                  {bookingData?.time || ""}
+                  <strong>Booked:</strong> {bookingData.date} {bookingData.time}
                 </Typography>
               </Box>
               <Box
@@ -107,8 +104,7 @@ export default function BookingTracker() {
               >
                 <FireTruck sx={{ width: 24, height: 24, mr: 1 }} />
                 <Typography variant="body1">
-                  <strong>Picked Up:</strong>
-                  {bookingData?.progressInformation?.pickedup || " Pending"}
+                  <strong>Picked Up:</strong> {bookingData.progressInformation.pickedup}
                 </Typography>
               </Box>
               <Box
@@ -121,7 +117,7 @@ export default function BookingTracker() {
               >
                 <CheckCircle sx={{ width: 24, height: 24, mr: 1 }} />
                 <Typography variant="body1">
-                  <strong>Status:</strong> {bookingData?.currentStatus || " Pending"}
+                  <strong>Status:</strong> {bookingData.currentStatus}
                 </Typography>
               </Box>
               <Button
@@ -148,13 +144,7 @@ export default function BookingTracker() {
                 sx={{ width: "100%" }}
                 type="submit"
                 disabled={loading}
-                endIcon={
-                  loading ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    <IconClock />
-                  )
-                }
+                endIcon={loading ? <CircularProgress size={24} color="inherit" /> : <IconClock />}
               >
                 {loading ? "Loading..." : "Track Booking"}
               </Button>

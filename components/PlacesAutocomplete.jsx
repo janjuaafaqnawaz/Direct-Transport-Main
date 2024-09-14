@@ -9,7 +9,7 @@ export default function PlacesAutocomplete({
   pickup,
   width,
 }) {
-  const apiKey = "AIzaSyBwepwcfkMunudUU-GVoc3AlSR-fTSOXAQ";
+  const apiKey = "AIzaSyD3FGI3-A4LF7Cr0PyqgwKvRmJDIGE6gFc";
 
   const handleLocationSelect = async (selected) => {
     try {

@@ -195,18 +195,6 @@ const goodsDescriptionOption = [
   { value: "Satchel" },
   { value: "Ladder" },
   { value: "Rack" },
-  { value: "Timber" },
-  { value: "Rolls" },
-  { value: "Coil" },
-  { value: "Crate" },
-  { value: "Drum" },
-  { value: "Pail" },
-  { value: "Steel" },
-  { value: "Aluminum" },
-  { value: "Bags" },
-  { value: "Conduit" },
-  { value: "Tubes" },
-  { value: "Hoses" },
 ];
 
 const initialFormData = {

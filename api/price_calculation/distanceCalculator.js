@@ -1,7 +1,7 @@
 "use server";
 
 export async function calculateDistance(origin, destination) {
-  const key = "AIzaSyBwepwcfkMunudUU-GVoc3AlSR-fTSOXAQ";
+  const key = "AIzaSyD3FGI3-A4LF7Cr0PyqgwKvRmJDIGE6gFc";
 
   if (!key) {
     throw new Error("Google Maps API key is not set");

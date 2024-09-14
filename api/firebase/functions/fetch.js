@@ -1,3 +1,5 @@
+"use client";
+
 import { getAuth } from "firebase/auth";
 import {
   collection,

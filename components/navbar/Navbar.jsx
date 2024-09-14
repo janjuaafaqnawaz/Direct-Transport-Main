@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { adminPages, authPages, businessPages, userPages } from "../static";
@@ -9,22 +10,30 @@ import { Button, ButtonGroup } from "@mantine/core";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+const getUserRole = () => {
+  if (typeof window !== "undefined") {
+    const userDoc = JSON.parse(localStorage.getItem("userDoc") || "{}");
+    return userDoc.role || null;
+  }
+  return null;
+};
+
 const Navbar = () => {
   const router = useRouter();
-  const [userPagesToRender, setUserPagesToRender] = useState([]);
-  const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
-  const role = userDoc.role || null;
+  const [userPagesToRender, setUserPagesToRender] = useState(authPages);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
-    const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
-    const role = userDoc.role || null;
+    const userRole = getUserRole();
+    setRole(userRole);
+
     const pages = {
       admin: adminPages,
       business: businessPages,
       user: userPages,
       auth: authPages,
     };
-    setUserPagesToRender(pages[role] || authPages);
+    setUserPagesToRender(pages[userRole] || authPages);
   }, []);
 
   return (
@@ -50,16 +59,12 @@ const Navbar = () => {
       <Hidden mdDown>
         <ButtonsSection
           router={router}
-          role={role}
           userPagesToRender={userPagesToRender}
+          role={role}
         />
       </Hidden>
       <Hidden mdUp>
-        <MenuSection
-          router={router}
-          role={role}
-          userPagesToRender={userPagesToRender}
-        />
+        <MenuSection router={router} userPagesToRender={userPagesToRender} />
       </Hidden>
     </nav>
   );
@@ -67,7 +72,7 @@ const Navbar = () => {
 
 export default Navbar;
 
-const ButtonsSection = ({ userPagesToRender, role, router }) => (
+const ButtonsSection = ({ userPagesToRender, router, role }) => (
   <div>
     <ButtonGroup className="gap-[2px]">
       {userPagesToRender.map((val, ind) => (

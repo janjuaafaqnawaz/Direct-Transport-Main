@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: "AIzaSyBwepwcfkMunudUU-GVoc3AlSR-fTSOXAQ",
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: "AIzaSyD3FGI3-A4LF7Cr0PyqgwKvRmJDIGE6gFc",
   },
   images: {
     domains: [
