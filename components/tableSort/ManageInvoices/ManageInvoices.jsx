@@ -25,14 +25,12 @@ export default function ManageInvoices({ invoice, hideAction }) {
       //         inv.address?.Origin?.coordinates?.lat,
       //         inv.address?.Origin?.coordinates?.lng
       //       ));
-
       //     const deliverySuburb =
       //       inv.address?.Destination?.suburb ||
       //       (await getSuburbByLatLng(
       //         inv.address?.Destination?.coordinates?.lat,
       //         inv.address?.Destination?.coordinates?.lng
       //       ));
-
       //     return {
       //       ...inv,
       //       pickupSuburb,
@@ -171,9 +169,17 @@ export default function ManageInvoices({ invoice, hideAction }) {
     id: row.docId || index + 1,
   }));
 
+  const { loading, priceSettings } = useFirebase();
+
+  if (loading) {
+    return <div className="text-center">Loading...</div>;
+  }
+
   return (
     <div className="w-[95vw]  overflow-hidden flex justify-center">
-      <Script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwepwcfkMunudUU-GVoc3AlSR-fTSOXAQ&libraries=places" />
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${priceSettings.GOOGLE_MAPS_API}=places`}
+      />
       <div className="max-w-[95vw]">
         <DataGrid
           rows={rowsWithIds}
