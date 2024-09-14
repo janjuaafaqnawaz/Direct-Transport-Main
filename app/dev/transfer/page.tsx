@@ -89,7 +89,6 @@ export default function Home() {
             type="text"
             id="targetStorageBucket"
             name="targetStorageBucket"
-            required
           />
         </div>
         <Button type="submit" disabled={isLoading}>

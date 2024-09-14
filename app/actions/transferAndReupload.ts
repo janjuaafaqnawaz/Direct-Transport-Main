@@ -11,7 +11,7 @@ import {
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // Function to fetch images with retry logic
-async function fetchWithRetry(url: string, retries = 3) {
+async function fetchWithRetry(url: string, retries = 3): Promise<Blob> {
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, {
@@ -20,7 +20,8 @@ async function fetchWithRetry(url: string, retries = 3) {
       if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
       return await response.blob(); // Convert the response to blob
-    } catch (error) {
+    } catch (error: any) {
+      // Explicitly typing error as any
       if (attempt < retries - 1) {
         console.warn(`Fetch failed (${error.message}), retrying...`);
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait before retrying
@@ -79,9 +80,9 @@ export async function transferCollectionAndReuploadImages(formData: FormData) {
         docData[imageField] &&
         Array.isArray(docData[imageField])
       ) {
-        let updatedImages = [];
+        let updatedImages: string[] = [];
 
-        for (const imageUrl of docData[imageField]) {
+        for (const imageUrl of docData[imageField] as string[]) {
           try {
             // Fetch image as blob with retry logic
             const blob = await fetchWithRetry(imageUrl);
@@ -102,7 +103,8 @@ export async function transferCollectionAndReuploadImages(formData: FormData) {
 
             // Append the new image URL to the updated images array
             updatedImages.push(newImageUrl);
-          } catch (error) {
+          } catch (error: any) {
+            // Explicitly typing error as any
             console.error(
               `Failed to process image for document ${docId}: ${error.message}`,
               error
@@ -126,7 +128,8 @@ export async function transferCollectionAndReuploadImages(formData: FormData) {
       success: true,
       message: "Collection transfer and image re-upload complete.",
     };
-  } catch (error) {
+  } catch (error: any) {
+    // Explicitly typing error as any
     console.error(
       "Error transferring collection and re-uploading images:",
       error
