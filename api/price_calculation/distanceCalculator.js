@@ -1,17 +1,9 @@
 "use server";
 
-export async function calculateDistance(origin, destination) {
-  const priceSettings = await fetchDocById("dev", "data");
-
-  const key = priceSettings.GOOGLE_MAPS_API;
-
-  if (!key) {
-    throw new Error("Google Maps API key is not set");
-  }
-
+export async function calculateDistance(origin, destination, GOOGLE_MAPS_API) {
   try {
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&units=imperial&key=${key}`
+      `https://maps.googleapis.com/maps/api/distancematrix/json?destinations=${destination}&origins=${origin}&units=imperial&key=${GOOGLE_MAPS_API}`
     );
 
     if (!response.ok) {

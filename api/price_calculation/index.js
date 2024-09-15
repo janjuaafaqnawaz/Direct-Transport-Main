@@ -1,6 +1,7 @@
 import { calculateDistance } from "./distanceCalculator";
 import CalcPrice from "./function/CalcPrice";
 import userPriceSettings from "./function/helper/userPriceSettings";
+import { fetchDocById } from "../firebase/functions/fetch";
 
 export default async function ProcessPrice(formData) {
   if (
@@ -11,6 +12,10 @@ export default async function ProcessPrice(formData) {
 
   const priceSettings = await userPriceSettings();
 
+  const API = await fetchDocById("dev", "data");
+
+  const GOOGLE_MAPS_API =
+    API?.GOOGLE_MAPS_API || "AIzaSyAqVtf4qM9DSMTbxeWH_742j7aD8zqQVvI";
   const min_rate = priceSettings?.minServices;
   const rate = priceSettings?.services;
   const gst = priceSettings?.gst?.GST;
@@ -18,7 +23,11 @@ export default async function ProcessPrice(formData) {
   const originStr = `${formData?.address?.Origin?.coordinates.lat},${formData?.address?.Origin?.coordinates.lng}`;
   const destinationStr = `${formData?.address?.Destination?.coordinates.lat},${formData?.address?.Destination?.coordinates.lng}`;
 
-  const distance = await calculateDistance(originStr, destinationStr);
+  const distance = await calculateDistance(
+    originStr,
+    destinationStr,
+    GOOGLE_MAPS_API
+  );
   const distanceData = distance?.rows[0]?.elements[0]?.distance;
 
   console.log({ distance, distanceData });
@@ -33,7 +42,6 @@ export default async function ProcessPrice(formData) {
     destinationStr,
     formData,
     priceSettings,
-    
   });
 
   return booking;
