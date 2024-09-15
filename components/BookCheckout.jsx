@@ -74,17 +74,17 @@ export default function BookCheckout({
         nav.push(stripe.url);
       } else {
         const pickupSuburb =
-          inv.address?.Origin?.suburb ||
+          invoice.address?.Origin?.suburb ||
           (await getSuburbByLatLng(
-            inv.address?.Origin?.coordinates?.lat,
-            inv.address?.Origin?.coordinates?.lng
+            invoice.address?.Origin?.coordinates?.lat,
+            invoice.address?.Origin?.coordinates?.lng
           ));
 
         const deliverySuburb =
-          inv.address?.Destination?.suburb ||
+          invoice.address?.Destination?.suburb ||
           (await getSuburbByLatLng(
-            inv.address?.Destination?.coordinates?.lat,
-            inv.address?.Destination?.coordinates?.lng
+            invoice.address?.Destination?.coordinates?.lat,
+            invoice.address?.Destination?.coordinates?.lng
           ));
 
         const res = await postInvoice(
