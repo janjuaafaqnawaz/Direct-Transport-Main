@@ -14,8 +14,6 @@ export default async function ProcessPrice(formData) {
 
   // const API = await fetchDocById("dev", "data");
 
-  console.log({ GOOGLE_MAPS_API });
-
   const min_rate = priceSettings?.minServices;
   const rate = priceSettings?.services;
   const gst = priceSettings?.gst?.GST;
