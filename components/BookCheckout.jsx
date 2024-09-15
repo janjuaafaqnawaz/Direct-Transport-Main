@@ -23,8 +23,6 @@ import "@mantine/dates/styles.css";
 import sendBookingEmail from "@/api/sendBookingEmail";
 import DimensionsTable from "./ItemDimensions/DimensionsTable";
 import ProcessPrice from "@/api/price_calculation/index";
-import ProccesBooking from "@/api/ProccesBooking";
-import { fetchDocById } from "@/api/firebase/functions/fetch";
 
 export default function BookCheckout({
   formData,
@@ -48,26 +46,9 @@ export default function BookCheckout({
       setLoading(false);
     };
     processBooking();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // useEffect(() => {
-  //   const processBooking = async () => {
-  //     const finaleData = await ProccesBooking(formData, fetchTolls);
-  //     const res = await fetchDocById("GST", "data");
-  //     let gstVal = res?.GST;
-  //     let price = finaleData?.totalPrice;
-  //     const gst = (parseFloat(price) * parseFloat(gstVal)) / 100;
-  //     setInvoice({
-  //       ...finaleData,
-  //       totalPriceWithGST: parseFloat(price) + gst + finaleData?.serviceCharges,
-  //       gst: gst,
-  //     });
-  //     setLoading(false);
-  //   };
-  //   processBooking();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   // Function to handle form submission
   const handleSubmit = async () => {
@@ -92,10 +73,27 @@ export default function BookCheckout({
         // console.log(stripe);
         nav.push(stripe.url);
       } else {
-        const res = await postInvoice(invoice, "place_bookings", selectedEmail);
+        const pickupSuburb =
+          inv.address?.Origin?.suburb ||
+          (await getSuburbByLatLng(
+            inv.address?.Origin?.coordinates?.lat,
+            inv.address?.Origin?.coordinates?.lng
+          ));
+
+        const deliverySuburb =
+          inv.address?.Destination?.suburb ||
+          (await getSuburbByLatLng(
+            inv.address?.Destination?.coordinates?.lat,
+            inv.address?.Destination?.coordinates?.lng
+          ));
+
+        const res = await postInvoice(
+          { ...invoice, pickupSuburb, deliverySuburb },
+          "place_bookings",
+          selectedEmail
+        );
         sendBookingEmail(invoice, res, res?.name || invoice?.contact);
-        // await addFrequentAddress(invoice.address.Origin);
-        // await addFrequentAddress(invoice.address.Destination);
+
         nav.push(`/RecentInvoices/${res}`);
       }
     }
