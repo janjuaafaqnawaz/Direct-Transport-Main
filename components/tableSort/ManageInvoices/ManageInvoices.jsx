@@ -179,7 +179,7 @@ export default function ManageInvoices({ invoice, hideAction }) {
   return (
     <div className="w-[95vw]  overflow-hidden flex justify-center">
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${priceSettings.GOOGLE_MAPS_API}=places`}
+        src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyAqVtf4qM9DSMTbxeWH_742j7aD8zqQVvI=places`}
       />
       <div className="max-w-[95vw]">
         <DataGrid

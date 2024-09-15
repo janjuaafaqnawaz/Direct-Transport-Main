@@ -12,10 +12,7 @@ export default async function ProcessPrice(formData) {
 
   const priceSettings = await userPriceSettings();
 
-  const API = await fetchDocById("dev", "data");
-
-  const GOOGLE_MAPS_API =
-    API?.GOOGLE_MAPS_API || "AIzaSyAqVtf4qM9DSMTbxeWH_742j7aD8zqQVvI";
+  // const API = await fetchDocById("dev", "data");
 
   console.log({ GOOGLE_MAPS_API });
 
@@ -26,12 +23,7 @@ export default async function ProcessPrice(formData) {
   const originStr = `${formData?.address?.Origin?.coordinates.lat},${formData?.address?.Origin?.coordinates.lng}`;
   const destinationStr = `${formData?.address?.Destination?.coordinates.lat},${formData?.address?.Destination?.coordinates.lng}`;
 
-  const distance = await calculateDistance(
-    originStr,
-    destinationStr,
-    GOOGLE_MAPS_API
-  );
-  console.log({ GOOGLE_MAPS_API, distance });
+  const distance = await calculateDistance(originStr, destinationStr);
   const distanceData = distance?.rows[0]?.elements[0]?.distance;
 
   const booking = await CalcPrice({

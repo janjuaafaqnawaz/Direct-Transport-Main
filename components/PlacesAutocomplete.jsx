@@ -11,9 +11,7 @@ export default function PlacesAutocomplete({
   pickup,
   width,
 }) {
-  const { loading, priceSettings } = useFirebase();
-
-  const apiKey = priceSettings.GOOGLE_MAPS_API;
+  const apiKey = "AIzaSyAqVtf4qM9DSMTbxeWH_742j7aD8zqQVvI";
 
   const handleLocationSelect = async (selected) => {
     try {
@@ -42,10 +40,6 @@ export default function PlacesAutocomplete({
       console.log(error);
     }
   };
-
-  if (loading) {
-    return <Spinner />;
-  }
 
   return (
     <>
