@@ -16,6 +16,9 @@ export default async function ProcessPrice(formData) {
 
   const GOOGLE_MAPS_API =
     API?.GOOGLE_MAPS_API || "AIzaSyAqVtf4qM9DSMTbxeWH_742j7aD8zqQVvI";
+
+  console.log({ GOOGLE_MAPS_API });
+
   const min_rate = priceSettings?.minServices;
   const rate = priceSettings?.services;
   const gst = priceSettings?.gst?.GST;
@@ -28,9 +31,8 @@ export default async function ProcessPrice(formData) {
     destinationStr,
     GOOGLE_MAPS_API
   );
+  console.log({ GOOGLE_MAPS_API, distance });
   const distanceData = distance?.rows[0]?.elements[0]?.distance;
-
-  console.log({ distance, distanceData });
 
   const booking = await CalcPrice({
     distanceData,
