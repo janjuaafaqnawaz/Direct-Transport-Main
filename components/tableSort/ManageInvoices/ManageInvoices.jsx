@@ -9,7 +9,6 @@ import EditInvoice from "./InvoiceAction/edit_invoice_modal/Modal";
 import Assigned from "./InvoiceAction/Assigned";
 import InvoicePOD from "./InvoiceAction/pod_invoice_modal/Modal";
 import { Chip } from "@nextui-org/react";
-import Script from "next/script";
 import { useEffect, useState } from "react";
 import { useFirebase } from "@/context/FirebaseContext";
 
@@ -170,17 +169,11 @@ export default function ManageInvoices({ invoice, hideAction }) {
     id: row.docId || index + 1,
   }));
 
-  const { loading, priceSettings } = useFirebase();
-
-  if (loading) {
-    return null;
-  }
+  
 
   return (
     <div className="w-[95vw]  overflow-hidden flex justify-center">
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${priceSettings?.GOOGLE_MAPS_API}=places`}
-      />
+ 
       <div className="max-w-[95vw]">
         <DataGrid
           rows={rowsWithIds}
