@@ -16,8 +16,6 @@ export default function App() {
     totalDrivers,
   } = useAdminContext();
 
-  console.log({ totalBookings, totalUsers, totalDrivers });
-
   const parseDate = (dateString) => {
     try {
       const parsedDate = parse(dateString, "dd/MM/yyyy", new Date());
@@ -106,7 +104,9 @@ export default function App() {
           </Card>
         </Tab>
       </Tabs>
-      <Button onClick={fetchNextBookingsPage}>Load Bookings</Button>
+      <Button className="max-w-lg mx-auto" onClick={fetchNextBookingsPage}>
+        Load Bookings
+      </Button>
     </div>
   );
 }

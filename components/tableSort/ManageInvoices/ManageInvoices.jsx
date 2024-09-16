@@ -188,11 +188,7 @@ export default function ManageInvoices({ invoice, hideAction }) {
           pageSize={10}
           rowHeight={100}
           disableRowSelectionOnClick
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 50 },
-            },
-          }}
+          pagination={false}
           pageSizeOptions={[5, 10, 20, 50, 100]}
         />
       </div>
