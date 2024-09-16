@@ -1,6 +1,5 @@
 "use client";
 import { useFirebase } from "@/context/FirebaseContext";
-import { Spinner } from "@nextui-org/react";
 import GooglePlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
@@ -11,7 +10,9 @@ export default function PlacesAutocomplete({
   pickup,
   width,
 }) {
-  const apiKey = "AIzaSyAqVtf4qM9DSMTbxeWH_742j7aD8zqQVvI";
+  const { loading, priceSettings } = useFirebase();
+
+  const apiKey = priceSettings?.GOOGLE_MAPS_API;
 
   const handleLocationSelect = async (selected) => {
     try {
@@ -40,6 +41,10 @@ export default function PlacesAutocomplete({
       console.log(error);
     }
   };
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <>

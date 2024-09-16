@@ -44,7 +44,7 @@ export default function Page() {
           }}
         >
           <Input
-            value={"AIzaSyAqVtf4qM9DSMTbxeWH_742j7aD8zqQVvI"}
+            value={priceSettings.GOOGLE_MAPS_API || ""}
             onChange={(e) => handleChange(e.target.value)} // Update priceSettings directly
             placeholder="Enter GOOGLE MAPS API Key"
             icon={<ApiRounded />}
