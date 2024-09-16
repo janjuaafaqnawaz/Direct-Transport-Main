@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "@/api/firebase/functions/fetch";
+import { useSearchParams } from "next/navigation";
 import {
   TextField,
   Card,
@@ -21,16 +22,27 @@ export default function BookingTracker() {
   const [bookingData, setBookingData] = useState(null);
   const [reference, setReference] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!reference) {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const urlReference = searchParams.get("reference");
+    if (urlReference) {
+      setReference(urlReference);
+      handleSubmit(null, urlReference);
+    }
+  }, [searchParams]);
+
+  const handleSubmit = async (e, urlRef = null) => {
+    if (e) e.preventDefault();
+    const ref = urlRef || reference;
+    if (!ref) {
       alert("Please enter a reference");
       return;
     }
 
     setLoading(true);
     try {
-      const docRef = doc(db, "place_bookings", reference);
+      const docRef = doc(db, "place_bookings", ref);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
@@ -57,7 +69,9 @@ export default function BookingTracker() {
         padding: 2,
       }}
     >
-      <Card sx={{ maxWidth: 500, width: "100%", boxShadow: 3, borderRadius: 2 }}>
+      <Card
+        sx={{ maxWidth: 500, width: "100%", boxShadow: 3, borderRadius: 2 }}
+      >
         <CardContent>
           <Typography
             variant="h4"
@@ -91,7 +105,8 @@ export default function BookingTracker() {
               >
                 <CalendarMonth sx={{ width: 24, height: 24, mr: 1 }} />
                 <Typography variant="body1">
-                  <strong>Booked:</strong> {bookingData.date} {bookingData.time}
+                  <strong>Booked:</strong> {bookingData?.date}{" "}
+                  {bookingData?.time}
                 </Typography>
               </Box>
               <Box
@@ -104,7 +119,8 @@ export default function BookingTracker() {
               >
                 <FireTruck sx={{ width: 24, height: 24, mr: 1 }} />
                 <Typography variant="body1">
-                  <strong>Picked Up:</strong> {bookingData.progressInformation.pickedup}
+                  <strong>Picked Up:</strong>{" "}
+                  {bookingData?.progressInformation?.pickedup}
                 </Typography>
               </Box>
               <Box
@@ -117,13 +133,16 @@ export default function BookingTracker() {
               >
                 <CheckCircle sx={{ width: 24, height: 24, mr: 1 }} />
                 <Typography variant="body1">
-                  <strong>Status:</strong> {bookingData.currentStatus}
+                  <strong>Status:</strong> {bookingData?.currentStatus}
                 </Typography>
               </Box>
               <Button
                 color="primary"
                 sx={{ mt: 2, width: "100%" }}
-                onClick={() => setShow(false)}
+                onClick={() => {
+                  setShow(false);
+                  setReference("");
+                }}
               >
                 Track Another Booking
               </Button>
@@ -144,7 +163,13 @@ export default function BookingTracker() {
                 sx={{ width: "100%" }}
                 type="submit"
                 disabled={loading}
-                endIcon={loading ? <CircularProgress size={24} color="inherit" /> : <IconClock />}
+                endIcon={
+                  loading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    <IconClock />
+                  )
+                }
               >
                 {loading ? "Loading..." : "Track Booking"}
               </Button>
@@ -155,3 +180,4 @@ export default function BookingTracker() {
     </Box>
   );
 }
+// https://yoursite.com/TrackMyBooking?reference=123456
