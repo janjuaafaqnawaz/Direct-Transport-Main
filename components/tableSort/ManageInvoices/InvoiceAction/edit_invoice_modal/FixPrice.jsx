@@ -79,16 +79,6 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
 
       console.log(updatedInvoice);
 
-      // console.log({
-      //   totalPrice,
-      //   totalPriceWithGST: Number(totalPriceWithGST.toFixed(2)),
-      //   gst: Number(gst.toFixed(2)),
-      //   WaitingTimeAtPickup,
-      //   WaitingTimeAtDrop,
-      //   charges_sum,
-      //   updatedInvoice,
-      // });
-
       await updateDoc("place_bookings", invoice.docId, updatedInvoice);
     } catch (error) {
       console.error("Error updating invoice:", error);
@@ -100,10 +90,12 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
 
   const handleAutoCalcSubmit = async () => {
     try {
-      const updatedInvoice = await ProcessPrice(invoice);
-      setInvoice(updatedInvoice);
-      setBooking(updatedInvoice);
-      await updateDoc("place_bookings", invoice.docId, updatedInvoice);
+      const booking = await ProcessPrice(invoice);
+      console.log({ booking });
+
+      setInvoice(booking);
+      setBooking(booking);
+      await updateDoc("place_bookings", invoice.docId, booking);
     } catch (error) {
       console.log({ error });
     }

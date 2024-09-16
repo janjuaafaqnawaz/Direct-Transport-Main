@@ -3,29 +3,42 @@ import userPriceSettings from "@/api/price_calculation/function/helper/userPrice
 
 export default async function ProcessPrice(formData) {
   try {
-    // Ensure formData is available
+    // Ensure formData is available and validate its structure
     if (!formData) {
-      throw new Error("formData is required but not provided.");
+      throw new Error("formData is required and must be an object.");
+    }
+
+    if (
+      !formData.service ||
+      !formData.returnType ||
+      typeof formData.distance !== "number"
+    ) {
+      throw new Error(
+        "formData is missing required fields or has invalid types."
+      );
     }
 
     // Fetch user price settings
     const priceSettings = await userPriceSettings();
-    if (!priceSettings) {
-      throw new Error("Price settings could not be retrieved.");
+    if (!priceSettings || typeof priceSettings !== "object") {
+      throw new Error("Price settings could not be retrieved or are invalid.");
     }
 
-    // Destructure the necessary fields from priceSettings
+    // Destructure the necessary fields from priceSettings with type checking
     const {
       minServices: min_rate,
       services: rate,
-      gst: { GST: gst } = {},
+      gst: { GST: gst } = { GST: 0 },
     } = priceSettings;
-    
 
-    // Validate if all necessary settings exist
-    if (min_rate === undefined || rate === undefined || gst === undefined) {
+    // Validate if all necessary settings exist and have correct types
+    if (
+      typeof min_rate !== "object" ||
+      typeof rate !== "object" ||
+      typeof gst !== "number"
+    ) {
       throw new Error(
-        "Incomplete price settings (minServices, services, or GST is missing)."
+        "Incomplete or invalid price settings (minServices, services, or GST is missing or has wrong type)."
       );
     }
 
@@ -38,11 +51,16 @@ export default async function ProcessPrice(formData) {
       priceSettings,
     });
 
+    // Validate the booking result
+
     // Return the booking result
     return booking;
-
   } catch (err) {
-    console.error(`ProcessPrice Error: ${err.message}`);
-    throw new Error(`ProcessPrice failed: ${err.message}`);
+    console.error(
+      `ProcessPrice Error: ${err instanceof Error ? err.message : String(err)}`
+    );
+    throw new Error(
+      `ProcessPrice failed: ${err instanceof Error ? err.message : String(err)}`
+    );
   }
 }
