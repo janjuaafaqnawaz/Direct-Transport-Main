@@ -69,10 +69,13 @@ export default function BookCheckout({
         // console.log(stripe);
         nav.push(stripe.url);
       } else {
-        const pickupSuburb = invoice.address?.Origin?.address?.addressLabel;
+        const pickupSuburb = await getSuburbByLatLng(
+          invoice.address?.Origin?.label
+        );
 
-        const deliverySuburb =
-          invoice.address?.Destination?.address?.addressLabel;
+        const deliverySuburb = await getSuburbByLatLng(
+          invoice.address?.Destination?.label
+        );
 
         const delivery = { ...invoice, pickupSuburb, deliverySuburb };
 

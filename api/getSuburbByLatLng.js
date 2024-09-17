@@ -1,38 +1,34 @@
-"use client"
+"use server";
 
-import { geocodeByLatLng } from "react-google-places-autocomplete";
+export default async function getSuburb(address) {
+  const apiKey = "AIzaSyDTsv2KjctO7_RCqsXQHs30mluZT-whoeQ";
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+    address
+  )}&key=${apiKey}`;
 
-const getSuburbByLatLng = async (lat, lng) => {
-  console.log({lat, lng});
-  
+  console.log(url);
+
   try {
-    const results = await geocodeByLatLng({ lat, lng });
+    const geocodeResponse = await fetch(url);
+    const geocodeData = await geocodeResponse.json();
 
-    if (!results || results.length === 0) {
-      throw new Error("No results found");
-    }
+    if (geocodeData.status === "OK" && geocodeData.results.length > 0) {
+      const addressComponents = geocodeData.results[0].address_components;
 
-    const addressComponents = results[0].address_components;
-    let suburb = "";
-
-    addressComponents.forEach((component) => {
-      if (
-        component.types.includes("sublocality") ||
+      // Find the suburb by its type "locality"
+      const suburbComponent = addressComponents.find((component) =>
         component.types.includes("locality")
-      ) {
-        suburb = component.long_name;
+      );
+
+      if (suburbComponent) {
+        const suburb = suburbComponent.long_name;
+        console.log(suburb);
+        return suburb;
       }
-    });
-
-    if (!suburb) {
-      throw new Error("Suburb not found");
     }
-    console.log(suburb);
-
-    return suburb;
   } catch (error) {
-    console.error("Error fetching suburb: ", error);
-    return null;
+    console.error("Error fetching suburb:", error);
   }
-};
-export default getSuburbByLatLng;
+
+  return null;
+}
