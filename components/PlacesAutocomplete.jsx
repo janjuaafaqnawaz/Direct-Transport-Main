@@ -17,6 +17,8 @@ export default function PlacesAutocomplete({
 
     autocompleteRef.current = Radar.ui.autocomplete({
       container: containerId,
+      placeholder: address?.label || "Search Address",
+      responsive: true,
       onSelection: (address) => {
         console.log(address);
 
@@ -35,16 +37,13 @@ export default function PlacesAutocomplete({
     return () => {
       autocompleteRef.current?.remove();
     };
-  }, [containerId, onLocationSelect]);
+  }, [containerId, onLocationSelect, address]);
 
   return (
     <>
-      <div>
+      <div className="w-full">
         <div id={containerId} />
       </div>
-      <div></div>
-      <div className="mt-2" />
-      <Chip size="sm"> {address?.label || ""}</Chip>
     </>
   );
 }

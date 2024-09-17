@@ -18,8 +18,7 @@ export default function Page() {
     useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  console.log({formData});
-  
+  console.log({ formData });
 
   const handleRefresh = () => {
     setRefreshKey((prevKey) => prevKey + 1);
@@ -117,7 +116,7 @@ export default function Page() {
                 })
               }
               pickup={true}
-              width={true}
+              address={formData.address.Origin}
             />
           ) : null}
           <FrequentAddress
@@ -142,7 +141,7 @@ export default function Page() {
                   address: { ...formData.address, Destination: loc },
                 })
               }
-              width={true}
+              address={formData.address.Destination}
             />
           ) : null}
         </div>

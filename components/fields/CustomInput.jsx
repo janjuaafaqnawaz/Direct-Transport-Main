@@ -8,7 +8,7 @@ export default function CustomInput({ name, label, value, handleChange }) {
       fullWidth
       style={{ maxWidth: 700, marginTop: 10 }}
       name={name || ""}
-      label={label || ""}
+      placeholder={label || ""}
       variant="outlined"
       helperText={`Enter ${label || ""}  `}
       size="small"
