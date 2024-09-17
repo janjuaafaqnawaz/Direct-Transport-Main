@@ -3,20 +3,7 @@ import React, { useEffect, useRef } from "react";
 import Radar from "radar-sdk-js";
 import "radar-sdk-js/dist/radar.css";
 
-const extractAddressComponents = (address) => {
-  const regex = /^(.*?),\s*([^,]+)\s([A-Z]{2,3})$/;
-  const match = address.match(regex);
 
-  if (match) {
-    const suburb = match[1].trim();
-    const state = match[2].trim();
-    const country = match[3].trim();
-
-    return { suburb, state, country };
-  } else {
-    return null;
-  }
-};
 
 export default function PlacesAutocomplete({
   onLocationSelect,
@@ -42,7 +29,6 @@ export default function PlacesAutocomplete({
           },
           label: address?.formattedAddress,
           address,
-          suburb: extractAddressComponents(address?.formattedAddress)?.suburb,
         };
         console.log(vals);
         onLocationSelect(vals);
