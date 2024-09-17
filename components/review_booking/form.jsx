@@ -3,7 +3,7 @@
 import "./form.css";
 
 import React, { useEffect, useState } from "react";
-import { Button, Divider } from "@mantine/core";
+import { Button, ButtonGroup, Divider } from "@mantine/core";
 import Link from "next/link";
 import { PlacesAutocomplete, BookCheckout } from "@/components/Index";
 import ItemDimensions from "@/components/ItemDimensions";
@@ -13,6 +13,7 @@ import CustomInput from "@/components/fields/CustomInput";
 import { initialFormData } from ".././static";
 import DateTime from "@/components/fields/DateTime";
 import { formatDate, formatTime } from "@/api/DateAndTime/format";
+import toast from "react-hot-toast";
 
 function Form({
   form,
@@ -24,6 +25,7 @@ function Form({
   fetchTolls,
   selectedEmail,
 }) {
+  const notify = (msg) => toast(msg);
   // -------------------------------State
 
   const [user, setUser] = useState([]);
@@ -62,7 +64,7 @@ function Form({
 
   // -----------------------------State Handlers
   const handleCheckOut = () => {
-    if (error) return alert("Please enter valid date & time");
+    if (error) return notify("Please enter valid date & time");
     const requiredFields = [
       "Contact",
       "Service",
@@ -81,7 +83,7 @@ function Form({
     if (emptyFields.length === 0) {
       setShowCheckout(true);
     } else {
-      alert(`Please fill in the following fields: ${emptyFields.join(", ")}`);
+      notify(`Please fill in the following fields: ${emptyFields.join(", ")}`);
     }
   };
 
@@ -300,55 +302,57 @@ function Form({
         </div>
       </div>
       <div
+        className="-mt-44"
         style={{
           width: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "column",
-          marginTop: "4rem",
         }}
       >
-        <Button
-          variant="filled"
-          mt={10}
-          color="#1384e1"
-          size="md"
-          w={230}
-          onClick={handleCheckOut}
-        >
-          Book Job
-        </Button>
-
-        <Link href="/ClientServices" style={{ textDecoration: "none" }}>
-          <Button w={230} variant="filled" mt={10} color="#1384e1" size="md">
-            Client Services
-          </Button>
-        </Link>
-        {action ? null : (
+        <ButtonGroup orientation="vertical">
           <Button
-            color="lime"
-            w={230}
-            mt={10}
             variant="filled"
-            size="md"
-            onClick={handleRefresh}
-          >
-            Clear Address
-          </Button>
-        )}
-        {action ? (
-          <Button
-            w={230}
-            variant="filled"
-            mt={10}
+            mt={3}
             color="#1384e1"
             size="md"
-            onClick={() => action("summary")}
+            w={230}
+            onClick={handleCheckOut}
           >
-            Back
+            Book Job
           </Button>
-        ) : null}
+
+          <Button w={230} variant="filled" mt={3} color="#1384e1" size="md">
+            <Link href="/ClientServices" style={{ textDecoration: "none" }}>
+              Client Services
+            </Link>
+          </Button>
+          {action ? null : (
+            <Button
+              color="lime"
+              w={230}
+              mt={3}
+              variant="filled"
+              size="md"
+              onClick={handleRefresh}
+            >
+              Clear Address
+            </Button>
+          )}
+          {action ? (
+            <Button
+              w={230}
+              variant="filled"
+              mt={10}
+              color="#1384e1"
+              size="md"
+              onClick={() => action("summary")}
+            >
+              Back
+            </Button>
+          ) : null}
+        </ButtonGroup>
       </div>
     </>
   );

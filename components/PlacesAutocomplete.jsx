@@ -16,6 +16,7 @@ export default function PlacesAutocomplete({
     Radar.initialize("prj_live_pk_fa04fb62631b87f8ef351d78bddf2c5717d482d9");
 
     autocompleteRef.current = Radar.ui.autocomplete({
+      countryCode: "AU",
       container: containerId,
       placeholder: address?.label || "Search Address",
       responsive: true,
