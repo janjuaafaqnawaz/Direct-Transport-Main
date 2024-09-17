@@ -202,7 +202,12 @@ function Form({
             show={() => setShowFrequentOrigins(false)}
             visible={edit}
           />
-
+          <CustomInput
+            name="pickupCompanyName"
+            label="Company Name"
+            value={formData.pickupCompanyName}
+            handleChange={handleChange}
+          />
           {edit && showFrequentOrigins ? (
             <PlacesAutocomplete
               onLocationSelect={(loc) =>
@@ -231,17 +236,19 @@ function Form({
               }
             />
           )}
-          <CustomInput
-            name="pickupCompanyName"
-            label="Company Name"
-            value={formData.pickupCompanyName}
-            handleChange={handleChange}
-          />
+
           <CustomInput
             name="pickupReference1"
             label="Reference"
             value={formData.pickupReference1}
             handleChange={handleChange}
+          />
+          <CustomInput
+            name="pickupPhone"
+            label="Phone number"
+            value={formData.pickupPhone}
+            handleChange={handleChange}
+            type="number"
           />
         </div>
         <div className="box">
@@ -259,6 +266,12 @@ function Form({
             }
             show={() => setShowFrequentDestinations(false)}
             visible={edit}
+          />{" "}
+          <CustomInput
+            name="dropCompanyName"
+            label="Company Name"
+            value={formData.dropCompanyName}
+            handleChange={handleChange}
           />
           {edit && showFrequentDestinations ? (
             <PlacesAutocomplete
@@ -288,21 +301,22 @@ function Form({
             />
           )}{" "}
           <CustomInput
-            name="dropCompanyName"
-            label="Company Name"
-            value={formData.dropCompanyName}
-            handleChange={handleChange}
-          />
-          <CustomInput
             name="deliveryIns"
             label="Delivery Instructions"
             value={formData.deliveryIns}
             handleChange={handleChange}
           />
+          <CustomInput
+            name="deliveryPhone"
+            label="Phone number"
+            value={formData.deliveryPhone}
+            handleChange={handleChange}
+            type="number"
+          />
         </div>
       </div>
       <div
-        className="-mt-44"
+        className="sm:-mt-44"
         style={{
           width: "100%",
           display: "flex",

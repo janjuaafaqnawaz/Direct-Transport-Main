@@ -35,6 +35,8 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
     internalReference: invoice?.internalReference || "",
     pickupCompanyName: invoice?.pickupCompanyName || "",
     dropCompanyName: invoice?.dropCompanyName || "",
+    pickupPhone: invoice?.pickupPhone || "",
+    deliveryPhone: invoice?.deliveryPhone || "",
   });
 
   console.log(invoice);
@@ -126,20 +128,21 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
                 className="w-64"
               />
             </Group>
-            {/* <Group grow wrap="nowrap" align="flex-end">
-              <Text className="font-semibold">Suburb:</Text>
-              <TextInput
-                value={formData?.address?.Origin?.suburb || ""}
-                onChange={handleChangeAddressSuburb("Origin")}
-                className="w-64"
-              />
-            </Group> */}
             <Group grow wrap="nowrap" align="flex-end">
               <Text className="font-semibold">Pickup Reference:</Text>
               <TextInput
                 value={formData.pickupReference1}
                 onChange={handleChange("pickupReference1")}
                 className="w-64"
+              />
+            </Group>{" "}
+            <Group grow wrap="nowrap" align="flex-end">
+              <Text className="font-semibold">Pickup Phone:</Text>
+              <TextInput
+                value={formData.pickupPhone}
+                onChange={handleChange("pickupPhone")}
+                className="w-64"
+                type="number"
               />
             </Group>
             <Group grow wrap="nowrap" align="flex-end">
@@ -158,20 +161,21 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
                 className="w-64"
               />
             </Group>
-            {/* <Group grow wrap="nowrap" align="flex-end">
-              <Text className="font-semibold">Suburb:</Text>
-              <TextInput
-                value={formData?.address?.Destination?.suburb || ""}
-                onChange={handleChangeAddressSuburb("Destination")}
-                className="w-64"
-              />
-            </Group> */}
             <Group grow wrap="nowrap" align="flex-end">
               <Text className="font-semibold">Delivery Instruction:</Text>
               <TextInput
                 value={formData.deliveryIns}
                 onChange={handleChange("deliveryIns")}
                 className="w-64"
+              />
+            </Group>
+            <Group grow wrap="nowrap" align="flex-end">
+              <Text className="font-semibold">Delivery Phone:</Text>
+              <TextInput
+                value={formData.deliveryPhone}
+                onChange={handleChange("deliveryPhone")}
+                className="w-64"
+                type="number"
               />
             </Group>
             <Divider my="sm" />

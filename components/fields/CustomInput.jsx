@@ -2,7 +2,13 @@
 
 import { TextField } from "@mui/material";
 
-export default function CustomInput({ name, label, value, handleChange }) {
+export default function CustomInput({
+  name,
+  label,
+  value,
+  handleChange,
+  type,
+}) {
   return (
     <TextField
       fullWidth
@@ -14,6 +20,7 @@ export default function CustomInput({ name, label, value, handleChange }) {
       size="small"
       value={value || ""}
       onChange={handleChange}
+      type={type}
     />
   );
 }
