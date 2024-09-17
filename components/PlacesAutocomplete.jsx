@@ -41,7 +41,7 @@ export default function PlacesAutocomplete({
       </div>
       <div></div>
       <div className="mt-2" />
-      <Chip size="sm"> {address.label}</Chip>
+      <Chip size="sm"> {address?.label || ""}</Chip>
     </>
   );
 }

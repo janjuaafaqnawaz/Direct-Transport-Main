@@ -5,8 +5,8 @@ import { fetchDocById } from "../firebase/functions/fetch";
 
 export default async function ProcessPrice(formData) {
   if (
-    !formData?.address?.Origin?.coordinates ||
-    !formData?.address?.Destination?.coordinates
+    !formData?.address?.Origin?.address ||
+    !formData?.address?.Destination?.address
   )
     return [];
 
@@ -18,8 +18,8 @@ export default async function ProcessPrice(formData) {
   const rate = priceSettings?.services;
   const gst = priceSettings?.gst?.GST;
 
-  const originStr = `${formData?.address?.Origin?.coordinates.lat},${formData?.address?.Origin?.coordinates.lng}`;
-  const destinationStr = `${formData?.address?.Destination?.coordinates.lat},${formData?.address?.Destination?.coordinates.lng}`;
+  const originStr = `${formData?.address?.Origin?.address.latitude},${formData?.address?.Origin?.address.longitude}`;
+  const destinationStr = `${formData?.address?.Destination?.address.latitude},${formData?.address?.Destination?.address.longitude}`;
 
   const distance = await calculateDistance(
     originStr,
