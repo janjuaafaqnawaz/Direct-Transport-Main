@@ -15,6 +15,7 @@ import "react-photo-view/dist/react-photo-view.css";
 import "./globals.css";
 import { useEffect } from "react";
 import { FirebaseProvider } from "@/context/FirebaseContext";
+import { Toaster } from "react-hot-toast";
 
 export default function Providers({ children }) {
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function Providers({ children }) {
       <MantineProvider>
         <PhotoProvider>
           <FirebaseProvider>{children}</FirebaseProvider>
+          <Toaster />
           <NextTopLoader color="#1383e1" />
         </PhotoProvider>
         <ToastContainer />

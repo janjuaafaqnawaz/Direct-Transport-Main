@@ -58,14 +58,15 @@ export default async function CalcPrice({
     address
   );
 
-  // if (!isOriginInside || !isDestinationInside) {
+  if (!isOriginInside || !isDestinationInside) {
+    price = distance * (max_volume <= 1000 ? 2.1 : 2.5);
+    returnType = "LD";
+  }
+  // if (distance >= 87) {
   //   price = distance * (max_volume <= 1000 ? 2.1 : 2.5);
   //   returnType = "LD";
   // }
-  if (distance >= 87) {
-    price = distance * (max_volume <= 1000 ? 2.1 : 2.5);
-    returnType = "LD";
-  } else if (
+  else if (
     Ladder.exist ||
     Rack.exist ||
     Pipes.exist ||
