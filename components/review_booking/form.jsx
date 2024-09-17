@@ -200,12 +200,7 @@ function Form({
             show={() => setShowFrequentOrigins(false)}
             visible={edit}
           />
-          <CustomInput
-            name="pickupCompanyName"
-            label="Company Name"
-            value={formData.pickupCompanyName}
-            handleChange={handleChange}
-          />
+
           {edit && showFrequentOrigins ? (
             <PlacesAutocomplete
               onLocationSelect={(loc) =>
@@ -214,6 +209,7 @@ function Form({
                   address: { ...formData.address, Origin: loc },
                 })
               }
+              address={formData.address.Origin}
               pickup={true}
             />
           ) : (
@@ -233,7 +229,12 @@ function Form({
               }
             />
           )}
-
+          <CustomInput
+            name="pickupCompanyName"
+            label="Company Name"
+            value={formData.pickupCompanyName}
+            handleChange={handleChange}
+          />
           <CustomInput
             name="pickupReference1"
             label="Reference"
@@ -257,12 +258,6 @@ function Form({
             show={() => setShowFrequentDestinations(false)}
             visible={edit}
           />
-          <CustomInput
-            name="dropCompanyName"
-            label="Company Name"
-            value={formData.dropCompanyName}
-            handleChange={handleChange}
-          />
           {edit && showFrequentDestinations ? (
             <PlacesAutocomplete
               onLocationSelect={(loc) =>
@@ -271,6 +266,7 @@ function Form({
                   address: { ...formData.address, Destination: loc },
                 })
               }
+              address={formData.address.Destination}
             />
           ) : (
             <CustomInput
@@ -288,7 +284,13 @@ function Form({
                 })
               }
             />
-          )}
+          )}{" "}
+          <CustomInput
+            name="dropCompanyName"
+            label="Company Name"
+            value={formData.dropCompanyName}
+            handleChange={handleChange}
+          />
           <CustomInput
             name="deliveryIns"
             label="Delivery Instructions"

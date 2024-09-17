@@ -1,84 +1,47 @@
 "use client";
-import { useFirebase } from "@/context/FirebaseContext";
-import GooglePlacesAutocomplete, {
-  geocodeByAddress,
-  getLatLng,
-} from "react-google-places-autocomplete";
+import React, { useEffect, useRef } from "react";
+import Radar from "radar-sdk-js";
+import "radar-sdk-js/dist/radar.css";
+import { Chip } from "@nextui-org/react";
 
 export default function PlacesAutocomplete({
   onLocationSelect,
   pickup,
-  width,
+  address,
 }) {
-  const { loading, priceSettings } = useFirebase();
+  const autocompleteRef = useRef(null);
+  const containerId = `autocomplete-${pickup ? "pick" : "drop"}`;
 
-  const apiKey = priceSettings?.GOOGLE_MAPS_API;
+  useEffect(() => {
+    Radar.initialize("prj_live_pk_fa04fb62631b87f8ef351d78bddf2c5717d482d9");
 
-  const handleLocationSelect = async (selected) => {
-    try {
-      console.log(selected);
+    autocompleteRef.current = Radar.ui.autocomplete({
+      container: containerId,
+      onSelection: (address) => {
+        console.log(address);
 
-      const results = await geocodeByAddress(selected.label);
-      const latLng = await getLatLng(results[0]);
+        const vals = {
+          coordinates: address?.geometry?.coordinates,
+          label: address?.formattedAddress,
+          address,
+        };
+        onLocationSelect(vals);
+      },
+    });
 
-      // Extract the suburb from the address components
-      const addressComponents = results[0].address_components;
-      let suburb = "";
-
-      addressComponents.forEach((component) => {
-        if (
-          component.types.includes("sublocality") ||
-          component.types.includes("locality")
-        ) {
-          suburb = component.long_name;
-        }
-      });
-
-      const vals = { coordinates: latLng, label: selected.label, suburb };
-
-      onLocationSelect(vals);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  if (loading) {
-    return null;
-  }
+    return () => {
+      autocompleteRef.current?.remove();
+    };
+  }, [containerId, onLocationSelect]);
 
   return (
     <>
-      <div
-        style={{
-          width:
-            width === false || width === undefined || width === null
-              ? "100%"
-              : "100%",
-          background: "#fff",
-        }}
-      >
-        <GooglePlacesAutocomplete
-          apiKey={apiKey}
-          autocompletionRequest={{
-            componentRestrictions: { country: "AU" },
-          }}
-          selectProps={{
-            onChange: handleLocationSelect,
-          }}
-        />
-      </div>
       <div>
-        <p
-          style={{
-            fontWeight: 400,
-            fontSize: "13px",
-            marginLeft: "1rem",
-            color: "gray",
-          }}
-        >
-          {pickup ? "Pick Up Address" : "Delivery Address"}
-        </p>
+        <div id={containerId} />
       </div>
+      <div></div>
+      <div className="mt-2" />
+      <Chip size="sm"> {address.label}</Chip>
     </>
   );
 }
