@@ -4,10 +4,9 @@ import { ActionIcon, Container, Text, Button } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import { AccountCircle, LocationOn, AttachMoney } from "@mui/icons-material";
 import Loading from "./Loading";
-import { fetchDocById } from "@/api/firebase/functions/fetch";
 import DimensionsTable from "@/components/ItemDimensions/DimensionsTable";
-import ProccesBooking from "@/api/ProccesBooking";
 import ProcessPrice from "@/api/price_calculation";
+import { useRouter } from "next/navigation";
 
 const renderDetails = (title, details) => (
   <div>
@@ -57,15 +56,24 @@ const renderDetails = (title, details) => (
 );
 
 const CheckoutSummary = ({ formData, action, updatedForm }) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [invoice, setInvoice] = useState(formData);
 
   useEffect(() => {
     const processBooking = async () => {
-      const finaleData = await ProcessPrice(invoice);
-      setInvoice(finaleData);
-      console.log("Checkout Summary Invoice Processed Data:", finaleData);
-      setLoading(false);
+      try {
+        const finaleData = await ProcessPrice(invoice);
+        setInvoice(finaleData);
+        console.log("Checkout Summary Invoice Processed Data:", {
+          finaleData,
+          formData,
+        });
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        router.push("/ClientServices");
+      }
     };
     processBooking();
     // eslint-disable-next-line react-hooks/exhaustive-deps

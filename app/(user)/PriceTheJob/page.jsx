@@ -18,6 +18,9 @@ export default function Page() {
     useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  console.log({formData});
+  
+
   const handleRefresh = () => {
     setRefreshKey((prevKey) => prevKey + 1);
     setFormData({

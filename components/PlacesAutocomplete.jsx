@@ -21,7 +21,10 @@ export default function PlacesAutocomplete({
         console.log(address);
 
         const vals = {
-          coordinates: address?.geometry?.coordinates,
+          coordinates: {
+            lat: address?.latitude,
+            lng: address?.longitude,
+          },
           label: address?.formattedAddress,
           address,
         };

@@ -3,15 +3,14 @@ import CalcPrice from "./function/CalcPrice";
 import userPriceSettings from "./function/helper/userPriceSettings";
 import { fetchDocById } from "../firebase/functions/fetch";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 export default async function ProcessPrice(formData) {
   const notify = (msg) => toast(msg);
 
   try {
     if (
-      !formData?.address?.Origin?.address ||
-      !formData?.address?.Destination?.address
+      !formData?.address?.Origin?.coordinates ||
+      !formData?.address?.Destination?.coordinates
     )
       return [];
 
@@ -23,8 +22,8 @@ export default async function ProcessPrice(formData) {
     const rate = priceSettings?.services;
     const gst = priceSettings?.gst?.GST;
 
-    const originStr = `${formData?.address?.Origin?.address.latitude},${formData?.address?.Origin?.address.longitude}`;
-    const destinationStr = `${formData?.address?.Destination?.address.latitude},${formData?.address?.Destination?.address.longitude}`;
+    const originStr = `${formData?.address?.Origin?.coordinates.lat},${formData?.address?.Origin?.coordinates.lng}`;
+    const destinationStr = `${formData?.address?.Destination?.coordinates.lat},${formData?.address?.Destination?.coordinates.lng}`;
 
     const distance = await calculateDistance(
       originStr,
@@ -49,5 +48,6 @@ export default async function ProcessPrice(formData) {
   } catch (error) {
     notify("something went wrong please try again later");
     console.log(error);
+    throw error;
   }
 }

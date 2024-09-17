@@ -4,18 +4,23 @@ import { isPointInGeofence as checkIsPointInGeofence } from "@/api/geofenceUtils
 export default async function isPointInGeofence(address) {
   const { Origin, Destination } = address || {};
 
-  if (!Origin || !Origin.address || !Destination || !Destination.address) {
-    console.error("Origin or Destination or their address are missing!");
+  if (
+    !Origin ||
+    !Origin.coordinates ||
+    !Destination ||
+    !Destination.coordinates
+  ) {
+    console.error("Origin or Destination or their coordinates are missing!");
     return { isOriginInside: false, isDestinationInside: false };
   }
 
   const res = await fetchDocById("geofence", "data");
   const geofence = JSON.parse(res.coor);
 
-  const OriginCoordinates = [Origin.address.latitude, Origin.address.latitude];
+  const OriginCoordinates = [Origin.coordinates.lat, Origin.coordinates.lng];
   const destinationCoordinates = [
-    Destination.address.latitude,
-    Destination.address.latitude,
+    Destination.coordinates.lat,
+    Destination.coordinates.lng,
   ];
 
   // Use the utility function that checks if the point is inside the geofence

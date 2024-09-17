@@ -1,34 +1,27 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
-import { RefreshCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useEffect } from 'react'
+import { RefreshCcw } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
-export default function ErrorComponent({
+export function Error({
   error,
   reset,
 }: {
-  error: Error;
-  reset: () => void;
+  error: Error
+  reset: () => void
 }) {
   useEffect(() => {
-    console.error(error);
-  }, [error]);
+    // Log the error to an error reporting service
+    console.error(error)
+  }, [error])
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <Card className="w-full max-w-md mx-auto bg-white">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            Oops! Something went wrong
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Oops! Something went wrong</CardTitle>
         </CardHeader>
         <CardContent className="text-center">
           <div className="mb-4">
@@ -48,16 +41,18 @@ export default function ErrorComponent({
             </svg>
           </div>
           <p className="text-muted-foreground">
-            We apologize for the inconvenience. Our team has been notified and
-            is working on resolving the issue.
+            We apologize for the inconvenience. Our team has been notified and is working on resolving the issue.
           </p>
         </CardContent>
         <CardFooter>
-          <Button className="w-full" onClick={() => reset()}>
+          <Button
+            className="w-full"
+            onClick={() => reset()}
+          >
             <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
           </Button>
         </CardFooter>
       </Card>
     </div>
-  );
+  )
 }
