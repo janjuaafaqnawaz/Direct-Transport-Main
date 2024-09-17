@@ -95,13 +95,15 @@ export default function ManageInvoices({ invoice, hideAction }) {
       field: "pickupSuburb",
       headerName: "Pickup Suburb",
       width: 150,
-      valueGetter: (value, row) => row?.pickupSuburb,
+      valueGetter: (value, row) =>
+        row?.pickupSuburb || row?.address?.Origin?.address?.suburb,
     },
     {
       field: "deliverySuburb",
       headerName: "Delivery Suburb",
       width: 150,
-      valueGetter: (value, row) => row?.deliverySuburb,
+      valueGetter: (value, row) =>
+        row?.deliverySuburb || row?.address?.Destination?.address?.suburb,
     },
     {
       field: "totalPriceWithGST",
@@ -169,11 +171,10 @@ export default function ManageInvoices({ invoice, hideAction }) {
     id: row.docId || index + 1,
   }));
 
-  
+  console.log(rowsWithIds[0]?.address?.Origin?.address);
 
   return (
     <div className="w-[95vw]  overflow-hidden flex justify-center">
- 
       <div className="max-w-[95vw]">
         <DataGrid
           rows={rowsWithIds}

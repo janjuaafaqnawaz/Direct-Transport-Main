@@ -69,22 +69,22 @@ export default function BookCheckout({
         // console.log(stripe);
         nav.push(stripe.url);
       } else {
-        const pickupSuburb =
-          invoice.address?.Origin?.suburb ||
-          (await getSuburbByLatLng(
-            invoice.address?.Origin?.coordinates?.lat,
-            invoice.address?.Origin?.coordinates?.lng
-          ));
+        // const pickupSuburb =
+        //   invoice.address?.Origin?.suburb ||
+        //   (await getSuburbByLatLng(
+        //     invoice.address?.Origin?.coordinates?.lat,
+        //     invoice.address?.Origin?.coordinates?.lng
+        //   ));
 
-        const deliverySuburb =
-          invoice.address?.Destination?.suburb ||
-          (await getSuburbByLatLng(
-            invoice.address?.Destination?.coordinates?.lat,
-            invoice.address?.Destination?.coordinates?.lng
-          ));
+        // const deliverySuburb =
+        //   invoice.address?.Destination?.suburb ||
+        //   (await getSuburbByLatLng(
+        //     invoice.address?.Destination?.coordinates?.lat,
+        //     invoice.address?.Destination?.coordinates?.lng
+        //   ));
 
         const res = await postInvoice(
-          { ...invoice, pickupSuburb, deliverySuburb },
+          { ...invoice },
           "place_bookings",
           selectedEmail
         );
