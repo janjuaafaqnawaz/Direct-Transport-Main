@@ -152,7 +152,6 @@ const adminPages = [
   { link: "/admin/manageusers", label: "Users" },
   { link: "/admin/drivers", label: "Drivers" },
   { link: "/MonthlyInvoices", label: "Monthly Invoices" },
-  { link: "/admin/geofence", label: "Regional" },
 ];
 
 const userPages = [

@@ -10,7 +10,7 @@ const MapComponent = dynamic(() => import("./components/MapComponent"), {
   ssr: false,
 });
 
-const Page = () => {
+const Geofence = () => {
   const [geofenceCoords, setGeofenceCoords] = useState([
     [-25.274398, 133.775136],
     [-31.950527, 115.860457],
@@ -35,7 +35,7 @@ const Page = () => {
     setNewAddressCoords(coords);
     const inside = isPointInGeofence(coords, geofenceCoords);
     console.log(inside);
-    
+
     setIsInside(inside);
   };
 
@@ -83,4 +83,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Geofence;
