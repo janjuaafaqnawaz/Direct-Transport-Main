@@ -20,6 +20,7 @@ export default async function CalcPrice({
   originStr,
   destinationStr,
   formData,
+  long_distance,
 }) {
   const { items, service, address } = formData;
 
@@ -41,16 +42,16 @@ export default async function CalcPrice({
     Pallet,
     Skid,
     Timber,
+    Steel,
+    Aluminum,
+    Conduit,
+    Tubes,
+    Bags,
     Rolls,
     Coil,
     Crate,
     Drum,
     Pail,
-    Steel,
-    Aluminum,
-    Bags,
-    Conduit,
-    Tubes,
     Hoses,
   } = itemCounts;
 
@@ -59,29 +60,29 @@ export default async function CalcPrice({
   );
 
   if (!isOriginInside || !isDestinationInside) {
-    price = distance * (max_volume <= 1000 ? 2.1 : 2.5);
+    price =
+      distance *
+      (max_volume <= 1000
+        ? Number(long_distance?.rateSmallVolume)
+        : Number(long_distance?.rateLargeVolume));
     returnType = "LD";
-  }
-  // if (distance >= 87) {
-  //   price = distance * (max_volume <= 1000 ? 2.1 : 2.5);
-  //   returnType = "LD";
-  // }
-  else if (
+  } else if (
     Ladder.exist ||
     Rack.exist ||
     Pipes.exist ||
     Timber.exist ||
-    Rolls.exist ||
-    Coil.exist ||
-    Crate.exist ||
-    Drum.exist ||
-    Pail.exist ||
     Steel.exist ||
     Aluminum.exist ||
-    Bags.exist ||
     Conduit.exist ||
-    Tubes.exist ||
-    Hoses.exist
+    Tubes.exist
+
+    // ||    Rolls.exist
+    // ||    Coil.exist
+    // ||    Crate.exist
+    // ||    Drum.exist
+    // ||    Pail.exist
+    // ||    Bags.exist
+    // ||    Hoses.exist
   ) {
     ({ price, returnType } = await determineLadderRackPipesPrice(
       distance,

@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import { Button } from "@nextui-org/react";
 import { fetchDocById } from "@/api/firebase/functions/fetch";
-import Geofence from "../../../geofence";
 
 export default function CustomPrice() {
   const [priceSettings, setPriceSettings] = useState({});
@@ -56,7 +55,6 @@ export default function CustomPrice() {
           </Button>
         </PriceSettings>
       )}
-      <Geofence />
     </div>
   );
 }

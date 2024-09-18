@@ -5,6 +5,7 @@ import { isPointInGeofence } from "@/api/geofenceUtils";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import { fetchDocById } from "@/api/firebase/functions/fetch";
 import PlacesAutocomplete from "@/components/PlacesAutocomplete";
+import Rates from "./components/Rates";
 
 const MapComponent = dynamic(() => import("./components/MapComponent"), {
   ssr: false,
@@ -49,6 +50,7 @@ const Geofence = () => {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 to-teal-500 p-4">
       <div className="w-full max-w-4xl bg-white shadow-lg rounded-3xl overflow-hidden">
+        <Rates />
         <div className="p-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">
             Modify Geofence Area

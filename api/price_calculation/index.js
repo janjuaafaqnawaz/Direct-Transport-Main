@@ -21,6 +21,7 @@ export default async function ProcessPrice(formData) {
     const min_rate = priceSettings?.minServices;
     const rate = priceSettings?.services;
     const gst = priceSettings?.gst?.GST;
+    const long_distance = priceSettings?.long_distance;
 
     const originStr = `${formData?.address?.Origin?.coordinates.lat},${formData?.address?.Origin?.coordinates.lng}`;
     const destinationStr = `${formData?.address?.Destination?.coordinates.lat},${formData?.address?.Destination?.coordinates.lng}`;
@@ -42,6 +43,7 @@ export default async function ProcessPrice(formData) {
       destinationStr,
       formData,
       priceSettings,
+      long_distance,
     });
 
     return booking;
