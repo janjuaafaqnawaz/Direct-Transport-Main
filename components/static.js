@@ -152,6 +152,7 @@ const adminPages = [
   { link: "/admin/manageusers", label: "Users" },
   { link: "/admin/drivers", label: "Drivers" },
   { link: "/MonthlyInvoices", label: "Monthly Invoices" },
+  { link: "/admin/geofence", label: "Regional" },
 ];
 
 const userPages = [
@@ -175,14 +176,11 @@ const authPages = [
 ];
 
 const statuses = [
-  // { val: "booked", status: "Booked" },
-  // { val: "etd", status: "E.T.D." },
   { val: "allocated", status: "Allocated" },
   { val: "pickedup", status: "Picked Up" },
   { val: "delivered", status: "Delivered" },
   { val: "returned", status: "Returned" },
   { val: "cancelled", status: "Cancelled" },
-  // { val: "pod", status: "P.O.D." },
 ];
 
 const goodsDescriptionOption = [
@@ -195,6 +193,18 @@ const goodsDescriptionOption = [
   { value: "Satchel" },
   { value: "Ladder" },
   { value: "Rack" },
+  { value: "Timber" },
+  { value: "Rolls" },
+  { value: "Coil" },
+  { value: "Crate" },
+  { value: "Drum" },
+  { value: "Pail" },
+  { value: "Steel" },
+  { value: "Aluminum" },
+  { value: "Bags" },
+  { value: "Conduit" },
+  { value: "Tubes" },
+  { value: "Hoses" },
 ];
 
 const initialFormData = {
