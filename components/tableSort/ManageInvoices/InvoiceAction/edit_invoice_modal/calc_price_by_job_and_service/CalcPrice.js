@@ -41,6 +41,8 @@ export default async function CalcPrice({ rate, min_rate, gst, formData }) {
       serviceType
     );
 
+    console.log({ charges, serviceCharge });
+
     price = charges;
     serviceCharges = serviceCharge;
     gst_charges = await GstCharges(price, gst);

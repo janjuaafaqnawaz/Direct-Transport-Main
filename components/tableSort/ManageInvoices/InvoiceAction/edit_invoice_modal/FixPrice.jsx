@@ -16,6 +16,7 @@ import { IconClock12 } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 import determineReturnAndServiceTypes from "@/api/price_calculation/function/helper/determineReturnAndServiceTypes";
 import ProcessPrice from "./calc_price_by_job_and_service/index";
+import toast from "react-hot-toast";
 
 export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   const [invoice, setInvoice] = useState({});
@@ -91,8 +92,7 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   const handleAutoCalcSubmit = async () => {
     try {
       const booking = await ProcessPrice(invoice);
-      console.log({ booking });
-
+      toast("Updated Successfully");
       setInvoice(booking);
       setBooking(booking);
       await updateDoc("place_bookings", invoice.docId, booking);
