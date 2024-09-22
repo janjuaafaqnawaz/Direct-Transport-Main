@@ -55,10 +55,13 @@ export default function MyDocument({ datesRange, invoices, user }) {
               <Text style={styles.tableCellHeader}>JOB NO</Text>
             </View>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>FROM</Text>
+              <Text style={styles.tableCellHeader}>Pickup Company </Text>
             </View>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>TO</Text>
+              <Text style={styles.tableCellHeader}>Drop Company </Text>
+            </View>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Ref </Text>
             </View>
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Job Code</Text>
@@ -107,10 +110,19 @@ export default function MyDocument({ datesRange, invoices, user }) {
                       <Text style={styles.tableCell}>{booking.docId} </Text>
                     </View>
                     <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{originLabel} </Text>
+                      <Text style={styles.tableCell}>
+                        {booking.pickupCompanyName}
+                      </Text>
                     </View>
                     <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{destinationLabel}</Text>
+                      <Text style={styles.tableCell}>
+                        {booking.dropCompanyName}
+                      </Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>
+                        {booking.internalReference}
+                      </Text>
                     </View>
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>{booking.returnType}</Text>

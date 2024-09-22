@@ -33,33 +33,7 @@ export default function MyDocument({ invoices, user }) {
 
         <View style={styles.header}>
           <Image style={styles.image} alt="logo" src="/pdf_header2.jpg" />
-          {/* <View>
-            <View style={styles.row}>
-              <Text style={styles.rowItem1}>Company Name: </Text>
-              <Text style={styles.rowItem2}>{user?.firstName || ""}</Text>
-            </View>
-            {user?.companyAddress ? (
-              <View style={styles.row}>
-                <Text style={styles.rowItem1}>Company Address: </Text>
-                <Text style={styles.rowItem2}>{user.companyAddress}</Text>
-              </View>
-            ) : null}
-            <View style={styles.row}>
-              <Text style={styles.rowItem1}>Date of issue: </Text>
-              <Text style={styles.rowItem2}>
-                {getFirstDateOfCurrentMonth()}
-              </Text>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.rowItem1}>Time period:</Text>
-              <Text style={styles.rowItem2}>
-                {startDateStr} - {endDateStr}
-              </Text>
-            </View>
-            <Text style={[styles.rowItem2, { color: "red" }]}>
-              Payment Term: 14 Days
-            </Text>
-          </View> */}
+
           <View>
             <Text style={styles.heading}>TAX INVOICE</Text>
             <Text style={styles.headerText}>
@@ -85,10 +59,13 @@ export default function MyDocument({ invoices, user }) {
               <Text style={styles.tableCellHeader}>JOB NO</Text>
             </View>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>FROM</Text>
+              <Text style={styles.tableCellHeader}>Pickup Company </Text>
             </View>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>TO</Text>
+              <Text style={styles.tableCellHeader}>Drop Company </Text>
+            </View>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Ref </Text>
             </View>
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Job Code</Text>
@@ -134,10 +111,19 @@ export default function MyDocument({ invoices, user }) {
                       <Text style={styles.tableCell}>{booking.docId} </Text>
                     </View>
                     <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{originLabel} </Text>
+                      <Text style={styles.tableCell}>
+                        {booking.pickupCompanyName}
+                      </Text>
                     </View>
                     <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>{destinationLabel}</Text>
+                      <Text style={styles.tableCell}>
+                        {booking.dropCompanyName}
+                      </Text>
+                    </View>
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>
+                        {booking.internalReference}
+                      </Text>
                     </View>
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>

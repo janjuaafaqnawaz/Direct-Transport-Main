@@ -37,19 +37,37 @@ const styles = StyleSheet.create({
     backgroundColor: "#f3f3f3",
     padding: 5,
   },
+
   tableCol: {
     width: "12%",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#bfbfbf",
     padding: 5,
+    wordWrap: "break-word", // For older browsers
+    overflowWrap: "break-word", // Modern browsers
+    wordBreak: "break-all", // Break long words
+    overflow: "hidden",
+    whiteSpace: "normal",
   },
+
   tableCellHeader: {
     fontSize: 10,
     fontWeight: "bold",
+    wordWrap: "break-word", // For older browsers
+    overflowWrap: "break-word", // Modern browsers
+    wordBreak: "break-all", // Break long words
+    overflow: "hidden",
+    whiteSpace: "normal",
   },
+
   tableCell: {
     fontSize: 8,
+    wordWrap: "break-word", // For older browsers
+    overflowWrap: "break-word", // Modern browsers
+    wordBreak: "break-all", // Break long words
+    overflow: "hidden",
+    whiteSpace: "normal",
   },
   image: {
     width: 200,
