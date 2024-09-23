@@ -24,6 +24,23 @@ export default function MyDocument({ datesRange, invoices, user }) {
     (a, b) => parseDate(b.date) - parseDate(a.date)
   );
 
+  function addSpaces(input) {
+    let result = "";
+    let count = 0;
+
+    for (let char of input) {
+      result += char;
+      count++;
+
+      if (count === 5) {
+        result += " ";
+        count = 0;
+      }
+    }
+
+    return result.trim(); // Remove any trailing space
+  }
+
   return (
     <Document>
       <Page size="A3" style={styles.page}>
@@ -121,7 +138,7 @@ export default function MyDocument({ datesRange, invoices, user }) {
                     </View>
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>
-                        {booking.internalReference}
+                        {addSpaces(booking?.internalReference || "")}
                       </Text>
                     </View>
                     <View style={styles.tableCol}>
