@@ -24,21 +24,21 @@ export default function MyDocument({ datesRange, invoices, user }) {
     (a, b) => parseDate(b.date) - parseDate(a.date)
   );
 
-  function addSpaces(input) {
+  function wrapText(input) {
     let result = "";
     let count = 0;
-
+  
     for (let char of input) {
-      result += char;
-      count++;
-
-      if (count === 5) {
-        result += " ";
-        count = 0;
-      }
+        result += char;
+        count++;
+  
+        if (count ===9) {
+            result += ""; // Just wrap, no extra character added
+            count = 0;
+        }
     }
-
-    return result.trim(); // Remove any trailing space
+  
+    return result.trim(); // Remove any trailing characters
   }
 
   return (
@@ -138,7 +138,7 @@ export default function MyDocument({ datesRange, invoices, user }) {
                     </View>
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>
-                        {addSpaces(booking?.internalReference || "")}
+                        {wrapText(booking?.internalReference || "")}
                       </Text>
                     </View>
                     <View style={styles.tableCol}>
