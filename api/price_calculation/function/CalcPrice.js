@@ -11,7 +11,6 @@ import determineLadderRackPipesPrice from "./determine_price_by_item/determineLa
 import determinePriceBySkid from "./determine_price_by_item/determinePriceBySkid";
 import { fetchTollsData } from "@/api/fetchTolls";
 import TruckPricing from "./truck_pricing";
-import LongDistancePricing from "./long_distance_pricing";
 
 export default async function CalcPrice({
   distanceData,
@@ -54,12 +53,12 @@ export default async function CalcPrice({
   );
 
   if (!isOriginInside || !isDestinationInside) {
-    ({ price, returnType } = await LongDistancePricing(
-      max_volume,
-      long_distance,
-      distance,
-      items
-    ));
+    price =
+      distance *
+      (max_volume <= 1000
+        ? Number(long_distance?.rateSmallVolume)
+        : Number(long_distance?.rateLargeVolume));
+    returnType = "LD";
   } else if (
     Ladder.exist ||
     Rack.exist ||
