@@ -11,6 +11,7 @@ import determineLadderRackPipesPrice from "./determine_price_by_item/determineLa
 import determinePriceBySkid from "./determine_price_by_item/determinePriceBySkid";
 import { fetchTollsData } from "@/api/fetchTolls";
 import TruckPricing from "./truck_pricing";
+import LongDistancePricing from "./long_distance_pricing";
 
 export default async function CalcPrice({
   distanceData,
@@ -46,13 +47,6 @@ export default async function CalcPrice({
     Aluminum,
     Conduit,
     Tubes,
-    Bags,
-    Rolls,
-    Coil,
-    Crate,
-    Drum,
-    Pail,
-    Hoses,
   } = itemCounts;
 
   const { isOriginInside, isDestinationInside } = await isPointInGeofence(
@@ -60,12 +54,12 @@ export default async function CalcPrice({
   );
 
   if (!isOriginInside || !isDestinationInside) {
-    price =
-      distance *
-      (max_volume <= 1000
-        ? Number(long_distance?.rateSmallVolume)
-        : Number(long_distance?.rateLargeVolume));
-    returnType = "LD";
+    ({ price, returnType } = await LongDistancePricing(
+      max_volume,
+      long_distance,
+      distance,
+      items
+    ));
   } else if (
     Ladder.exist ||
     Rack.exist ||
@@ -75,14 +69,6 @@ export default async function CalcPrice({
     Aluminum.exist ||
     Conduit.exist ||
     Tubes.exist
-
-    // ||    Rolls.exist
-    // ||    Coil.exist
-    // ||    Crate.exist
-    // ||    Drum.exist
-    // ||    Pail.exist
-    // ||    Bags.exist
-    // ||    Hoses.exist
   ) {
     ({ price, returnType } = await determineLadderRackPipesPrice(
       distance,
@@ -139,10 +125,24 @@ export default async function CalcPrice({
   gst_charges = await GstCharges(price, gst);
 
   if (service !== "Standard") {
-    tolls = await fetchTollsData(
-      formData.address.Origin.coordinates,
-      formData.address.Destination.coordinates
-    );
+    const origin = formData.address.Origin.coordinates;
+    const destination = formData.address.Destination.coordinates;
+    const requestBody = {
+      from: origin,
+      to: destination,
+      serviceProvider: "here",
+      vehicle: {
+        type: "2AxlesTaxi",
+        weight: { value: 20000, unit: "pound" },
+        height: { value: 7.5, unit: "meter" },
+        length: { value: 7.5, unit: "meter" },
+        axles: 4,
+        emissionClass: "euro_5",
+      },
+    };
+    const requestBodyStr = JSON.stringify(requestBody);
+    console.log({ requestBodyStr, requestBody });
+    tolls = await fetchTollsData(requestBodyStr);
   }
 
   returnType = determineReturnAndServiceTypes(service, returnType);
