@@ -81,19 +81,22 @@ export default function Component() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Minimum Services</h3>
+          <h3 className="text-lg font-semibold">Minimum Charge</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {Object.entries(priceSettings.long_distance.minServices).map(
               ([service, min]) => (
-                <Input
-                  key={service}
-                  type="number"
-                  value={min}
-                  name={`long_distance.minServices.${service}`}
-                  onChange={handleChange}
-                  placeholder={`Min for ${service}`}
-                  label={`Min ${service}`}
-                />
+                <div key={service}>
+                  <label className="block mb-2 font-medium text-sm">
+                    Min {service}
+                  </label>
+                  <Input
+                    type="number"
+                    value={min}
+                    name={`long_distance.minServices.${service}`}
+                    onChange={handleChange}
+                    placeholder={`Min for ${service}`}
+                  />
+                </div>
               )
             )}
           </div>
@@ -103,15 +106,18 @@ export default function Component() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {Object.entries(priceSettings.long_distance.services).map(
               ([service, cost]) => (
-                <Input
-                  key={service}
-                  type="number"
-                  value={cost}
-                  name={`long_distance.services.${service}`}
-                  onChange={handleChange}
-                  placeholder={`Cost for ${service}`}
-                  label={service}
-                />
+                <div key={service}>
+                  <label className="block mb-2 font-medium text-sm">
+                    {service}
+                  </label>
+                  <Input
+                    type="number"
+                    value={cost}
+                    name={`long_distance.services.${service}`}
+                    onChange={handleChange}
+                    placeholder={`Cost for ${service}`}
+                  />
+                </div>
               )
             )}
           </div>
