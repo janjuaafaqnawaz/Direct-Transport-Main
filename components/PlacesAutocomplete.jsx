@@ -3,8 +3,6 @@ import React, { useEffect, useRef } from "react";
 import Radar from "radar-sdk-js";
 import "radar-sdk-js/dist/radar.css";
 
-
-
 export default function PlacesAutocomplete({
   onLocationSelect,
   pickup,
@@ -21,6 +19,8 @@ export default function PlacesAutocomplete({
       container: containerId,
       placeholder: address?.label || "Search Address",
       responsive: true,
+      limit: 20,
+      maxHeight: "300px",
       onSelection: (address) => {
         const vals = {
           coordinates: {
