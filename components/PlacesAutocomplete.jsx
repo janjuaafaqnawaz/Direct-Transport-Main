@@ -10,7 +10,7 @@ export default function GooglePlacesInput({ onLocationSelect }) {
   const [autocomplete, setAutocomplete] = useState(null);
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAqVtf4qM9DSMTbxeWH_742j7aD8zqQVvI", // Use your own API key
+    googleMapsApiKey: "AIzaSyDTsv2KjctO7_RCqsXQHs30mluZT-whoeQ", // Use your own API key
     libraries: libraries,
   });
 
