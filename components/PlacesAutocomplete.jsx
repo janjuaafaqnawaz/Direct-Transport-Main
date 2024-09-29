@@ -70,12 +70,6 @@ export default function GooglePlacesInput({ onLocationSelect }) {
   return (
     <div className="space-y-4">
       <div>
-        <label
-          htmlFor="place-input"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Search for a place
-        </label>
         <Autocomplete
           onLoad={onLoad}
           onPlaceChanged={onPlaceChanged}
