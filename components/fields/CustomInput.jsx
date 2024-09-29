@@ -16,7 +16,8 @@ export default function CustomInput({
       name={name || ""}
       placeholder={label || ""}
       variant="outlined"
-      helperText={`Enter ${label || ""}  `}
+      label={`Enter ${label || ""}  `}
+    
       size="small"
       value={value || ""}
       onChange={handleChange}
