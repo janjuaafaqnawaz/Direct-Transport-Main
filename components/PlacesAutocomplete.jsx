@@ -1,50 +1,96 @@
 "use client";
-import React, { useEffect, useRef } from "react";
-import Radar from "radar-sdk-js";
-import "radar-sdk-js/dist/radar.css";
 
-export default function PlacesAutocomplete({
-  onLocationSelect,
-  pickup,
-  address,
-}) {
-  const autocompleteRef = useRef(null);
-  const containerId = `autocomplete-${pickup ? "pick" : "drop"}`;
+import { useState, useCallback } from "react";
+import { useLoadScript, Autocomplete } from "@react-google-maps/api";
+import { Input } from "@/components/ui/input";
 
-  useEffect(() => {
-    Radar.initialize("prj_live_pk_fa04fb62631b87f8ef351d78bddf2c5717d482d9");
+const libraries = ["places"];
 
-    autocompleteRef.current = Radar.ui.autocomplete({
-      countryCode: "AU",
-      container: containerId,
-      placeholder: address?.label || "Search Address",
-      responsive: true,
-      limit: 20,
-      maxHeight: "300px",
-      onSelection: (address) => {
-        const vals = {
-          coordinates: {
-            lat: address?.latitude,
-            lng: address?.longitude,
+export default function GooglePlacesInput({ onLocationSelect }) {
+  const [autocomplete, setAutocomplete] = useState(null);
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: "AIzaSyAqVtf4qM9DSMTbxeWH_742j7aD8zqQVvI", // Use your own API key
+    libraries: libraries,
+  });
+
+  const onLoad = useCallback((autocomplete) => {
+    setAutocomplete(autocomplete);
+  }, []);
+
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) return;
+
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+      const addressComponents = place.address_components;
+
+      const getAddressComponent = (types) => {
+        const component = addressComponents.find((comp) =>
+          types.some((type) => comp.types.includes(type))
+        );
+        return component ? component.long_name : null;
+      };
+
+      const formattedLocation = {
+        coordinates: {
+          lat: lat,
+          lng: lng,
+        },
+        label: place.formatted_address,
+        address: {
+          latitude: lat,
+          longitude: lng,
+          geometry: {
+            type: "Point",
+            coordinates: [lng, lat],
           },
-          label: address?.formattedAddress,
-          address,
-        };
-        console.log(vals);
-        onLocationSelect(vals);
-      },
-    });
+          country: getAddressComponent(["country"]),
+          countryCode: getAddressComponent(["country"]),
+          county: getAddressComponent(["administrative_area_level_2"]),
+          city: getAddressComponent(["locality", "sublocality"]),
+          suburb: getAddressComponent(["sublocality_level_1", "neighborhood"]),
+          state: getAddressComponent(["administrative_area_level_1"]),
+          stateCode: getAddressComponent(["administrative_area_level_1"]),
+          formattedAddress: place.formatted_address,
+          addressLabel: place.name,
+        },
+      };
 
-    return () => {
-      autocompleteRef.current?.remove();
-    };
-  }, [containerId, onLocationSelect, address]);
+      console.log(formattedLocation);
+      onLocationSelect(formattedLocation);
+    }
+  };
+
+  if (loadError) return <div>Error loading maps</div>;
+  if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <>
-      <div className="w-full">
-        <div id={containerId} />
+    <div className="space-y-4">
+      <div>
+        <label
+          htmlFor="place-input"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Search for a place
+        </label>
+        <Autocomplete
+          onLoad={onLoad}
+          onPlaceChanged={onPlaceChanged}
+          options={{
+            componentRestrictions: { country: "AU" }, // Restrict to Australia
+          }}
+        >
+          <Input
+            id="place-input"
+            type="text"
+            placeholder="Enter a location"
+            className="w-full"
+          />
+        </Autocomplete>
       </div>
-    </>
+    </div>
   );
 }
