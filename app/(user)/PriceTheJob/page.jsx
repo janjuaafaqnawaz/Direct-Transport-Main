@@ -145,12 +145,18 @@ export default function Page() {
             />
           ) : null}
         </div>
+
+        <br />
+
         <ServicesFields
           handleChange={(service) =>
             setFormData({ ...formData, service: service })
           }
           value={formData.service}
         />
+
+        <br />
+
         <ItemDimensions
           handleItems={(items) => setFormData({ ...formData, items: items })}
           defaultItems={formData?.items}
