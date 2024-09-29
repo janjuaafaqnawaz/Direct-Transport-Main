@@ -4,10 +4,7 @@ import PriceJobIcon from "@mui/icons-material/MonetizationOn";
 import AddressesIcon from "@mui/icons-material/LocationOn";
 import InvoicesIcon from "@mui/icons-material/Receipt";
 import { getFormattedDateStr } from "@/api/DateAndTime/index";
-import {
-  formattedDateCurrent,
-  formattedTimeCurrent,
-} from "@/api/DateAndTime/format";
+import { formattedDateCurrent } from "@/api/DateAndTime/format";
 
 const clientServiceslinks = [
   {
@@ -147,12 +144,13 @@ const suburbOption = [
 
 const adminPages = [
   { link: "/ClientServices", label: "Client Services" },
-  { link: "/admin/ManageBookings", label: "Bookings" },
-  { link: "/admin/Services", label: "Services  " },
-  { link: "/admin/manageusers", label: "Users" },
-  { link: "/admin/drivers", label: "Drivers" },
+  { link: "/admin/Manage/Bookings", label: "Bookings" },
+  { link: "/admin/Settings/Same-Day", label: "Same Day" },
+  { link: "/admin/Settings/Next-Day", label: "Next Day" },
+  { link: "/admin/Manage/Users", label: "Users" },
+  { link: "/admin/Manage/Drivers", label: "Drivers" },
   { link: "/MonthlyInvoices", label: "Monthly Invoices" },
-  { link: "/admin/geofence", label: "Regional" },
+  { link: "/admin/Settings/Regional", label: "Regional" },
 ];
 
 const userPages = [

@@ -43,9 +43,25 @@ export default function ClientServices() {
     },
     userRole === "business" || userRole === "admin"
       ? {
-          title: "Place Booking",
-          description: "Price a booking",
-          link: "/PlaceTheBooking",
+          title: "Book Same Day",
+          description: "Place Same Day Booking",
+          link: "/Book-Same-Day",
+          icon: <PlaceBookingIcon />,
+        }
+      : {},
+    userRole === "business" || userRole === "admin"
+      ? {
+          title: "Book Next Day",
+          description: "Place Next Day Booking",
+          link: "/Book-Next-Day",
+          icon: <PlaceBookingIcon />,
+        }
+      : {},
+    userRole === "business" || userRole === "admin"
+      ? {
+          title: "Next day or 3-4",
+          description: "Place before 12pm for this Service",
+          link: "/Book-3-4-Day",
           icon: <PlaceBookingIcon />,
         }
       : {},
@@ -104,7 +120,7 @@ export default function ClientServices() {
           >
             {item?.title}
           </Text>
-          <Text c="dimmed">{item?.description}</Text>
+          <Text c="dimmed"  size="sm">{item?.description}</Text>
         </div>
       </div>
     </Link>
