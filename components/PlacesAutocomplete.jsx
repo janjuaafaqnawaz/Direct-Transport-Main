@@ -68,23 +68,21 @@ export default function GooglePlacesInput({ onLocationSelect }) {
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <div className="space-y-4">
-      <div>
-        <Autocomplete
-          onLoad={onLoad}
-          onPlaceChanged={onPlaceChanged}
-          options={{
-            componentRestrictions: { country: "AU" }, // Restrict to Australia
-          }}
-        >
-          <Input
-            id="place-input"
-            type="text"
-            placeholder="Enter a location"
-            className="w-full"
-          />
-        </Autocomplete>
-      </div>
+    <div className="w-full">
+      <Autocomplete
+        onLoad={onLoad}
+        onPlaceChanged={onPlaceChanged}
+        options={{
+          componentRestrictions: { country: "AU" }, // Restrict to Australia
+        }}
+      >
+        <Input
+          id="place-input"
+          type="text"
+          placeholder="Enter a location"
+          className="w-full"
+        />
+      </Autocomplete>
     </div>
   );
 }
