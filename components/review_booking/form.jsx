@@ -16,6 +16,7 @@ import { formatDate, formatTime } from "@/api/DateAndTime/format";
 import toast from "react-hot-toast";
 
 function Form({
+  type,
   form,
   edit,
   action,
@@ -101,7 +102,7 @@ function Form({
   if (showCheckout) {
     return (
       <BookCheckout
-        formData={formData}
+        formData={{ ...formData, type }}
         cat={"place_bookings"}
         job={true}
         payment={payment}

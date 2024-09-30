@@ -14,7 +14,7 @@ export default async function ProcessPrice(formData) {
     )
       return [];
 
-    const priceSettings = await userPriceSettings();
+    const priceSettings = await userPriceSettings(formData?.type);
 
     const API = await fetchDocById("dev", "data");
 
