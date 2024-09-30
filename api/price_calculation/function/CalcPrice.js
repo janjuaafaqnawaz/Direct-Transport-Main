@@ -58,9 +58,23 @@ export default async function CalcPrice({
       max_volume,
       long_distance,
       distance,
-      items
+      items,
+      total_weight,
+      longest_length,
+      rate,
+      min_rate,
+      Ladder,
+      Rack,
+      Pipes,
+      Timber,
+      Steel,
+      Aluminum,
+      Conduit,
+      Tubes,
+      Pallet,
+      Skid
     ));
-  }else if (
+  } else if (
     Ladder.exist ||
     Rack.exist ||
     Pipes.exist ||
