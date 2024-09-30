@@ -22,6 +22,7 @@ export default async function CalcPrice({
   destinationStr,
   formData,
   long_distance,
+  booking_type,
 }) {
   const { items, service, address } = formData;
 
@@ -159,7 +160,11 @@ export default async function CalcPrice({
     tolls = await fetchTollsData(requestBodyStr);
   }
 
-  returnType = determineReturnAndServiceTypes(service, returnType);
+  returnType = determineReturnAndServiceTypes(
+    service,
+    returnType,
+    booking_type
+  );
 
   console.info({
     pricing: {
@@ -167,6 +172,7 @@ export default async function CalcPrice({
       tolls,
       requestQuote,
       returnType,
+      booking_type,
     },
 
     extra_charges: {

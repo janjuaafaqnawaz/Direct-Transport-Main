@@ -14,7 +14,9 @@ export default async function ProcessPrice(formData) {
     )
       return [];
 
-    const priceSettings = await userPriceSettings(formData?.type);
+    const booking_type = formData?.type;
+
+    const priceSettings = await userPriceSettings(booking_type);
 
     const API = await fetchDocById("dev", "data");
 
@@ -44,6 +46,7 @@ export default async function ProcessPrice(formData) {
       formData,
       priceSettings,
       long_distance,
+      booking_type,
     });
 
     return booking;
