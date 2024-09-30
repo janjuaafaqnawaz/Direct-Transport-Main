@@ -13,7 +13,8 @@ import CustomInput from "@/components/fields/CustomInput";
 import { initialFormData } from ".././static";
 import DateTime from "@/components/fields/DateTime";
 import { formatDate, formatTime } from "@/api/DateAndTime/format";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
+import isPointInGeofence from "@/api/price_calculation/function/helper/isPointInGeofence";
 
 function Form({
   type,
@@ -26,18 +27,17 @@ function Form({
   fetchTolls,
   selectedEmail,
 }) {
-  const notify = (msg) => toast(msg);
+  const notify = (msg) => toast("")(msg);
   // -------------------------------State
 
   const [user, setUser] = useState([]);
   const [error, setError] = useState(true);
   const [formData, setFormData] = useState(form || initialFormData);
-  console.log(formData);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [showFrequentOrigins, setShowFrequentOrigins] = useState(true);
   const [showFrequentDestinations, setShowFrequentDestinations] =
     useState(true);
+  const [locationsError, setLocationsError] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -52,7 +52,6 @@ function Form({
   }, []);
 
   const handleRefresh = () => {
-    setRefreshKey((prevKey) => prevKey + 1);
     setFormData({
       ...formData,
       address: {
@@ -65,7 +64,9 @@ function Form({
 
   // -----------------------------State Handlers
   const handleCheckOut = () => {
-    if (error) return notify("Please enter valid date & time");
+    if (locationsError) return toast.error("Please enter valid location ");
+    if (error) return toast.error("Please enter valid date & time");
+
     const requiredFields = [
       "Contact",
       "Service",
@@ -84,7 +85,9 @@ function Form({
     if (emptyFields.length === 0) {
       setShowCheckout(true);
     } else {
-      notify(`Please fill in the following fields: ${emptyFields.join(", ")}`);
+      toast.success(
+        `Please fill in the following fields: ${emptyFields.join(", ")}`
+      );
     }
   };
 
@@ -93,6 +96,97 @@ function Form({
     if (name && value) {
       setFormData({ ...formData, [name]: value });
     } else {
+    }
+  };
+
+  const handle_address = async (name, e, overwrite, type) => {
+    setLocationsError(true);
+
+    try {
+      // Show a toast message if the type is same day
+      if (type === "same_day") {
+        toast.error("Same day delivery cannot be processed at this time.");
+        return;
+      }
+
+      // Update form data first
+      toast.info("Updating form data...");
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        address: {
+          ...prevFormData.address,
+          [name]: overwrite ? e : { ...prevFormData.address[name], ...e },
+        },
+      }));
+
+      // Get the updated addresses
+      const updatedAddresses = {
+        ...formData.address,
+        [name]: overwrite ? e : { ...formData.address[name], ...e },
+      };
+
+      // Show current address state for debugging
+      toast.info("Current addresses state:", {
+        autoClose: false,
+      });
+      console.log(updatedAddresses);
+
+      // Check geofence only if both addresses are provided
+      if (
+        updatedAddresses.Origin?.coordinates &&
+        updatedAddresses.Destination?.coordinates
+      ) {
+        toast.info("Checking geofence for both addresses...");
+        const { isOriginInside, isDestinationInside } = await isPointInGeofence(
+          updatedAddresses
+        );
+
+        console.log({
+          isOriginInside,
+          isDestinationInside,
+          Origin: updatedAddresses.Origin,
+          Destination: updatedAddresses.Destination,
+        });
+
+        // Show the result of the geofence check
+        toast.info(
+          `Geofence Check: Origin inside: ${isOriginInside}, Destination inside: ${isDestinationInside}`
+        );
+
+        // Show error and revert state if both addresses are outside the geofence
+        if (!isOriginInside && !isDestinationInside) {
+          toast.error(
+            "Both addresses are outside the allowed area. Please select valid locations."
+          );
+
+          // Revert to the previous state
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            address: {
+              ...prevFormData.address,
+              [name]: formData.address[name], // Revert to the previous state
+            },
+          }));
+        }
+      }
+
+      // Clear the error state since we are proceeding
+      setLocationsError(false);
+
+      // If everything is fine, show success message
+      toast.success("Address saved successfully.");
+    } catch (error) {
+      console.error(error);
+
+      // Revert the state in case of an error
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        address: {
+          ...prevFormData.address,
+          [name]: formData.address[name], // Revert to the previous state
+        },
+      }));
+      toast.error("An error occurred while saving the address.");
     }
   };
 
@@ -191,15 +285,16 @@ function Form({
           <h3>Pickup Details</h3>
           <FrequentAddress
             address={formData.address.Origin}
-            handleChange={(address) =>
-              setFormData({
-                ...formData,
-                address: {
-                  ...formData.address,
-                  Origin: address,
-                },
-              })
-            }
+            handleChange={(e) => handle_address("Origin", e)}
+            //   handleChange={(address) =>
+            //   setFormData({
+            //     ...formData,
+            //     address: {
+            //       ...formData.address,
+            //       Origin: address,
+            //     },
+            //   })
+            // }
             show={() => setShowFrequentOrigins(false)}
             visible={edit}
           />
@@ -211,12 +306,7 @@ function Form({
           />
           {edit && showFrequentOrigins ? (
             <PlacesAutocomplete
-              onLocationSelect={(loc) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, Origin: loc },
-                })
-              }
+              onLocationSelect={(e) => handle_address("Destination", e, true)}
               address={formData.address.Origin}
               pickup={true}
             />
@@ -228,7 +318,7 @@ function Form({
                   ...formData,
                   address: {
                     ...formData.address,
-                    Origin: {
+                    Destination: {
                       ...formData.address.Origin,
                       label: e.target.value,
                     },
@@ -256,15 +346,7 @@ function Form({
           <h3>Drop Details</h3>
           <FrequentAddress
             address={formData.address.Destination}
-            handleChange={(address) =>
-              setFormData({
-                ...formData,
-                address: {
-                  ...formData.address,
-                  Destination: address,
-                },
-              })
-            }
+            handleChange={(e) => handle_address("Destination", e)}
             show={() => setShowFrequentDestinations(false)}
             visible={edit}
           />{" "}
@@ -276,12 +358,13 @@ function Form({
           />
           {edit && showFrequentDestinations ? (
             <PlacesAutocomplete
-              onLocationSelect={(loc) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, Destination: loc },
-                })
-              }
+              onLocationSelect={(e) => handle_address("Destination", e, true)}
+              // onLocationSelect={(loc) =>
+              //   setFormData({
+              //     ...formData,
+              //     address: { ...formData.address, Destination: loc },
+              //   })
+              // }
               address={formData.address.Destination}
             />
           ) : (
