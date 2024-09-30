@@ -14,7 +14,7 @@ export default function ThreeFourDay() {
 
   useEffect(() => {
     if (priceSettings) {
-      setSettings(priceSettings.three_four_Day);
+      setSettings(priceSettings.three_four_day);
       setLoading(false);
     }
   }, [priceSettings]);
@@ -25,7 +25,7 @@ export default function ThreeFourDay() {
     try {
       const newSettings = {
         ...priceSettings,
-        three_four_Day: settings,
+        three_four_day: settings,
       };
 
       console.log("Updated settings:", newSettings);
