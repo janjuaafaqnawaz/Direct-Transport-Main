@@ -29,18 +29,6 @@ export default function ClientServices() {
   };
 
   const clientServicesLinks = [
-    {
-      title: "Price The Job",
-      description: "Place a Booking",
-      link: "/PriceTheJob",
-      icon: <PriceJobIcon />,
-    },
-    {
-      title: "Track Booking",
-      description: "Track your recent bookings",
-      link: "/TrackBooking",
-      icon: <TrackBookingIcon />,
-    },
     userRole === "business" || userRole === "admin"
       ? {
           title: "Book Same Day",
@@ -49,6 +37,12 @@ export default function ClientServices() {
           icon: <PlaceBookingIcon />,
         }
       : {},
+    {
+      title: "Price The Job",
+      description: "Place a Booking",
+      link: "/PriceTheJob",
+      icon: <PriceJobIcon />,
+    },
     userRole === "business" || userRole === "admin"
       ? {
           title: "Book Next Day",
@@ -57,14 +51,21 @@ export default function ClientServices() {
           icon: <PlaceBookingIcon />,
         }
       : {},
+
     userRole === "business" || userRole === "admin"
       ? {
-          title: "Next day or 3-4",
+          title: "Book 3-4 day",
           description: "Place before 12pm for this Service",
           link: "/Book-3-4-Day",
           icon: <PlaceBookingIcon />,
         }
       : {},
+    {
+      title: "Track Booking",
+      description: "Track your recent bookings",
+      link: "/TrackBooking",
+      icon: <TrackBookingIcon />,
+    },
     {
       title: "Invoices",
       description: "View invoices",
@@ -77,18 +78,19 @@ export default function ClientServices() {
       link: "/FrequentAddresses",
       icon: <AddressesIcon />,
     },
+
+    {
+      title: "Job Inquiry",
+      description: "Enquire on a specific booking",
+      link: "/JobInquiry",
+      icon: <JobInquiryIcon />,
+    },
     {
       title: "Logout",
       description: "Log Out",
       link: "#",
       icon: <LogoutIcon />,
       logout: true,
-    },
-    {
-      title: "Job Inquiry",
-      description: "Enquire on a specific booking",
-      link: "/JobInquiry",
-      icon: <JobInquiryIcon />,
     },
   ];
 
@@ -120,7 +122,9 @@ export default function ClientServices() {
           >
             {item?.title}
           </Text>
-          <Text c="dimmed"  size="sm">{item?.description}</Text>
+          <Text c="dimmed" size="sm">
+            {item?.description}
+          </Text>
         </div>
       </div>
     </Link>
