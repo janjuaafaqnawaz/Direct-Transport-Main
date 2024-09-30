@@ -2,7 +2,7 @@
 
 import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import NextDay from "./components/next_day";
-import ThreeFourDay from "./components/three_four_Day";
+import ThreeFourDay from "./components/three_four_day";
 
 export default function App() {
   return (
