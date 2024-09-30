@@ -58,7 +58,21 @@ export default async function CalcPrice({
       max_volume,
       long_distance,
       distance,
-      items
+      items,
+      total_weight,
+      longest_length,
+      rate,
+      min_rate,
+      Ladder,
+      Rack,
+      Pipes,
+      Timber,
+      Steel,
+      Aluminum,
+      Conduit,
+      Tubes,
+      Pallet,
+      Skid
     ));
   } else if (
     Ladder.exist ||
@@ -145,11 +159,7 @@ export default async function CalcPrice({
     tolls = await fetchTollsData(requestBodyStr);
   }
 
-  returnType = determineReturnAndServiceTypes(
-    service,
-    returnType,
-    formData?.type
-  );
+  returnType = determineReturnAndServiceTypes(service, returnType);
 
   console.info({
     pricing: {
