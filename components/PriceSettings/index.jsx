@@ -33,6 +33,7 @@ const sortObjectKeysNumerically = (obj) => {
 };
 
 export default function PriceSettings({
+  title,
   priceSettings,
   setPriceSettings,
   children,
@@ -83,7 +84,7 @@ export default function PriceSettings({
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-        Service Rates
+        {title || ""} Service Rates
       </h1>
       <div className="flex justify-end gap-4 mb-4">
         {children}

@@ -7,14 +7,14 @@ import { Button, Spinner } from "@nextui-org/react";
 import toast from "react-hot-toast";
 import useAdminContext from "@/context/AdminProvider";
 
-export default function CustomPrice() {
+export default function NextDay() {
   const { priceSettings } = useAdminContext();
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (priceSettings) {
-      setSettings(priceSettings.same_day);
+      setSettings(priceSettings.next_day);
       setLoading(false);
     }
   }, [priceSettings]);
@@ -25,11 +25,10 @@ export default function CustomPrice() {
     try {
       const newSettings = {
         ...priceSettings,
-        same_day: settings,
+        next_day: settings,
       };
 
       console.log("Updated settings:", newSettings);
-
       await updateDoc("data", "price_settings", newSettings);
 
       toast.success("Saved price settings");
@@ -48,7 +47,7 @@ export default function CustomPrice() {
   return (
     <div className="w-full overflow-hidden">
       <PriceSettings
-        title={"Same Day"}
+        title={"Next Day"}
         priceSettings={settings}
         setPriceSettings={setSettings}
       >
