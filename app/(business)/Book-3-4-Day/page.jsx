@@ -54,7 +54,7 @@ export default function Page() {
           />
         </Container>
       )}
-      <Form edit={true} selectedEmail={selectedEmail} />
+      <Form type={"three_four_day"} edit={true} selectedEmail={selectedEmail} />
     </>
   );
 }

@@ -54,7 +54,7 @@ export default function Page() {
           />
         </Container>
       )}
-      <Form edit={true} selectedEmail={selectedEmail} />
+      <Form type={"same_day"} edit={true} selectedEmail={selectedEmail} />
     </>
   );
 }
