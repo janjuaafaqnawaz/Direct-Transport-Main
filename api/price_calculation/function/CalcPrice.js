@@ -60,7 +60,7 @@ export default async function CalcPrice({
       distance,
       items
     ));
-  }else if (
+  } else if (
     Ladder.exist ||
     Rack.exist ||
     Pipes.exist ||
@@ -145,7 +145,11 @@ export default async function CalcPrice({
     tolls = await fetchTollsData(requestBodyStr);
   }
 
-  returnType = determineReturnAndServiceTypes(service, returnType);
+  returnType = determineReturnAndServiceTypes(
+    service,
+    returnType,
+    formData?.type
+  );
 
   console.info({
     pricing: {
