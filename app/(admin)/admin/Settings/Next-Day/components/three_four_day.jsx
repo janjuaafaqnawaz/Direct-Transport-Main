@@ -7,13 +7,12 @@ import { Button, Spinner } from "@nextui-org/react";
 import toast from "react-hot-toast";
 import useAdminContext from "@/context/AdminProvider";
 
-export default function NextDay() {
+export default function ThreeFourDay() {
   const { priceSettings } = useAdminContext();
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
 
   console.log(priceSettings);
-  
 
   useEffect(() => {
     if (priceSettings) {
