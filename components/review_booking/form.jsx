@@ -100,53 +100,57 @@ function Form({
     }
   };
   const handle_address = async (name, e, overwrite) => {
-    if (type === "same_day") {
-      toast.error("Same day delivery cannot be processed at this time.");
-      return;
-    }
-
     const updatedAddress = overwrite ? e : { ...formData.address[name], ...e };
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      address: {
-        ...prevFormData.address,
-        [name]: updatedAddress,
-      },
-    }));
-
-    const updatedAddresses = {
-      ...formData.address,
-      [name]: updatedAddress,
-    };
-    console.log(updatedAddresses);
-
-    if (
-      updatedAddresses.Origin?.coordinates &&
-      updatedAddresses.Destination?.coordinates
-    ) {
-      try {
-        const { isOriginInside, isDestinationInside } = await isPointInGeofence(
-          updatedAddresses
-        );
-
-        if (isOriginInside || isDestinationInside) {
-          setLocationsError(false);
-          toast.success("Address saved and is within the allowed area.");
-        } else {
-          setLocationsError(true);
-          toast.error(
-            "Both addresses are outside the allowed area. Please select valid locations."
-          );
-          revertAddress(name);
-        }
-      } catch (error) {
-        console.error(error);
-        revertAddress(name);
-        toast.error("An error occurred while saving the address.");
-      }
+    if (type === "same_day") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        address: {
+          ...prevFormData.address,
+          [name]: updatedAddress,
+        },
+      }));
+      toast.success("Address selected ");
     } else {
-      setLocationsError(false);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        address: {
+          ...prevFormData.address,
+          [name]: updatedAddress,
+        },
+      }));
+
+      const updatedAddresses = {
+        ...formData.address,
+        [name]: updatedAddress,
+      };
+      console.log(updatedAddresses);
+
+      if (
+        updatedAddresses.Origin?.coordinates &&
+        updatedAddresses.Destination?.coordinates
+      ) {
+        try {
+          const { isOriginInside, isDestinationInside } =
+            await isPointInGeofence(updatedAddresses);
+
+          if (isOriginInside || isDestinationInside) {
+            setLocationsError(false);
+            toast.success("Address saved and is within the allowed area.");
+          } else {
+            setLocationsError(true);
+            toast.error(
+              "Both addresses are outside the allowed area. Please select valid locations."
+            );
+            revertAddress(name);
+          }
+        } catch (error) {
+          console.error(error);
+          revertAddress(name);
+          toast.error("An error occurred while saving the address.");
+        }
+      } else {
+        setLocationsError(false);
+      }
     }
   };
 
@@ -276,7 +280,7 @@ function Form({
           />
           {edit && showFrequentOrigins ? (
             <PlacesAutocomplete
-              onLocationSelect={(e) => handle_address("Destination", e, true)}
+              onLocationSelect={(e) => handle_address("Origin", e, true)}
               address={formData.address.Origin}
               pickup={true}
             />

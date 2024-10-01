@@ -1,5 +1,4 @@
 "use client";
-import PlaceBookingIcon from "@mui/icons-material/Place";
 import { Text, Container, ThemeIcon, SimpleGrid } from "@mantine/core";
 import classes from "./ClientServices.module.css";
 import Link from "next/link";
