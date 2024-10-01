@@ -1,7 +1,7 @@
 "use client";
 
 import "./form.css";
-
+import { Alert } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup, Divider } from "@mantine/core";
 import Link from "next/link";
@@ -36,7 +36,7 @@ function Form({
   const [showFrequentOrigins, setShowFrequentOrigins] = useState(true);
   const [showFrequentDestinations, setShowFrequentDestinations] =
     useState(true);
-  const [locationsError, setLocationsError] = useState(true);
+  const [locationsError, setLocationsError] = useState(false);
 
   console.log(formData.address);
 
@@ -257,18 +257,12 @@ function Form({
         </div>
         <div className="box">
           <h3>Pickup Details</h3>
+          {locationsError && (
+            <Alert className="w-full">Please enter valid location </Alert>
+          )}
           <FrequentAddress
             address={formData.address.Origin}
             handleChange={(e) => handle_address("Origin", e)}
-            //   handleChange={(address) =>
-            //   setFormData({
-            //     ...formData,
-            //     address: {
-            //       ...formData.address,
-            //       Origin: address,
-            //     },
-            //   })
-            // }
             show={() => setShowFrequentOrigins(false)}
             visible={edit}
           />
@@ -318,6 +312,9 @@ function Form({
         </div>
         <div className="box">
           <h3>Drop Details</h3>
+          {locationsError && (
+            <Alert className="w-full">Please enter valid location</Alert>
+          )}
           <FrequentAddress
             address={formData.address.Destination}
             handleChange={(e) => handle_address("Destination", e)}
