@@ -15,6 +15,8 @@ import DateTime from "@/components/fields/DateTime";
 import { formatDate, formatTime } from "@/api/DateAndTime/format";
 import isPointInGeofence from "@/api/price_calculation/function/helper/isPointInGeofence";
 import toast from "react-hot-toast";
+import { Cross } from "lucide-react";
+import { ErrorOutline } from "@mui/icons-material";
 
 function Form({
   type,
@@ -139,7 +141,7 @@ function Form({
           } else {
             setLocationsError(true);
             toast.error(
-              "Both addresses are inside the allowed area. Please select valid locations."
+              "Both addresses are inside the non allowed area. Please select valid locations."
             );
             revertAddress(name);
           }
@@ -159,7 +161,7 @@ function Form({
       ...prevFormData,
       address: {
         ...prevFormData.address,
-        [name]: formData.address[name],
+        [name]: {},
       },
     }));
   };
@@ -258,7 +260,9 @@ function Form({
         <div className="box">
           <h3>Pickup Details</h3>
           {locationsError && (
-            <Alert className="w-full">Please enter valid location </Alert>
+            <Alert icon={<ErrorOutline />} className="w-full">
+              Please enter valid location{" "}
+            </Alert>
           )}
           <FrequentAddress
             address={formData.address.Origin}
@@ -313,7 +317,9 @@ function Form({
         <div className="box">
           <h3>Drop Details</h3>
           {locationsError && (
-            <Alert className="w-full">Please enter valid location</Alert>
+            <Alert icon={<ErrorOutline />} className="w-full">
+              Please enter valid location
+            </Alert>
           )}
           <FrequentAddress
             address={formData.address.Destination}
@@ -330,12 +336,6 @@ function Form({
           {edit && showFrequentDestinations ? (
             <PlacesAutocomplete
               onLocationSelect={(e) => handle_address("Destination", e, true)}
-              // onLocationSelect={(loc) =>
-              //   setFormData({
-              //     ...formData,
-              //     address: { ...formData.address, Destination: loc },
-              //   })
-              // }
               address={formData.address.Destination}
             />
           ) : (
