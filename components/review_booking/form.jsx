@@ -13,8 +13,8 @@ import CustomInput from "@/components/fields/CustomInput";
 import { initialFormData } from ".././static";
 import DateTime from "@/components/fields/DateTime";
 import { formatDate, formatTime } from "@/api/DateAndTime/format";
-import { toast } from "react-toastify";
 import isPointInGeofence from "@/api/price_calculation/function/helper/isPointInGeofence";
+import toast from "react-hot-toast";
 
 function Form({
   type,
@@ -98,9 +98,8 @@ function Form({
     } else {
     }
   };
-
   const handle_address = async (name, e, overwrite, type) => {
-    setLocationsError(true);
+    setLocationsError(true); // Initially, set error to true
 
     try {
       // Show a toast message if the type is same day
@@ -109,8 +108,7 @@ function Form({
         return;
       }
 
-      // Update form data first
-      toast.info("Updating form data...");
+      // Update form data without unnecessary toast
       setFormData((prevFormData) => ({
         ...prevFormData,
         address: {
@@ -125,36 +123,24 @@ function Form({
         [name]: overwrite ? e : { ...formData.address[name], ...e },
       };
 
-      // Show current address state for debugging
-      toast.info("Current addresses state:", {
-        autoClose: false,
-      });
-      console.log(updatedAddresses);
-
       // Check geofence only if both addresses are provided
       if (
         updatedAddresses.Origin?.coordinates &&
         updatedAddresses.Destination?.coordinates
       ) {
-        toast.info("Checking geofence for both addresses...");
+        // Remove redundant loading message and use a success/error toast after geofence check
         const { isOriginInside, isDestinationInside } = await isPointInGeofence(
           updatedAddresses
         );
 
-        console.log({
-          isOriginInside,
-          isDestinationInside,
-          Origin: updatedAddresses.Origin,
-          Destination: updatedAddresses.Destination,
-        });
-
-        // Show the result of the geofence check
-        toast.info(
-          `Geofence Check: Origin inside: ${isOriginInside}, Destination inside: ${isDestinationInside}`
-        );
-
-        // Show error and revert state if both addresses are outside the geofence
-        if (!isOriginInside && !isDestinationInside) {
+        // Check if at least one of the locations is inside the geofence
+        if (isOriginInside || isDestinationInside) {
+          // At least one is inside, clear the error and show success toast
+          setLocationsError(false);
+          toast.success("Address saved and is within the allowed area.");
+        } else {
+          // Both are outside the geofence, show an error
+          setLocationsError(true);
           toast.error(
             "Both addresses are outside the allowed area. Please select valid locations."
           );
@@ -169,16 +155,10 @@ function Form({
           }));
         }
       }
-
-      // Clear the error state since we are proceeding
-      setLocationsError(false);
-
-      // If everything is fine, show success message
-      toast.success("Address saved successfully.");
     } catch (error) {
       console.error(error);
 
-      // Revert the state in case of an error
+      // Show a single toast message in case of an error and revert state
       setFormData((prevFormData) => ({
         ...prevFormData,
         address: {
@@ -210,7 +190,7 @@ function Form({
     <>
       <div className="container">
         <div className="box">
-          <h3>Job Information</h3>
+          <h3>Job information</h3>
           <p>
             Account:
             {selectedEmail?.name !== "" ? selectedEmail.name : user?.firstName}
@@ -268,7 +248,7 @@ function Form({
             handle_time={(name, val) => handleDateChange(name, formatTime(val))}
             handleInvalid={(e) => setError(e)}
           />
-          <h5 className="my-8">Service Information</h5>
+          <h5 className="my-8">Servicermation</h5>
           <ServicesFields
             handleChange={(service) =>
               setFormData({ ...formData, service: service })
@@ -283,7 +263,7 @@ function Form({
         </div>
         <div className="box">
           <h3>Pickup Details</h3>
-          <FrequentAddress
+          {/* <FrequentAddress
             address={formData.address.Origin}
             handleChange={(e) => handle_address("Origin", e)}
             //   handleChange={(address) =>
@@ -297,7 +277,7 @@ function Form({
             // }
             show={() => setShowFrequentOrigins(false)}
             visible={edit}
-          />
+          /> */}
           <CustomInput
             name="pickupCompanyName"
             label="Company Name"
@@ -344,12 +324,12 @@ function Form({
         </div>
         <div className="box">
           <h3>Drop Details</h3>
-          <FrequentAddress
+          {/* <FrequentAddress
             address={formData.address.Destination}
             handleChange={(e) => handle_address("Destination", e)}
             show={() => setShowFrequentDestinations(false)}
             visible={edit}
-          />{" "}
+          />{" "} */}
           <CustomInput
             name="dropCompanyName"
             label="Company Name"

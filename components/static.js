@@ -154,6 +154,9 @@ const adminPages = [
 ];
 
 const userPages = [
+  { link: "/admin/Settings/Same-Day", label: "Same Day" },
+  { link: "/admin/Settings/Next-Day", label: "Next Day" },
+  { link: "/admin/Settings/3-4-Day", label: "3-4 Day" },
   { link: "/PriceTheJob", label: "Price A Job" },
   { link: "/ClientServices", label: "Client Services" },
   { link: "/FrequentAddresses", label: "Frequent Addresses" },
