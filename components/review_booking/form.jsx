@@ -133,13 +133,13 @@ function Form({
           const { isOriginInside, isDestinationInside } =
             await isPointInGeofence(updatedAddresses);
 
-          if (isOriginInside || isDestinationInside) {
+          if (!isOriginInside || !isDestinationInside) {
             setLocationsError(false);
             toast.success("Address saved and is within the allowed area.");
           } else {
             setLocationsError(true);
             toast.error(
-              "Both addresses are outside the allowed area. Please select valid locations."
+              "Both addresses are inside the allowed area. Please select valid locations."
             );
             revertAddress(name);
           }
