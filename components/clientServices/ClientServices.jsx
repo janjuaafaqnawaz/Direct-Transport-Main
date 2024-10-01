@@ -12,6 +12,7 @@ import JobInquiryIcon from "@mui/icons-material/Help";
 import PriceJobIcon from "@mui/icons-material/MonetizationOn";
 import AddressesIcon from "@mui/icons-material/LocationOn";
 import InvoicesIcon from "@mui/icons-material/Receipt";
+import { Image } from "@nextui-org/react";
 
 export default function ClientServices() {
   const router = useRouter();
@@ -34,7 +35,13 @@ export default function ClientServices() {
           title: "Book Same Day",
           description: "Place Same Day Booking",
           link: "/Book-Same-Day",
-          icon: <PlaceBookingIcon />,
+          icon: (
+            <Image
+              className="size-12  "
+              src="/icons/SAME_DAY.png"
+              alt="booking"
+            />
+          ),
         }
       : {},
     {
@@ -48,7 +55,13 @@ export default function ClientServices() {
           title: "Book Next Day",
           description: "Place Next Day Booking",
           link: "/Book-Next-Day",
-          icon: <PlaceBookingIcon />,
+          icon: (
+            <Image
+              className="size-12  "
+              src="/icons/NEXT_DAY.png"
+              alt="booking"
+            />
+          ),
         }
       : {},
 
@@ -57,7 +70,13 @@ export default function ClientServices() {
           title: "Book 3-4 day",
           description: "Place before 12pm for this Service",
           link: "/Book-3-4-Day",
-          icon: <PlaceBookingIcon />,
+          icon: (
+            <Image
+              className="size-12  "
+              src="/icons/3-4_Day.png"
+              alt="booking"
+            />
+          ),
         }
       : {},
     {
@@ -107,7 +126,7 @@ export default function ClientServices() {
           variant="light"
           color="#1384e1"
           className={classes.itemIcon}
-          size={60}
+          size={70}
           radius="md"
         >
           {item?.icon}
