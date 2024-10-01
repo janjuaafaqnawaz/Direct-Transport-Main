@@ -27,7 +27,6 @@ function Form({
   fetchTolls,
   selectedEmail,
 }) {
-  const notify = (msg) => toast("")(msg);
   // -------------------------------State
 
   const [user, setUser] = useState([]);
@@ -38,6 +37,8 @@ function Form({
   const [showFrequentDestinations, setShowFrequentDestinations] =
     useState(true);
   const [locationsError, setLocationsError] = useState(true);
+
+  console.log(formData.address);
 
   useEffect(() => {
     async function fetchData() {
@@ -98,76 +99,65 @@ function Form({
     } else {
     }
   };
-  const handle_address = async (name, e, overwrite, type) => {
-    setLocationsError(true); // Initially, set error to true
+  const handle_address = async (name, e, overwrite) => {
+    if (type === "same_day") {
+      toast.error("Same day delivery cannot be processed at this time.");
+      return;
+    }
 
-    try {
-      // Show a toast message if the type is same day
-      if (type === "same_day") {
-        toast.error("Same day delivery cannot be processed at this time.");
-        return;
-      }
+    const updatedAddress = overwrite ? e : { ...formData.address[name], ...e };
 
-      // Update form data without unnecessary toast
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        address: {
-          ...prevFormData.address,
-          [name]: overwrite ? e : { ...prevFormData.address[name], ...e },
-        },
-      }));
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      address: {
+        ...prevFormData.address,
+        [name]: updatedAddress,
+      },
+    }));
 
-      // Get the updated addresses
-      const updatedAddresses = {
-        ...formData.address,
-        [name]: overwrite ? e : { ...formData.address[name], ...e },
-      };
+    const updatedAddresses = {
+      ...formData.address,
+      [name]: updatedAddress,
+    };
+    console.log(updatedAddresses);
 
-      // Check geofence only if both addresses are provided
-      if (
-        updatedAddresses.Origin?.coordinates &&
-        updatedAddresses.Destination?.coordinates
-      ) {
-        // Remove redundant loading message and use a success/error toast after geofence check
+    if (
+      updatedAddresses.Origin?.coordinates &&
+      updatedAddresses.Destination?.coordinates
+    ) {
+      try {
         const { isOriginInside, isDestinationInside } = await isPointInGeofence(
           updatedAddresses
         );
 
-        // Check if at least one of the locations is inside the geofence
         if (isOriginInside || isDestinationInside) {
-          // At least one is inside, clear the error and show success toast
           setLocationsError(false);
           toast.success("Address saved and is within the allowed area.");
         } else {
-          // Both are outside the geofence, show an error
           setLocationsError(true);
           toast.error(
             "Both addresses are outside the allowed area. Please select valid locations."
           );
-
-          // Revert to the previous state
-          setFormData((prevFormData) => ({
-            ...prevFormData,
-            address: {
-              ...prevFormData.address,
-              [name]: formData.address[name], // Revert to the previous state
-            },
-          }));
+          revertAddress(name);
         }
+      } catch (error) {
+        console.error(error);
+        revertAddress(name);
+        toast.error("An error occurred while saving the address.");
       }
-    } catch (error) {
-      console.error(error);
-
-      // Show a single toast message in case of an error and revert state
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        address: {
-          ...prevFormData.address,
-          [name]: formData.address[name], // Revert to the previous state
-        },
-      }));
-      toast.error("An error occurred while saving the address.");
+    } else {
+      setLocationsError(false);
     }
+  };
+
+  const revertAddress = (name) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      address: {
+        ...prevFormData.address,
+        [name]: formData.address[name],
+      },
+    }));
   };
 
   const handleDateChange = (name, val) =>
@@ -263,7 +253,7 @@ function Form({
         </div>
         <div className="box">
           <h3>Pickup Details</h3>
-          {/* <FrequentAddress
+          <FrequentAddress
             address={formData.address.Origin}
             handleChange={(e) => handle_address("Origin", e)}
             //   handleChange={(address) =>
@@ -277,7 +267,7 @@ function Form({
             // }
             show={() => setShowFrequentOrigins(false)}
             visible={edit}
-          /> */}
+          />
           <CustomInput
             name="pickupCompanyName"
             label="Company Name"
@@ -324,12 +314,12 @@ function Form({
         </div>
         <div className="box">
           <h3>Drop Details</h3>
-          {/* <FrequentAddress
+          <FrequentAddress
             address={formData.address.Destination}
             handleChange={(e) => handle_address("Destination", e)}
             show={() => setShowFrequentDestinations(false)}
             visible={edit}
-          />{" "} */}
+          />{" "}
           <CustomInput
             name="dropCompanyName"
             label="Company Name"
