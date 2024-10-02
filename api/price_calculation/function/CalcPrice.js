@@ -44,7 +44,22 @@ export default async function CalcPrice({
     address
   );
 
-  if (booking_type === "three_four_day" && booking_type === "next_day") {
+  if (booking_type === "same_day") {
+    ({ price, returnType } = await determinePricingAndReturnType({
+      distance,
+      max_volume,
+      longest_length,
+      total_weight,
+      rate,
+      min_rate,
+      items,
+      long_distance,
+      isOriginInside,
+      isDestinationInside,
+      itemCounts,
+    }));
+    toast("Same day pricing applying");
+  } else {
     ({ price, returnType } = await determineNFDayPricingAndReturnType({
       distance,
       max_volume,
@@ -60,20 +75,7 @@ export default async function CalcPrice({
       priceSettings,
       booking_type,
     }));
-  } else {
-    ({ price, returnType } = await determinePricingAndReturnType({
-      distance,
-      max_volume,
-      longest_length,
-      total_weight,
-      rate,
-      min_rate,
-      items,
-      long_distance,
-      isOriginInside,
-      isDestinationInside,
-      itemCounts,
-    }));
+    toast("Near future pricing applying");
   }
 
   const { charges, serviceCharge } = await ServiceCharges(

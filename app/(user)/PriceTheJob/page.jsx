@@ -46,6 +46,7 @@ export default function Page() {
   if (show === "checkout") {
     return (
       <Form
+        type={"same_day"}
         form={formData}
         cat={"place_job"}
         edit={false}
