@@ -5,7 +5,7 @@ import styles from "./pdf.styles";
 import getTotalInvoicePrice from "./getTotalInvoicePrice";
 import { format } from "date-fns";
 
-export default function MyDocument({ datesRange, invoices, user }) {
+export default function PDFLayout2({ datesRange, invoices, user }) {
   const { start, end } = datesRange;
   const { totalPrice, totalGst, totalTolls, totalUnloading } =
     getTotalInvoicePrice(invoices);
@@ -72,13 +72,10 @@ export default function MyDocument({ datesRange, invoices, user }) {
               <Text style={styles.tableCellHeader}>JOB NO</Text>
             </View>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>Pickup Company </Text>
+              <Text style={styles.tableCellHeader}>FROM </Text>
             </View>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>Drop Company </Text>
-            </View>
-            <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>Ref </Text>
+              <Text style={styles.tableCellHeader}>TO </Text>
             </View>
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Job Code</Text>
@@ -127,19 +124,10 @@ export default function MyDocument({ datesRange, invoices, user }) {
                       <Text style={styles.tableCell}>{booking.docId} </Text>
                     </View>
                     <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>
-                        {booking.pickupCompanyName}
-                      </Text>
+                      <Text style={styles.tableCell}>{originLabel}</Text>
                     </View>
                     <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>
-                        {booking.dropCompanyName}
-                      </Text>
-                    </View>
-                    <View style={styles.tableCol}>
-                      <Text style={styles.tableCell}>
-                        {addSpaces(booking?.internalReference || "")}
-                      </Text>
+                      <Text style={styles.tableCell}>{destinationLabel}</Text>
                     </View>
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>{booking.returnType}</Text>

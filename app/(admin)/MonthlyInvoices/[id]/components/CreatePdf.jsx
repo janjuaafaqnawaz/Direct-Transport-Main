@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useEffect, useState } from "react";
 import useAdminContext from "@/context/AdminProvider";
-import { format, parse } from "date-fns"; // Make sure date-fns is imported
+import { parse } from "date-fns";
 import PdfButton from "./pdf/PdfButton";
 import { Loader } from "@mantine/core";
 
@@ -33,8 +34,6 @@ function convertToISOString(dateString, hours = 11, minutes = 25, seconds = 4) {
 
   return date.toISOString();
 }
-
-// Example usage
 
 export default function CreatePdf({ datesRange, user }) {
   const [loading, setLoading] = useState(true);
