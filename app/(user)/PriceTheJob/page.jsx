@@ -1,195 +1,52 @@
-"use client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Clock, Truck, CalendarDays } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
-import { useState } from "react";
-import { Button, ButtonGroup, Center, Container } from "@mantine/core";
-import { initialFormData } from "@/components/static";
-import { PlacesAutocomplete } from "@/components/Index";
-import ItemDimensions from "@/components/ItemDimensions";
-import CheckoutSummary from "@/components/CheckoutSummary";
-import Form from "@/components/review_booking/form";
-import ServicesFields from "@/components/fields/ServicesFields";
-import FrequentAddress from "@/components/fields/FrequentAddress";
-
-export default function Page() {
-  const [formData, setFormData] = useState(initialFormData);
-  const [show, setShow] = useState("");
-  const [showFrequentOrigins, setShowFrequentOrigins] = useState(true);
-  const [showFrequentDestinations, setShowFrequentDestinations] =
-    useState(true);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  console.log({ formData });
-
-  const handleRefresh = () => {
-    setRefreshKey((prevKey) => prevKey + 1);
-    setFormData({
-      ...formData,
-      address: {
-        Origin: {},
-        Destination: {},
-      },
-    });
-    setShowFrequentOrigins(true), setShowFrequentDestinations(true);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const styleField = {
-    width: "100%",
-    margin: ".8rem 0",
-    minWidth: "10rem",
-  };
-
-  if (show === "checkout") {
-    return (
-      <Form
-        type={"same_day"}
-        form={formData}
-        cat={"place_job"}
-        edit={false}
-        action={(e) => {
-          setShow(e);
-        }}
-        back={true}
-        diseble={true}
-        fetchTolls={true}
-        selectedEmail={""}
-      />
-    );
-  } else if (show === "summary") {
-    const requiredFields = ["Service", "Items", "Address"];
-    const emptyFields = requiredFields.filter(
-      (field) =>
-        !formData[field.toLowerCase()] ||
-        (Array.isArray(formData[field.toLowerCase()]) &&
-          formData[field.toLowerCase()].length === 0)
-    );
-
-    if (emptyFields.length === 0) {
-      return (
-        <CheckoutSummary
-          formData={formData}
-          updatedForm={(updatedForm) => {
-            setFormData(updatedForm);
-          }}
-          action={(e) => {
-            setShow(e);
-          }}
-        />
-      );
-    } else {
-      console.log(
-        `Please fill in the following fields: ${emptyFields.join(", ")}`
-      );
-    }
-  }
-
+export default function DeliveryOptions() {
   return (
-    <>
-      <Container size={"xs"}>
-        <Center>
-          <h3>Pickup Details</h3>{" "}
-        </Center>
-        <div style={styleField} key={refreshKey}>
-          <FrequentAddress
-            address={formData.address.Origin}
-            handleChange={(address) =>
-              setFormData({
-                ...formData,
-                address: {
-                  ...formData.address,
-                  Origin: address,
-                },
-              })
-            }
-            show={() => setShowFrequentOrigins(false)}
-            visible={true}
-          />
-          {showFrequentOrigins === true ? (
-            <PlacesAutocomplete
-              onLocationSelect={(loc) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, Origin: loc },
-                })
-              }
-              pickup={true}
-              address={formData.address.Origin}
+    <div className="min-h-[80vh]  flex items-center justify-center p-4">
+      <Card className="w-full max-w-4xl bg-white/90 backdrop-blur-sm shadow-xl">
+        <CardContent className="p-6">
+          <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
+            Choose Your Delivery Option
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <DeliveryOption
+              href={"/PriceTheJob/same_day"}
+              icon={"/icons/SAME_DAY.png"}
+              title="Same Day"
+              description="Get your items delivered within hours"
             />
-          ) : null}
-          <FrequentAddress
-            address={formData.address.Destination}
-            handleChange={(address) =>
-              setFormData({
-                ...formData,
-                address: {
-                  ...formData.address,
-                  Destination: address,
-                },
-              })
-            }
-            show={() => setShowFrequentDestinations(false)}
-            visible={true}
-          />
-          {showFrequentDestinations === true ? (
-            <PlacesAutocomplete
-              onLocationSelect={(loc) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, Destination: loc },
-                })
-              }
-              address={formData.address.Destination}
+            <DeliveryOption
+              href={"/PriceTheJob/next_day"}
+              icon={"/icons/NEXT_DAY.png"}
+              title="Next Day"
+              description="Receive your package by tomorrow"
             />
-          ) : null}
-        </div>
+            <DeliveryOption
+              href={"/PriceTheJob/three_four_day"}
+              icon={"/icons/3-4_Day.png"}
+              title="3-4 Day"
+              description="Standard delivery at a lower cost"
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
-        <br />
-
-        <ServicesFields
-          handleChange={(service) =>
-            setFormData({ ...formData, service: service })
-          }
-          value={formData.service}
-        />
-
-        <br />
-
-        <ItemDimensions
-          handleItems={(items) => setFormData({ ...formData, items: items })}
-          defaultItems={formData?.items}
-        />
-        <Center>
-          <ButtonGroup orientation="vertical">
-            <Button
-              w={180}
-              color="#1384e1"
-              mt={3}
-              variant="filled"
-              onClick={() => {
-                setShow("summary");
-              }}
-            >
-              Price A Job
-            </Button>
-            <Button w={180} color="#1384e1" mt={3} variant="filled">
-              Client Service
-            </Button>
-            <Button
-              w={180}
-              color="lime"
-              mt={3}
-              variant="filled"
-              onClick={handleRefresh}
-            >
-              Clear Address
-            </Button>
-          </ButtonGroup>
-        </Center>
-      </Container>
-    </>
+function DeliveryOption({ icon, title, description, href }) {
+  return (
+    <Link href={href}>
+      <div className="flex flex-col items-center p-4 bg-white rounded-lg shadow transition-all duration-300 hover:shadow-lg hover:scale-105">
+        <Image src={icon} className="size-36" width={100} height={100} alt="" />
+        <h2 className="text-xl font-semibold mt-4 mb-2 text-gray-800">
+          {title}
+        </h2>
+        <p className="text-center text-gray-600">{description}</p>
+      </div>
+    </Link>
   );
 }
