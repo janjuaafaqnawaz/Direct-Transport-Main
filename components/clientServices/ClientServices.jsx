@@ -12,6 +12,7 @@ import PriceJobIcon from "@mui/icons-material/MonetizationOn";
 import AddressesIcon from "@mui/icons-material/LocationOn";
 import InvoicesIcon from "@mui/icons-material/Receipt";
 import { Image } from "@nextui-org/react";
+import { IconTruckDelivery } from "@tabler/icons-react";
 
 export default function ClientServices() {
   const router = useRouter();
@@ -34,13 +35,7 @@ export default function ClientServices() {
           title: "Place Booking",
           description: "Place Booking",
           link: "/Delivery-Options",
-          icon: (
-            <Image
-              className="size-12  "
-              src="/icons/SAME_DAY.png"
-              alt="booking"
-            />
-          ),
+          icon: <IconTruckDelivery className="size-10" />,
         }
       : {},
 

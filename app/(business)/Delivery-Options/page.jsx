@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function DeliveryOptions() {
   return (
-    <div className="min-h-screen  flex items-center justify-center p-4">
+    <div className="min-h-[80vh]  flex items-center justify-center p-4">
       <Card className="w-full max-w-4xl bg-white/90 backdrop-blur-sm shadow-xl">
         <CardContent className="p-6">
           <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
