@@ -31,9 +31,9 @@ export default function ClientServices() {
   const clientServicesLinks = [
     userRole === "business" || userRole === "admin"
       ? {
-          title: "Book Same Day",
-          description: "Place Same Day Booking",
-          link: "/Book-Same-Day",
+          title: "Place Booking",
+          description: "Place Booking",
+          link: "/Delivery-Options",
           icon: (
             <Image
               className="size-12  "
@@ -43,41 +43,7 @@ export default function ClientServices() {
           ),
         }
       : {},
-    {
-      title: "Price The Job",
-      description: "Place a Booking",
-      link: "/PriceTheJob",
-      icon: <PriceJobIcon className="size-12" />,
-    },
-    userRole === "business" || userRole === "admin"
-      ? {
-          title: "Book Next Day",
-          description: "Place before 12pm for this Service",
-          link: "/Book-Next-Day",
-          icon: (
-            <Image
-              className="size-12  "
-              src="/icons/NEXT_DAY.png"
-              alt="booking"
-            />
-          ),
-        }
-      : {},
 
-    userRole === "business" || userRole === "admin"
-      ? {
-          title: "Book 3-4 day",
-          description: "Place before 12pm for this Service",
-          link: "/Book-3-4-Day",
-          icon: (
-            <Image
-              className="size-12  "
-              src="/icons/3-4_Day.png"
-              alt="booking"
-            />
-          ),
-        }
-      : {},
     {
       title: "Track Booking",
       description: "Track your recent bookings",

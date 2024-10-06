@@ -144,6 +144,7 @@ const suburbOption = [
 
 const adminPages = [
   { link: "/ClientServices", label: "Client Services" },
+  { link: "/Delivery-Options", label: "Place Booking" },
   { link: "/admin/Manage/Bookings", label: "Bookings" },
   { link: "/admin/Settings/Same-Day", label: "Same Day" },
   { link: "/admin/Settings/Next-Day", label: "Next Day" },
@@ -162,9 +163,7 @@ const userPages = [
 
 const businessPages = [
   { link: "/ClientServices", label: "Client Services" },
-  { link: "/Book-Same-Day", label: "Same Day" },
-  { link: "/Book-Next-Day", label: "Next Day" },
-  { link: "/Book-3-4-Day", label: "3-4 Day" },
+  { link: "/Delivery-Options", label: "Place Booking" },
   { link: "/PriceTheJob", label: "Price A Job" },
   { link: "/FrequentAddresses", label: "Frequent Addresses" },
   { link: "/RecentInvoices", label: "Recent Invoices" },
