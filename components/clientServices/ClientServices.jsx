@@ -38,6 +38,13 @@ export default function ClientServices() {
           icon: <IconTruckDelivery className="size-10" />,
         }
       : {},
+    {
+      title: "Price The Job",
+      description: "Place a Booking",
+      link: "/PriceTheJob",
+      icon: <PriceJobIcon className="size-12" />,
+    },
+    
 
     {
       title: "Track Booking",
