@@ -39,19 +39,18 @@ export default function ClientServices() {
         }
       : {},
     {
-      title: "Price The Job",
-      description: "Place a Booking",
-      link: "/PriceTheJob",
-      icon: <PriceJobIcon className="size-12" />,
-    },
-    
-
-    {
       title: "Track Booking",
       description: "Track your recent bookings",
       link: "/TrackBooking",
       icon: <TrackBookingIcon className="size-10" />,
     },
+    {
+      title: "Price The Job",
+      description: "Place a Booking",
+      link: "/PriceTheJob",
+      icon: <PriceJobIcon className="size-12" />,
+    },
+
     {
       title: "Invoices",
       description: "View invoices",
@@ -66,17 +65,17 @@ export default function ClientServices() {
     },
 
     {
-      title: "Job Inquiry",
-      description: "Enquire on a specific booking",
-      link: "/JobInquiry",
-      icon: <JobInquiryIcon className="size-10" />,
-    },
-    {
       title: "Logout",
       description: "Log Out",
       link: "#",
       icon: <LogoutIcon className="size-10" />,
       logout: true,
+    },
+    {
+      title: "Job Inquiry",
+      description: "Enquire on a specific booking",
+      link: "/JobInquiry",
+      icon: <JobInquiryIcon className="size-10" />,
     },
   ];
 
