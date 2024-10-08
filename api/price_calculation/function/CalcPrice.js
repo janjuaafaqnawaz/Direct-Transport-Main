@@ -74,6 +74,7 @@ export default async function CalcPrice({
       Pallet,
       Skid
     ));
+    returnType = costType;
   } else if (
     Ladder.exist ||
     Rack.exist ||
