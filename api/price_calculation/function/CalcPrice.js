@@ -213,8 +213,7 @@ async function determineNFDayPricingAndReturnType({
     booking_type,
   });
 
-  // Calculate final price based on distance and future rate
-  const finalPrice = distance * Number(futureRate); // Convert futureRate to a number
+  const finalPrice = distance * Number(futureRate);
 
   return { price: finalPrice, returnType };
 }
@@ -248,7 +247,7 @@ async function determinePricingAndReturnType({
   let price = 0;
   let returnType = "N/A";
 
-  if ((!isOriginInside || !isDestinationInside) && !isLdDisabled) {
+  if (!isOriginInside || (!isDestinationInside && !isLdDisabled)) {
     ({ price, returnType } = await LongDistancePricing(
       max_volume,
       long_distance,
@@ -269,6 +268,7 @@ async function determinePricingAndReturnType({
       Pallet,
       Skid
     ));
+    returnType = "LD";
   } else if (
     Ladder.exist ||
     Rack.exist ||
