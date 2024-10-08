@@ -45,10 +45,12 @@ export default async function LongDistancePricing(
       min_rate,
       items
     ));
+    price = basedOnPrice(returnType, long_distance, distance);
+    returnType = returnType;
   } else if (max_volume > 1000 || longest_length > 270) {
     const { cost, costType } = await TruckPricing(distance, items);
     price = basedOnPrice(costType, long_distance, distance);
-    // returnType = costType;
+    returnType = costType;
   } else if (Pallet.exist && max_volume <= 1000) {
     const { price: palletPrice, returnType: palletType } =
       await determinePriceByPallet(
@@ -60,25 +62,25 @@ export default async function LongDistancePricing(
         items
       );
     price = basedOnPrice(palletType, long_distance, distance);
-    // returnType = palletType;
+    returnType = palletType;
   } else if (Skid.exist) {
     const { price: skidPrice, returnType: skidType } =
       await determinePriceBySkid(distance, Skid.count, rate, min_rate);
     price = basedOnPrice(skidType, long_distance, distance);
-    // returnType = skidType;
+    returnType = skidType;
   } else if (total_weight <= 25 && longest_length < 100 && max_volume <= 25) {
-    // returnType = "Courier";
+    returnType = "Courier";
     price = basedOnPrice(returnType, long_distance, distance);
   } else if (longest_length <= 400 && max_volume <= 500) {
-    // returnType = "HT";
+    returnType = "HT";
     price = basedOnPrice(returnType, long_distance, distance);
   } else if (max_volume <= 1000) {
-    // returnType = "1T";
+    returnType = "1T";
     price = basedOnPrice(returnType, long_distance, distance);
   } else {
     const { cost, costType } = await TruckPricing(distance, items);
     price = cost;
-    // returnType = costType;
+    returnType = costType;
   }
 
   return { price, returnType };
