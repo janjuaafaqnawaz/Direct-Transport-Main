@@ -1,26 +1,34 @@
 "use client";
-import { deleteUserAcc } from "@/api/firebase/functions/auth";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
-  TableHeader,
-  TableColumn,
   TableBody,
-  CircularProgress,
   TableCell,
-  Button,
+  TableHead,
+  TableHeader,
   TableRow,
-  Chip,
-} from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Trash2, History, Edit, RefreshCw } from "lucide-react";
+import { deleteUserAcc } from "@/api/firebase/functions/auth";
 import useAdminContext from "@/context/AdminProvider";
-import { useState } from "react";
 import Create from "./Create";
 
-function DriverTable({ filter }) {
+export default function DriverTable({ filter }) {
   const router = useRouter();
   const { allDrivers } = useAdminContext();
-
   const [isLoading, setIsLoading] = useState(false);
+
   const filterVal = filter.toLowerCase();
   const filteredDrivers =
     filter === ""
@@ -33,72 +41,111 @@ function DriverTable({ filter }) {
 
   const handleDeleteUser = async (email) => {
     const res = await deleteUserAcc(email);
-    // if (res) {
-    //   setDriver(drivers.filter((driver) => driver.email !== email));
-    // }
+    // Additional logic after deletion if needed
   };
-  const emptyContent = isLoading ? (
-    <CircularProgress className="mx-auto" color="warning" />
-  ) : (
-    <p>You have no more drivers to show here</p>
-  );
 
   return (
-    <Table className="w-[90vw]" aria-label="Example static collection table">
-      <TableHeader>
-        <TableColumn>No</TableColumn>
-        <TableColumn>User Name</TableColumn>
-        <TableColumn>Phone</TableColumn>
-        <TableColumn>Role</TableColumn>
-        <TableColumn>Email</TableColumn>
-        <TableColumn>Action</TableColumn>
-      </TableHeader>
-      <TableBody emptyContent={emptyContent}>
-        {filteredDrivers.length > 0 &&
-          filteredDrivers.map((driver, index) => (
-            <TableRow key={index}>
-              <TableCell className="capitalize text-gray-700">
-                <Chip> {index + 1}</Chip>
-              </TableCell>
-              <TableCell className="w-[12%] capitalize text-gray-700">
-                {driver?.firstName}
-              </TableCell>
-              <TableCell className="w-[14%] capitalize text-gray-700">
-                {driver?.phone || ""}
-              </TableCell>
-              <TableCell className="w-[12%] capitalize text-gray-700">
-                {driver?.role}
-              </TableCell>
-              <TableCell className="w-[15%] text-gray-500 ">
-                {driver?.email}
-              </TableCell>
-              <TableCell className="w-[45%] ">
-                <Button
-                  className=" mr-4"
-                  onClick={() => handleDeleteUser(driver?.email)}
-                  variant="solid"
-                  color="danger"
-                >
-                  Delete
-                </Button>
-                <Button
-                  className=" mr-4"
-                  onClick={() => router.push(`/admin/drivers/${driver?.email}`)}
-                  variant="solid"
-                  color="primary"
-                >
-                  History
-                </Button>
-                <Create edit={true} driver={driver} />
-                <Button className="w-40" variant="solid" color="primary">
-                  Reset Password Link
-                </Button>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[50px]">No</TableHead>
+            <TableHead>User Name</TableHead>
+            <TableHead>Phone</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead className="text-right">Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isLoading ? (
+            <TableRow>
+              <TableCell colSpan={6} className="h-24 text-center">
+                <div className="flex justify-center">
+                  <svg
+                    className="animate-spin h-5 w-5 text-primary"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                </div>
               </TableCell>
             </TableRow>
-          ))}
-      </TableBody>
-    </Table>
+          ) : filteredDrivers.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="h-24 text-center">
+                You have no more drivers to show here
+              </TableCell>
+            </TableRow>
+          ) : (
+            filteredDrivers.map((driver, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <Badge variant="outline">{index + 1}</Badge>
+                </TableCell>
+                <TableCell className="font-medium">
+                  {driver?.firstName}
+                </TableCell>
+                <TableCell>{driver?.phone || "N/A"}</TableCell>
+                <TableCell>
+                  <Badge variant="secondary">{driver?.role}</Badge>
+                </TableCell>
+                <TableCell>{driver?.email}</TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDeleteUser(driver?.email)}
+                    className="mr-2"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      router.push(`/admin/Drivers/${driver?.email}`)
+                    }
+                    className="mr-2"
+                  >
+                    <History className="mr-2 h-4 w-4" /> History
+                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="mr-2">
+                        <Edit className="mr-2 h-4 w-4" /> Edit
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Edit Driver</DialogTitle>
+                      </DialogHeader>
+                      <Create edit={true} driver={driver} />
+                    </DialogContent>
+                  </Dialog>
+                  <Button variant="outline" size="sm">
+                    <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
-
-export default DriverTable;
