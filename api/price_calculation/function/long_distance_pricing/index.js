@@ -23,6 +23,8 @@ export default async function LongDistancePricing(
   Pallet,
   Skid
 ) {
+  console.log("Using Long Distance");
+
   let price = 0;
   let returnType = "LD";
 

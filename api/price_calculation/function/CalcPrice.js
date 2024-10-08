@@ -201,13 +201,17 @@ async function determineNFDayPricingAndReturnType({
     isOriginInside,
     isDestinationInside,
     itemCounts,
+    isLdDisabled: true,
   });
 
   const futureRate = priceSettings[booking_type]?.services[returnType];
 
-  console.log({ priceSettings, returnType, futureRate });
-
-  toast(futureRate);
+  console.log("Near Future", {
+    priceSettings,
+    returnType,
+    futureRate,
+    booking_type,
+  });
 
   // Calculate final price based on distance and future rate
   const finalPrice = distance * Number(futureRate); // Convert futureRate to a number
@@ -227,6 +231,7 @@ async function determinePricingAndReturnType({
   isOriginInside,
   isDestinationInside,
   itemCounts,
+  isLdDisabled,
 }) {
   const {
     Ladder,
@@ -243,7 +248,7 @@ async function determinePricingAndReturnType({
   let price = 0;
   let returnType = "N/A";
 
-  if (!isOriginInside || !isDestinationInside) {
+  if ((!isOriginInside || !isDestinationInside) && !isLdDisabled) {
     ({ price, returnType } = await LongDistancePricing(
       max_volume,
       long_distance,

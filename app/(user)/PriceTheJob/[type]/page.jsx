@@ -69,7 +69,7 @@ export default function Page({ params }) {
     if (emptyFields.length === 0) {
       return (
         <CheckoutSummary
-          formData={formData}
+          formData={{ ...formData, type: params.type }}
           updatedForm={(updatedForm) => {
             setFormData(updatedForm);
           }}
