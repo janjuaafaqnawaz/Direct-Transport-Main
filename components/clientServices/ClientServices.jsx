@@ -46,7 +46,7 @@ export default function ClientServices() {
       ? {
           title: "Place Booking",
           description: "Place Booking",
-          link: "/Delivery-Options",
+          link: "/PlaceTheBooking",
           icon: <IconTruckDelivery className="size-10" />,
         }
       : {},
