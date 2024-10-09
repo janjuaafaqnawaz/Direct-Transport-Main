@@ -30,6 +30,18 @@ export default function ClientServices() {
   };
 
   const clientServicesLinks = [
+    {
+      title: "Price The Job",
+      description: "Place a Booking",
+      link: "/PriceTheJob",
+      icon: <PriceJobIcon className="size-12" />,
+    },
+    {
+      title: "Track Booking",
+      description: "Track your recent bookings",
+      link: "/TrackBooking",
+      icon: <TrackBookingIcon className="size-10" />,
+    },
     userRole === "business" || userRole === "admin"
       ? {
           title: "Place Booking",
@@ -38,19 +50,6 @@ export default function ClientServices() {
           icon: <IconTruckDelivery className="size-10" />,
         }
       : {},
-    {
-      title: "Track Booking",
-      description: "Track your recent bookings",
-      link: "/TrackBooking",
-      icon: <TrackBookingIcon className="size-10" />,
-    },
-    {
-      title: "Price The Job",
-      description: "Place a Booking",
-      link: "/PriceTheJob",
-      icon: <PriceJobIcon className="size-12" />,
-    },
-
     {
       title: "Invoices",
       description: "View invoices",
