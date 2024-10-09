@@ -240,6 +240,14 @@ async function fetchPlaceBookingsExistingAccsMonthly(email) {
   }
 }
 
+// Helper function to format a Date object to "dd/mm/yyyy" string
+function formatDateToDDMMYYYY(date) {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
 async function getBookingsBetweenDates(
   fromDateString,
   toDateString,
@@ -250,17 +258,18 @@ async function getBookingsBetweenDates(
   const user = JSON.parse(localStorage.getItem("userDoc"));
   const collectionRef = collection(db, "place_bookings");
   try {
-    // Adjust from and to dates to cover the entire day
+    // Convert from and to dates to "dd/mm/yyyy" string format
     const fromDate = new Date(fromDateString);
-    fromDate.setHours(0, 0, 0, 0);
     const toDate = new Date(toDateString);
-    toDate.setHours(23, 59, 59, 999);
 
-    // Create a base query with date conditions
+    const fromDateFormatted = formatDateToDDMMYYYY(fromDate);
+    const toDateFormatted = formatDateToDDMMYYYY(toDate);
+
+    // Create a base query with date conditions (lexical comparison for date strings)
     let baseQuery = query(
       collectionRef,
-      where("createdAt", ">=", fromDate),
-      where("createdAt", "<=", toDate)
+      where("date", ">=", fromDateFormatted),
+      where("date", "<=", toDateFormatted)
     );
 
     // Add userEmail condition if the role is not admin
