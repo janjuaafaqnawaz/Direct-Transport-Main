@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, Truck, CalendarDays } from "lucide-react";
 import Image from "next/image";
@@ -46,6 +47,9 @@ function DeliveryOption({ icon, title, description, href }) {
           {title}
         </h2>
         <p className="text-center text-gray-600">{description}</p>
+        <Button className="mt-4 w-full" auto color="primary">
+          Book Now
+        </Button>
       </div>
     </Link>
   );
