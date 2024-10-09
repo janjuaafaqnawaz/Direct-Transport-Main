@@ -10,7 +10,7 @@ export default function Page() {
       <br />
       <div className="   flex   justify-center items-center gap-10 w-full">
         <Link
-          href="/PriceTheJob/Delivery/same_day"
+          href="/PlaceTheBooking/Delivery/same_day"
           className="group w-96 h-80 relative rounded-lg overflow-hidden"
         >
           <Image
@@ -27,7 +27,7 @@ export default function Page() {
           </div>
         </Link>
         <Link
-          href="/PriceTheJob/Delivery"
+          href="/PlaceTheBooking/Delivery"
           className="group w-96 h-80 relative rounded-lg overflow-hidden"
         >
           <Image
