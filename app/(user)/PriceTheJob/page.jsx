@@ -1,52 +1,49 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Truck, CalendarDays } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 
-export default function DeliveryOptions() {
+export default function Page() {
   return (
-    <div className="min-h-[80vh]  flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl bg-white/90 backdrop-blur-sm shadow-xl">
-        <CardContent className="p-6">
-          <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
-            Choose Your Delivery Option
-          </h1>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <DeliveryOption
-              href={"/PriceTheJob/same_day"}
-              icon={"/icons/SAME_DAY.png"}
-              title="Same Day"
-              description="Get your items delivered within hours"
-            />
-            <DeliveryOption
-              href={"/PriceTheJob/next_day"}
-              icon={"/icons/NEXT_DAY.png"}
-              title="Next Day"
-              description="Receive your package by tomorrow"
-            />
-            <DeliveryOption
-              href={"/PriceTheJob/three_four_day"}
-              icon={"/icons/3-4_Day.png"}
-              title="3-4 Day"
-              description="Standard delivery at a lower cost"
-            />
+    <div className="mt-36 flex flex-col align-middle">
+      <h1 className="text-5xl font-bold text-center mb-8">Delivery Options</h1>
+      <br />
+      <br />
+      <div className="   flex   justify-center items-center gap-10 w-full">
+        <Link
+          href="/PriceTheJob/Delivery/same_day"
+          className="group w-96 h-80 relative rounded-lg overflow-hidden"
+        >
+          <Image
+            src="/images/Country NSW Deliveries.jpg"
+            alt="Country NSW Deliveries"
+            width={300}
+            height={300}
+            className="object-cover w-full h-full transition-transform group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+            <p className="text-3xl font-semibold text-white">
+              Same Day Deliveries
+            </p>
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-function DeliveryOption({ icon, title, description, href }) {
-  return (
-    <Link href={href}>
-      <div className="flex flex-col items-center p-4 bg-white rounded-lg shadow transition-all duration-300 hover:shadow-lg hover:scale-105">
-        <Image src={icon} className="size-36" width={100} height={100} alt="" />
-        <h2 className="text-xl font-semibold mt-4 mb-2 text-gray-800">
-          {title}
-        </h2>
-        <p className="text-center text-gray-600">{description}</p>
+        </Link>
+        <Link
+          href="/PriceTheJob/Delivery"
+          className="group w-96 h-80 relative rounded-lg overflow-hidden"
+        >
+          <Image
+            src="/images/Sydney Metro Deliveries.jpg"
+            alt="Sydney Metro Deliveries"
+            width={300}
+            height={300}
+            className="object-cover w-full h-full transition-transform group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+            <p className="text-3xl font-semibold text-white">
+              Sydney Metro Deliveries
+            </p>
+          </div>
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }
