@@ -58,7 +58,7 @@ export default async function CalcPrice({
       isDestinationInside,
       itemCounts,
     }));
-    toast("Same day pricing applying");
+    console.log("Same day pricing applying");
   } else {
     ({ price, returnType } = await determineNFDayPricingAndReturnType({
       distance,
@@ -75,7 +75,7 @@ export default async function CalcPrice({
       priceSettings,
       booking_type,
     }));
-    toast("Near future pricing applying");
+    console.log("Near future pricing applying");
   }
 
   const { charges, serviceCharge } = await ServiceCharges(
