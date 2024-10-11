@@ -1,27 +1,45 @@
-export default function determineReturnAndServiceTypes(serviceType, returnType) {
-  // Check if returnType already contains any of the service codes
+export default function determineReturnAndServiceTypes(
+  serviceType,
+  returnType,
+  type
+) {
   const serviceCodes = ["G", "X", "D", "AF", "W"];
-  
-  // If returnType already includes any of the service codes, return it as is
-  if (serviceCodes.some(code => returnType.includes(code))) {
+
+  if (serviceCodes.some((code) => returnType.includes(code))) {
     return returnType;
   }
 
-  // Determine the job based on returnType
   const job = returnType === "Courier" ? "C" : returnType;
 
-  // Add the appropriate service code based on serviceType
-  if (serviceType === "Standard") {
-    return `${job}G`;
-  } else if (serviceType === "Express") {
-    return `${job}X`;
-  } else if (serviceType === "Direct") {
-    return `${job}D`;
-  } else if (serviceType === "After Hours") {
-    return `${job}AF`;
-  } else if (serviceType === "Weekend Deliveries") {
-    return `${job}W`;
-  } else {
-    return returnType;
+  let code = job;
+
+  if (type === "same_day") {
+    switch (serviceType) {
+      case "Standard":
+        code += "G";
+        break;
+      case "Express":
+        code += "X";
+        break;
+      case "Direct":
+        code += "D";
+        break;
+      case "After Hours":
+        code += "AF";
+        break;
+      case "Weekend Deliveries":
+        code += "W";
+        break;
+      default:
+        break;
+    }
   }
+
+  if (type === "three_four_day") {
+    code += "-NF";
+  } else if (type === "next_day") {
+    code += "-ND";
+  }
+
+  return code;
 }

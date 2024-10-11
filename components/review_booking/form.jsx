@@ -1,7 +1,7 @@
 "use client";
 
 import "./form.css";
-
+import { Alert } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup, Divider } from "@mantine/core";
 import Link from "next/link";
@@ -13,9 +13,13 @@ import CustomInput from "@/components/fields/CustomInput";
 import { initialFormData } from ".././static";
 import DateTime from "@/components/fields/DateTime";
 import { formatDate, formatTime } from "@/api/DateAndTime/format";
+import isPointInGeofence from "@/api/price_calculation/function/helper/isPointInGeofence";
 import toast from "react-hot-toast";
+import { Cross } from "lucide-react";
+import { ErrorOutline } from "@mui/icons-material";
 
 function Form({
+  type,
   form,
   edit,
   action,
@@ -25,18 +29,18 @@ function Form({
   fetchTolls,
   selectedEmail,
 }) {
-  const notify = (msg) => toast(msg);
   // -------------------------------State
 
   const [user, setUser] = useState([]);
   const [error, setError] = useState(true);
   const [formData, setFormData] = useState(form || initialFormData);
-  console.log(formData);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [showFrequentOrigins, setShowFrequentOrigins] = useState(true);
   const [showFrequentDestinations, setShowFrequentDestinations] =
     useState(true);
+  const [locationsError, setLocationsError] = useState(false);
+
+  console.log(formData.address);
 
   useEffect(() => {
     async function fetchData() {
@@ -51,7 +55,6 @@ function Form({
   }, []);
 
   const handleRefresh = () => {
-    setRefreshKey((prevKey) => prevKey + 1);
     setFormData({
       ...formData,
       address: {
@@ -64,7 +67,9 @@ function Form({
 
   // -----------------------------State Handlers
   const handleCheckOut = () => {
-    if (error) return notify("Please enter valid date & time");
+    if (locationsError) return toast.error("Please enter valid location ");
+    if (error) return toast.error("Please enter valid date & time");
+
     const requiredFields = [
       "Contact",
       "Service",
@@ -83,7 +88,9 @@ function Form({
     if (emptyFields.length === 0) {
       setShowCheckout(true);
     } else {
-      notify(`Please fill in the following fields: ${emptyFields.join(", ")}`);
+      toast.success(
+        `Please fill in the following fields: ${emptyFields.join(", ")}`
+      );
     }
   };
 
@@ -94,6 +101,70 @@ function Form({
     } else {
     }
   };
+  const handle_address = async (name, e, overwrite) => {
+    const updatedAddress = overwrite ? e : { ...formData.address[name], ...e };
+    if (type === "same_day") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        address: {
+          ...prevFormData.address,
+          [name]: updatedAddress,
+        },
+      }));
+      toast.success("Address selected ");
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        address: {
+          ...prevFormData.address,
+          [name]: updatedAddress,
+        },
+      }));
+
+      const updatedAddresses = {
+        ...formData.address,
+        [name]: updatedAddress,
+      };
+      console.log(updatedAddresses);
+
+      if (
+        updatedAddresses.Origin?.coordinates &&
+        updatedAddresses.Destination?.coordinates
+      ) {
+        try {
+          const { isOriginInside, isDestinationInside } =
+            await isPointInGeofence(updatedAddresses);
+
+          if (!isOriginInside || !isDestinationInside) {
+            setLocationsError(false);
+            toast.success("Address saved and is within the allowed area.");
+          } else {
+            setLocationsError(true);
+            toast.error(
+              "Both addresses are inside the non allowed area. Please select valid locations."
+            );
+            revertAddress(name);
+          }
+        } catch (error) {
+          console.error(error);
+          revertAddress(name);
+          toast.error("An error occurred while saving the address.");
+        }
+      } else {
+        setLocationsError(false);
+      }
+    }
+  };
+
+  const revertAddress = (name) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      address: {
+        ...prevFormData.address,
+        [name]: {},
+      },
+    }));
+  };
 
   const handleDateChange = (name, val) =>
     setFormData({ ...formData, [name]: val });
@@ -101,7 +172,7 @@ function Form({
   if (showCheckout) {
     return (
       <BookCheckout
-        formData={formData}
+        formData={{ ...formData, type }}
         cat={"place_bookings"}
         job={true}
         payment={payment}
@@ -115,7 +186,7 @@ function Form({
     <>
       <div className="container">
         <div className="box">
-          <h3>Job Information</h3>
+          <h3>Job information</h3>
           <p>
             Account:
             {selectedEmail?.name !== "" ? selectedEmail.name : user?.firstName}
@@ -153,10 +224,23 @@ function Form({
             }}
           >
             <p>
-              <strong>Please Note:</strong> Interstate/regional prices may vary
-              from the original quote. Please wait for the job to be accepted
-              and we will contact you if any changes are necessary.
+              <strong>Please Note:</strong>
+              {type === "same_day" ? (
+                "Interstate/regional prices may vary from the original quote. Please wait for the job to be accepted and we will contact you if any changes are necessary."
+              ) : (
+                <>
+                  <br />
+                  1. Has to be booked before 12 noon <br />
+                  2. Deliveries will be carried out during normal business hours
+                  (7am - 5pm) <br />
+                  3. Goods must be ready for pickup at the time of the booking
+                  <br />
+                  4. Accurate dimensions and weights will be required for
+                  accurate pricing
+                </>
+              )}
             </p>
+
             <p>
               <strong>
                 Accurate measurements are necessary for accurate pricing.
@@ -173,13 +257,15 @@ function Form({
             handle_time={(name, val) => handleDateChange(name, formatTime(val))}
             handleInvalid={(e) => setError(e)}
           />
-          <h5 className="my-8">Service Information</h5>
-          <ServicesFields
-            handleChange={(service) =>
-              setFormData({ ...formData, service: service })
-            }
-            value={formData.service}
-          />
+          <h5 className="my-8">Service information</h5>
+          {type === "same_day" ? (
+            <ServicesFields
+              handleChange={(service) =>
+                setFormData({ ...formData, service: service })
+              }
+              value={formData.service}
+            />
+          ) : null}
           <ItemDimensions
             handleItems={(items) => setFormData({ ...formData, items: items })}
             defaultItems={formData?.items}
@@ -188,17 +274,14 @@ function Form({
         </div>
         <div className="box">
           <h3>Pickup Details</h3>
+          {locationsError && (
+            <Alert icon={<ErrorOutline />} className="w-full">
+              Please enter valid location
+            </Alert>
+          )}
           <FrequentAddress
             address={formData.address.Origin}
-            handleChange={(address) =>
-              setFormData({
-                ...formData,
-                address: {
-                  ...formData.address,
-                  Origin: address,
-                },
-              })
-            }
+            handleChange={(e) => handle_address("Origin", e)}
             show={() => setShowFrequentOrigins(false)}
             visible={edit}
           />
@@ -210,12 +293,7 @@ function Form({
           />
           {edit && showFrequentOrigins ? (
             <PlacesAutocomplete
-              onLocationSelect={(loc) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, Origin: loc },
-                })
-              }
+              onLocationSelect={(e) => handle_address("Origin", e, true)}
               address={formData.address.Origin}
               pickup={true}
             />
@@ -227,7 +305,7 @@ function Form({
                   ...formData,
                   address: {
                     ...formData.address,
-                    Origin: {
+                    Destination: {
                       ...formData.address.Origin,
                       label: e.target.value,
                     },
@@ -253,20 +331,17 @@ function Form({
         </div>
         <div className="box">
           <h3>Drop Details</h3>
+          {locationsError && (
+            <Alert icon={<ErrorOutline />} className="w-full">
+              Please enter valid location
+            </Alert>
+          )}
           <FrequentAddress
             address={formData.address.Destination}
-            handleChange={(address) =>
-              setFormData({
-                ...formData,
-                address: {
-                  ...formData.address,
-                  Destination: address,
-                },
-              })
-            }
+            handleChange={(e) => handle_address("Destination", e)}
             show={() => setShowFrequentDestinations(false)}
             visible={edit}
-          />{" "}
+          />
           <CustomInput
             name="dropCompanyName"
             label="Company Name"
@@ -275,12 +350,7 @@ function Form({
           />
           {edit && showFrequentDestinations ? (
             <PlacesAutocomplete
-              onLocationSelect={(loc) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, Destination: loc },
-                })
-              }
+              onLocationSelect={(e) => handle_address("Destination", e, true)}
               address={formData.address.Destination}
             />
           ) : (
@@ -299,7 +369,7 @@ function Form({
                 })
               }
             />
-          )}{" "}
+          )}
           <CustomInput
             name="deliveryIns"
             label="Delivery Instructions"

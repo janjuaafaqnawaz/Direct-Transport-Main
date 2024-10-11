@@ -239,7 +239,6 @@ async function fetchPlaceBookingsExistingAccsMonthly(email) {
     return null;
   }
 }
-
 // Helper function to format a Date object to "dd/mm/yyyy" string
 function formatDateToDDMMYYYY(date) {
   const day = String(date.getDate()).padStart(2, "0");

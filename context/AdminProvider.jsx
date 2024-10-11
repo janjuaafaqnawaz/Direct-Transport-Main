@@ -1,6 +1,7 @@
 import { app } from "@/api/firebase/config";
 import {
   collection,
+  doc, // <-- Add doc for document reference
   getFirestore,
   query,
   onSnapshot,
@@ -22,9 +23,10 @@ const AdminProvider = ({ children }) => {
   const [allDrivers, setAllDrivers] = useState([]);
   const [lastBookingDoc, setLastBookingDoc] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [priceSettings, setPriceSettings] = useState(null); // <-- State for price settings
 
   const [totalBookings, setTotalBookings] = useState(0); // Store total bookings count
-  const BOOKINGS_LIMIT = 1500;
+  const BOOKINGS_LIMIT = 100;
 
   // Function to fetch total document counts in Firestore collection
   const fetchDocumentCounts = async () => {
@@ -101,16 +103,40 @@ const AdminProvider = ({ children }) => {
     }
   };
 
+  // Function to fetch price settings with real-time updates
+  const fetchPriceSettings = () => {
+    try {
+      const priceSettingsRef = doc(db, "data", "price_settings"); // Reference to 'price_settings' doc
+
+      const unsubscribePriceSettings = onSnapshot(
+        priceSettingsRef,
+        (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            setPriceSettings(docSnapshot.data());
+          } else {
+            console.log("Price settings document does not exist.");
+          }
+        }
+      );
+
+      return unsubscribePriceSettings; // Return the unsubscribe function
+    } catch (error) {
+      console.error("Error fetching price settings:", error);
+    }
+  };
+
   useEffect(() => {
     // Initial fetch for bookings and users
     const unsubscribeBookings = fetchBookingsWithPagination(true);
     const unsubscribeUsers = fetchUsers(); // Corrected fetchUsers call
+    const unsubscribePriceSettings = fetchPriceSettings(); // Fetch price settings in real-time
     fetchDocumentCounts(); // Fetch the total bookings count
 
     // Clean up listeners on component unmount
     return () => {
       if (unsubscribeBookings) unsubscribeBookings();
       if (unsubscribeUsers) unsubscribeUsers(); // Unsubscribe from users snapshot listener
+      if (unsubscribePriceSettings) unsubscribePriceSettings(); // Unsubscribe from price settings listener
     };
   }, []); // Run once on component mount
 
@@ -120,6 +146,7 @@ const AdminProvider = ({ children }) => {
         allBookings,
         allUsers,
         allDrivers,
+        priceSettings, // Provide price settings in context
         fetchNextBookingsPage: () => fetchBookingsWithPagination(false),
         isLoading,
         totalBookings, // Provide total bookings count to the context

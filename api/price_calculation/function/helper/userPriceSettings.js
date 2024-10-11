@@ -8,13 +8,12 @@ export default async function userPriceSettings() {
 
   const userPriceSettings = user?.usePrice ? private_price : universal_price;
 
-  console.log(
-    "Using",
-    user?.usePrice ? "private_price_settings" : "universal_price_settings",
-    "usePrice",
-    user?.usePrice,
-    { user, private_price }
-  );
+  console.log({
+    user,
+    universal_price,
+    private_price,
+    using: userPriceSettings,
+  });
 
   return userPriceSettings;
 }

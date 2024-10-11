@@ -60,7 +60,7 @@ export default function Page() {
     >
       <Button onClick={open}>Add Address</Button>
 
-      <Modal opened={opened} onClose={close} title="Write Address">
+      <Modal opened={opened} onClose={close} >
         <Typography id="modal-modal-title" variant="h6" component="h2">
           Write Your Address
         </Typography>

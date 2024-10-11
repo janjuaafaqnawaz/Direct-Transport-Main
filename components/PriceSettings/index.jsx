@@ -33,6 +33,7 @@ const sortObjectKeysNumerically = (obj) => {
 };
 
 export default function PriceSettings({
+  title,
   priceSettings,
   setPriceSettings,
   children,
@@ -80,10 +81,65 @@ export default function PriceSettings({
   const { gst, minWaitTime, minServices, services, truckServices } =
     priceSettings;
 
+  const sections = [
+    truckServices && {
+      key: "truck",
+      title: "Truck",
+      component: (
+        <TruckServices
+          handleChange={(key, value) =>
+            handleChange("truckServices", key, value)
+          }
+          settings={truckServices}
+        />
+      ),
+    },
+    services && {
+      key: "services",
+      title: "Ute/Van",
+      component: (
+        <Services
+          handleChange={(key, value) => handleChange("services", key, value)}
+          settings={services}
+        />
+      ),
+    },
+    minServices && {
+      key: "minServicePrices",
+      title: "Ute/Van",
+      component: (
+        <MinServicesPrices
+          handleChange={(key, value) => handleChange("minServices", key, value)}
+          settings={minServices}
+        />
+      ),
+    },
+    gst && {
+      key: "gst",
+      title: "GST",
+      component: (
+        <GST
+          handleChange={(key, value) => handleChange("gst", key, value)}
+          settings={gst}
+        />
+      ),
+    },
+    minWaitTime && {
+      key: "waitTimeRate",
+      title: "Wait Time Rate",
+      component: (
+        <WaitTimeRate
+          handleChange={(key, value) => handleChange("minWaitTime", key, value)}
+          settings={minWaitTime}
+        />
+      ),
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-        Service Rates
+        {title || ""} Service Rates
       </h1>
       <div className="flex justify-end gap-4 mb-4">
         {children}
@@ -116,76 +172,22 @@ export default function PriceSettings({
         isResizable
         isDraggable
       >
-        {[
-          {
-            key: "truck",
-            title: "Truck",
-            component: (
-              <TruckServices
-                handleChange={(key, value) =>
-                  handleChange("truckServices", key, value)
-                }
-                settings={truckServices}
-              />
-            ),
-          },
-          {
-            key: "services",
-            title: "Ute/Van",
-            component: (
-              <Services
-                handleChange={(key, value) =>
-                  handleChange("services", key, value)
-                }
-                settings={services}
-              />
-            ),
-          },
-          {
-            key: "minServicePrices",
-            title: "Ute/Van",
-            component: (
-              <MinServicesPrices
-                handleChange={(key, value) =>
-                  handleChange("minServices", key, value)
-                }
-                settings={minServices}
-              />
-            ),
-          },
-          {
-            key: "gst",
-            title: "GST",
-            component: (
-              <GST
-                handleChange={(key, value) => handleChange("gst", key, value)}
-                settings={gst}
-              />
-            ),
-          },
-          {
-            key: "waitTimeRate",
-            title: "Wait Time Rate",
-            component: (
-              <WaitTimeRate
-                handleChange={(key, value) =>
-                  handleChange("minWaitTime", key, value)
-                }
-                settings={minWaitTime}
-              />
-            ),
-          },
-        ].map(({ key, title, component }) => (
-          <div key={key} className="bg-white p-4 rounded-lg shadow-md relative">
-            <button className="drag-handle absolute top-2 right-2 text-gray-400 hover:text-gray-600 cursor-move">
-              <IconGripVertical size={20} />
-            </button>
-            <h2 className="text-md font-semibold text-gray-700 mb-4">
-              {title}
-            </h2>
-            {component}
-          </div>
-        ))}
+        {sections
+          .filter((item) => item !== undefined)
+          .map(({ key, title, component }) => (
+            <div
+              key={key}
+              className="bg-white p-4 rounded-lg shadow-md relative"
+            >
+              <button className="drag-handle absolute top-2 right-2 text-gray-400 hover:text-gray-600 cursor-move">
+                <IconGripVertical size={20} />
+              </button>
+              <h2 className="text-md font-semibold text-gray-700 mb-4">
+                {title}
+              </h2>
+              {component}
+            </div>
+          ))}
       </ResponsiveGridLayout>
     </div>
   );

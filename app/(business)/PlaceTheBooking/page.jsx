@@ -1,60 +1,58 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { CAP } from "@/components/Index";
-import Form from "@/components/review_booking/form";
-import { Autocomplete, Container } from "@mantine/core";
-import { getUsersEmailAndNames } from "@/api/firebase/functions/fetch";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 export default function Page() {
-  const [user, setUser] = useState(null);
-  const [emails, setEmails] = useState([]);
-  const [selectedEmail, setSelectedEmail] = useState({
-    email: "",
-    admin: false,
-    name: "",
-  });
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userDoc")) || null;
-    setUser(user);
-
-    const fetchEmails = async () => {
-      const users = await getUsersEmailAndNames();
-      // Filter out duplicate names
-      const uniqueUsers = users.filter(
-        (user, index, self) =>
-          index === self.findIndex((u) => u.name === user.name)
-      );
-      setEmails(uniqueUsers);
-    };
-    fetchEmails();
-  }, []);
-
-  const handleEmailChange = (value) => {
-    const selectedUser = emails.find((email) => email.name === value);
-    if (selectedUser) {
-      setSelectedEmail({
-        ...selectedUser,
-        admin: user.role === "admin",
-      });
-    }
-  };
-
   return (
-    <>
-      {user && user?.role === "admin" && (
-        <Container size="xs" my={50}>
-          <Autocomplete
-            label="Create booking"
-            placeholder="Select by Company names"
-            data={emails.map((user) => user.name)}
-            maxDropdownHeight={200}
-            onChange={handleEmailChange}
+    <div className="mt-36 flex flex-col align-middle">
+      <div className="flex flex-wrap justify-center items-center gap-10 w-full">
+        <Link
+          href="/PlaceTheBooking/Delivery/same_day"
+          className="group w-96 h-80 relative rounded-lg overflow-hidden"
+        >
+          <Image
+            src="/images/Country NSW Deliveries.jpg"
+            alt="Sydney Metro Deliveries"
+            width={300}
+            height={300}
+            className="object-cover w-full h-full transition-transform group-hover:scale-110"
           />
-        </Container>
-      )}
-      <Form edit={true} selectedEmail={selectedEmail} />
-    </>
+          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+            <p className="text-3xl text-center font-semibold text-white">
+              Sydney Metro <br /> Deliveries
+            </p>
+          </div>
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+            <Button className="w-28 mb-8" auto color="primary">
+              Book Now
+            </Button>
+          </div>
+        </Link>
+
+        <Link
+          href="/PlaceTheBooking/Delivery"
+          className="group w-96 h-80 relative rounded-lg overflow-hidden"
+        >
+          <Image
+            src="/images/Sydney Metro Deliveries.jpg"
+            alt="Country NSW Deliveries"
+            width={300}
+            height={300}
+            className="object-cover w-full h-full transition-transform group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+            <p className="text-3xl text-center font-semibold text-white">
+              Regional/Country NSW Deliveries
+            </p>
+          </div>
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+            <Button className="w-28 mb-8" auto color="primary">
+              Book Now
+            </Button>
+          </div>
+        </Link>
+      </div>
+    </div>
   );
 }

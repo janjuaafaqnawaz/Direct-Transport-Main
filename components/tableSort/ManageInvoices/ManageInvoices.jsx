@@ -9,41 +9,8 @@ import EditInvoice from "./InvoiceAction/edit_invoice_modal/Modal";
 import Assigned from "./InvoiceAction/Assigned";
 import InvoicePOD from "./InvoiceAction/pod_invoice_modal/Modal";
 import { Chip } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import { useFirebase } from "@/context/FirebaseContext";
 
 export default function ManageInvoices({ invoice, hideAction }) {
-  const [invoicesWithSuburbs, setInvoicesWithSuburbs] = useState([]);
-
-  useEffect(() => {
-    const fetchSuburbs = async () => {
-      // const updatedInvoices = await Promise.all(
-      //   invoice.map(async (inv) => {
-      //     const pickupSuburb =
-      //       inv.address?.Origin?.suburb ||
-      //       (await getSuburbByLatLng(
-      //         inv.address?.Origin?.coordinates?.lat,
-      //         inv.address?.Origin?.coordinates?.lng
-      //       ));
-      //     const deliverySuburb =
-      //       inv.address?.Destination?.suburb ||
-      //       (await getSuburbByLatLng(
-      //         inv.address?.Destination?.coordinates?.lat,
-      //         inv.address?.Destination?.coordinates?.lng
-      //       ));
-      //     return {
-      //       ...inv,
-      //       pickupSuburb,
-      //       deliverySuburb,
-      //     };
-      //   })
-      // );
-      // setInvoicesWithSuburbs(updatedInvoices);
-    };
-
-    fetchSuburbs();
-  }, [invoice, hideAction]);
-
   const sortedInvoices = [...invoice].sort(
     (a, b) => b.createdAt.seconds - a.createdAt.seconds
   );
@@ -169,11 +136,8 @@ export default function ManageInvoices({ invoice, hideAction }) {
     id: row.docId || index + 1,
   }));
 
-  
-
   return (
     <div className="w-[95vw]  overflow-hidden flex justify-center">
- 
       <div className="max-w-[95vw]">
         <DataGrid
           rows={rowsWithIds}

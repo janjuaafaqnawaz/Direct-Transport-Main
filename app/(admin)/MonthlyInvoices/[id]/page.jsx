@@ -11,7 +11,7 @@ import CreatePdf from "./components/CreatePdf";
 export default function Page(params) {
   const [datesRange, setDatesRange] = useState({});
   const email = decodeURIComponent(params.params.id);
-  const { allUsers } = useAdminContext();
+  const { allBookings, allUsers } = useAdminContext();
 
   const user = allUsers.find(
     (user) => user.email.toLowerCase() === email.toLowerCase()

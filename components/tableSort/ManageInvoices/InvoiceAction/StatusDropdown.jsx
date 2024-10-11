@@ -1,15 +1,7 @@
 "use client";
 
 import { statuses } from "@/components/static";
-import {
-  ActionIcon,
-  Button,
-  Combobox,
-  Input,
-  InputBase,
-  Text,
-  useCombobox,
-} from "@mantine/core";
+import { Button, Combobox, useCombobox } from "@mantine/core";
 import { useState } from "react";
 import { format } from "date-fns";
 import { updateDoc } from "@/api/firebase/functions/upload";
@@ -37,6 +29,7 @@ export default function StatusDropdown({ booking }) {
         [currentStatus]: currentDateTime,
       },
       currentStatus: currentStatus,
+      isNew: false,
     };
 
     setInvoice(updatedData);

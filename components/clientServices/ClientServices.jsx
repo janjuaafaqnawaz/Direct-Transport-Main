@@ -1,5 +1,4 @@
 "use client";
-import PlaceBookingIcon from "@mui/icons-material/Place";
 import { Text, Container, ThemeIcon, SimpleGrid } from "@mantine/core";
 import classes from "./ClientServices.module.css";
 import Link from "next/link";
@@ -12,6 +11,8 @@ import JobInquiryIcon from "@mui/icons-material/Help";
 import PriceJobIcon from "@mui/icons-material/MonetizationOn";
 import AddressesIcon from "@mui/icons-material/LocationOn";
 import InvoicesIcon from "@mui/icons-material/Receipt";
+import { Image } from "@nextui-org/react";
+import { IconTruckDelivery } from "@tabler/icons-react";
 
 export default function ClientServices() {
   const router = useRouter();
@@ -33,82 +34,87 @@ export default function ClientServices() {
       title: "Price The Job",
       description: "Place a Booking",
       link: "/PriceTheJob",
-      icon: <PriceJobIcon />,
+      icon: <PriceJobIcon className="size-12" />,
     },
     {
       title: "Track Booking",
       description: "Track your recent bookings",
       link: "/TrackBooking",
-      icon: <TrackBookingIcon />,
+      icon: <TrackBookingIcon className="size-10" />,
     },
     userRole === "business" || userRole === "admin"
       ? {
           title: "Place Booking",
-          description: "Price a booking",
+          description: "Place Booking",
           link: "/PlaceTheBooking",
-          icon: <PlaceBookingIcon />,
+          icon: <IconTruckDelivery className="size-10" />,
         }
       : {},
     {
       title: "Invoices",
       description: "View invoices",
       link: "/RecentInvoices",
-      icon: <InvoicesIcon />,
+      icon: <InvoicesIcon className="size-10" />,
     },
     {
       title: "Addresses",
       description: "Manage frequent addresses",
       link: "/FrequentAddresses",
-      icon: <AddressesIcon />,
+      icon: <AddressesIcon className="size-10" />,
     },
+
     {
       title: "Logout",
       description: "Log Out",
       link: "#",
-      icon: <LogoutIcon />,
+      icon: <LogoutIcon className="size-10" />,
       logout: true,
     },
     {
       title: "Job Inquiry",
       description: "Enquire on a specific booking",
       link: "/JobInquiry",
-      icon: <JobInquiryIcon />,
+      icon: <JobInquiryIcon className="size-10" />,
     },
   ];
 
-  const items = clientServicesLinks.map((item, index) => (
-    <Link
-      href={item?.link || "/"}
-      key={index}
-      onClick={() => (item?.logout ? logoutUser() : null)}
-      passHref
-      style={{ textDecoration: "none" }}
-    >
-      <div className={`${classes.item} ${classes.link}`}>
-        <ThemeIcon
-          variant="light"
-          color="#1384e1"
-          className={classes.itemIcon}
-          size={60}
-          radius="md"
-        >
-          {item?.icon}
-        </ThemeIcon>
-
-        <div>
-          <Text
-            fw={700}
-            fz="lg"
-            style={{ color: "black" }}
-            className={classes.itemTitle}
+  const items = clientServicesLinks
+    .filter((item) => Object.keys(item).length > 0)
+    .map((item, index) => (
+      <Link
+        href={item?.link || "/"}
+        key={index}
+        onClick={() => (item?.logout ? logoutUser() : null)}
+        passHref
+        style={{ textDecoration: "none" }}
+      >
+        <div className={`${classes.item} ${classes.link}`}>
+          <ThemeIcon
+            variant="light"
+            color="#1384e1"
+            className={classes.itemIcon}
+            size={70}
+            radius="md"
           >
-            {item?.title}
-          </Text>
-          <Text c="dimmed">{item?.description}</Text>
+            {item?.icon}
+          </ThemeIcon>
+
+          <div>
+            <Text
+              fw={700}
+              fz="lg"
+              style={{ color: "black" }}
+              className={classes.itemTitle}
+            >
+              {item?.title}
+            </Text>
+            <Text c="dimmed" size="sm">
+              {item?.description}
+            </Text>
+          </div>
         </div>
-      </div>
-    </Link>
-  ));
+      </Link>
+    ));
 
   return (
     <Container size={700} className={classes.wrapper}>

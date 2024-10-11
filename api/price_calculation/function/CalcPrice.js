@@ -12,6 +12,7 @@ import determinePriceBySkid from "./determine_price_by_item/determinePriceBySkid
 import { fetchTollsData } from "@/api/fetchTolls";
 import TruckPricing from "./truck_pricing";
 import LongDistancePricing from "./long_distance_pricing";
+import toast from "react-hot-toast";
 
 export default async function CalcPrice({
   distanceData,
@@ -21,7 +22,9 @@ export default async function CalcPrice({
   originStr,
   destinationStr,
   formData,
+  priceSettings,
   long_distance,
+  booking_type,
 }) {
   const { items, service, address } = formData;
 
@@ -36,6 +39,199 @@ export default async function CalcPrice({
   const { max_volume, total_weight, longest_length, palletSpaces } =
     await calculateItemsVolume(items);
   const itemCounts = await countItemsByType(items);
+
+  const { isOriginInside, isDestinationInside } = await isPointInGeofence(
+    address
+  );
+
+  if (booking_type === "same_day") {
+    ({ price, returnType } = await determinePricingAndReturnType({
+      distance,
+      max_volume,
+      longest_length,
+      total_weight,
+      rate,
+      min_rate,
+      items,
+      long_distance,
+      isOriginInside,
+      isDestinationInside,
+      itemCounts,
+    }));
+    toast("Same day pricing applying");
+  } else {
+    ({ price, returnType } = await determineNFDayPricingAndReturnType({
+      distance,
+      max_volume,
+      longest_length,
+      total_weight,
+      rate,
+      min_rate,
+      items,
+      long_distance,
+      isOriginInside,
+      isDestinationInside,
+      itemCounts,
+      priceSettings,
+      booking_type,
+    }));
+    toast("Near future pricing applying");
+  }
+
+  const { charges, serviceCharge } = await ServiceCharges(
+    price,
+    requestQuote,
+    service
+  );
+
+  price = charges;
+  serviceCharges = serviceCharge;
+  gst_charges = await GstCharges(price, gst);
+
+  if (service !== "Standard") {
+    const origin = formData.address.Origin.coordinates;
+    const destination = formData.address.Destination.coordinates;
+    const requestBody = {
+      from: origin,
+      to: destination,
+      serviceProvider: "here",
+      vehicle: {
+        type: "2AxlesTaxi",
+        weight: { value: 20000, unit: "pound" },
+        height: { value: 7.5, unit: "meter" },
+        length: { value: 7.5, unit: "meter" },
+        axles: 4,
+        emissionClass: "euro_5",
+      },
+    };
+    const requestBodyStr = JSON.stringify(requestBody);
+    console.log({ requestBodyStr, requestBody });
+    tolls = await fetchTollsData(requestBodyStr);
+  }
+
+  returnType = determineReturnAndServiceTypes(
+    service,
+    returnType,
+    booking_type
+  );
+
+  console.info({
+    pricing: {
+      price,
+      tolls,
+      requestQuote,
+      returnType,
+      booking_type,
+    },
+
+    extra_charges: {
+      rate,
+      min_rate,
+      gst_charges,
+    },
+
+    distance_and_volume: {
+      distance,
+      max_volume,
+      total_weight,
+      longest_length,
+      distanceData,
+      palletSpaces,
+      itemCounts,
+    },
+
+    Booking: {
+      ...formData,
+    },
+
+    location: {
+      originStr,
+      destinationStr,
+    },
+  });
+
+  function toFixedSafe(value, decimals) {
+    if (typeof value === "number" && !isNaN(value)) {
+      return value.toFixed(decimals);
+    }
+    return "0.00";
+  }
+
+  return {
+    gst: Number(toFixedSafe(gst_charges, 2)),
+    totalPrice: toFixedSafe(price, 2),
+    totalPriceWithGST: Number(toFixedSafe(price + gst_charges, 2)),
+    totalTolls: tolls?.totalTolls || 0,
+    totalTollsCost: tolls?.totalTollsCost || 0,
+    returnType,
+    requestQuote,
+    palletSpaces,
+    distanceData: distanceData,
+    serviceCharges,
+    distance,
+    ...formData,
+  };
+}
+
+async function determineNFDayPricingAndReturnType({
+  distance,
+  max_volume,
+  longest_length,
+  total_weight,
+  rate,
+  min_rate,
+  items,
+  long_distance,
+  isOriginInside,
+  isDestinationInside,
+  itemCounts,
+  priceSettings,
+  booking_type,
+}) {
+  // Destructure the response from determinePricingAndReturnType
+  const { price: basePrice, returnType } = await determinePricingAndReturnType({
+    distance,
+    max_volume,
+    longest_length,
+    total_weight,
+    rate,
+    min_rate,
+    items,
+    long_distance,
+    isOriginInside,
+    isDestinationInside,
+    itemCounts,
+    isLdDisabled: true,
+  });
+
+  const futureRate = priceSettings[booking_type]?.services[returnType];
+
+  console.log("Near Future", {
+    priceSettings,
+    returnType,
+    futureRate,
+    booking_type,
+  });
+
+  const finalPrice = distance * Number(futureRate);
+
+  return { price: finalPrice, returnType };
+}
+
+async function determinePricingAndReturnType({
+  distance,
+  max_volume,
+  longest_length,
+  total_weight,
+  rate,
+  min_rate,
+  items,
+  long_distance,
+  isOriginInside,
+  isDestinationInside,
+  itemCounts,
+  isLdDisabled,
+}) {
   const {
     Ladder,
     Rack,
@@ -48,12 +244,10 @@ export default async function CalcPrice({
     Conduit,
     Tubes,
   } = itemCounts;
+  let price = 0;
+  let returnType = "N/A";
 
-  const { isOriginInside, isDestinationInside } = await isPointInGeofence(
-    address
-  );
-
-  if (!isOriginInside || !isDestinationInside) {
+  if (!isOriginInside || (!isDestinationInside && !isLdDisabled)) {
     ({ price, returnType } = await LongDistancePricing(
       max_volume,
       long_distance,
@@ -74,7 +268,7 @@ export default async function CalcPrice({
       Pallet,
       Skid
     ));
-    returnType = returnType;
+    returnType = "LD";
   } else if (
     Ladder.exist ||
     Rack.exist ||
@@ -129,92 +323,5 @@ export default async function CalcPrice({
     returnType = costType;
   }
 
-  const { charges, serviceCharge } = await ServiceCharges(
-    price,
-    requestQuote,
-    service
-  );
-
-  price = charges;
-  serviceCharges = serviceCharge;
-  gst_charges = await GstCharges(price, gst);
-
-  if (service !== "Standard") {
-    const origin = formData.address.Origin.coordinates;
-    const destination = formData.address.Destination.coordinates;
-    const requestBody = {
-      from: origin,
-      to: destination,
-      serviceProvider: "here",
-      vehicle: {
-        type: "2AxlesTaxi",
-        weight: { value: 20000, unit: "pound" },
-        height: { value: 7.5, unit: "meter" },
-        length: { value: 7.5, unit: "meter" },
-        axles: 4,
-        emissionClass: "euro_5",
-      },
-    };
-    const requestBodyStr = JSON.stringify(requestBody);
-    console.log({ requestBodyStr, requestBody });
-    tolls = await fetchTollsData(requestBodyStr);
-  }
-
-  returnType = determineReturnAndServiceTypes(service, returnType);
-
-  console.info({
-    pricing: {
-      price,
-      tolls,
-      requestQuote,
-      returnType,
-    },
-
-    extra_charges: {
-      rate,
-      min_rate,
-      gst_charges,
-    },
-
-    distance_and_volume: {
-      distance,
-      max_volume,
-      total_weight,
-      longest_length,
-      distanceData,
-      palletSpaces,
-      itemCounts,
-    },
-
-    Booking: {
-      ...formData,
-    },
-
-    location: {
-      originStr,
-      destinationStr,
-    },
-  });
-
-  function toFixedSafe(value, decimals) {
-    if (typeof value === "number" && !isNaN(value)) {
-      return value.toFixed(decimals);
-    }
-    return "0.00";
-  }
-
-  return {
-    gst: Number(toFixedSafe(gst_charges, 2)),
-    totalPrice: toFixedSafe(price, 2),
-    totalPriceWithGST: Number(toFixedSafe(price + gst_charges, 2)),
-    totalTolls: tolls?.totalTolls || 0,
-    totalTollsCost: tolls?.totalTollsCost || 0,
-    returnType,
-    requestQuote,
-    palletSpaces,
-    distanceData: distanceData,
-    serviceCharges,
-    distance,
-    ...formData,
-  };
+  return { price, returnType };
 }
