@@ -8,14 +8,11 @@ import ItemDimensions from "@/components/ItemDimensions";
 import CheckoutSummary from "@/components/CheckoutSummary";
 import Form from "@/components/review_booking/form";
 import ServicesFields from "@/components/fields/ServicesFields";
-import FrequentAddress from "@/components/fields/FrequentAddress";
 
 export default function Page({ params }) {
   const [formData, setFormData] = useState(initialFormData);
   const [show, setShow] = useState("");
-  const [showFrequentOrigins, setShowFrequentOrigins] = useState(true);
-  const [showFrequentDestinations, setShowFrequentDestinations] =
-    useState(true);
+
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleRefresh = () => {
@@ -94,57 +91,26 @@ export default function Page({ params }) {
           <h3>Pickup Details</h3>{" "}
         </Center>
         <div style={styleField} key={refreshKey}>
-          <FrequentAddress
+          <PlacesAutocomplete
+            onLocationSelect={(loc) =>
+              setFormData({
+                ...formData,
+                address: { ...formData.address, Origin: loc },
+              })
+            }
+            pickup={true}
             address={formData.address.Origin}
-            handleChange={(address) =>
+          />
+
+          <PlacesAutocomplete
+            onLocationSelect={(loc) =>
               setFormData({
                 ...formData,
-                address: {
-                  ...formData.address,
-                  Origin: address,
-                },
+                address: { ...formData.address, Destination: loc },
               })
             }
-            show={() => setShowFrequentOrigins(false)}
-            visible={true}
-          />
-          {showFrequentOrigins === true ? (
-            <PlacesAutocomplete
-              onLocationSelect={(loc) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, Origin: loc },
-                })
-              }
-              pickup={true}
-              address={formData.address.Origin}
-            />
-          ) : null}
-          <FrequentAddress
             address={formData.address.Destination}
-            handleChange={(address) =>
-              setFormData({
-                ...formData,
-                address: {
-                  ...formData.address,
-                  Destination: address,
-                },
-              })
-            }
-            show={() => setShowFrequentDestinations(false)}
-            visible={true}
           />
-          {showFrequentDestinations === true ? (
-            <PlacesAutocomplete
-              onLocationSelect={(loc) =>
-                setFormData({
-                  ...formData,
-                  address: { ...formData.address, Destination: loc },
-                })
-              }
-              address={formData.address.Destination}
-            />
-          ) : null}
         </div>
 
         <br />

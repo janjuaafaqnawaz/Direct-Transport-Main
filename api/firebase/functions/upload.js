@@ -53,7 +53,7 @@ async function postDoc(data, collectionName) {
 }
 
 async function postInvoice(data, collectionName, selectedEmail) {
-  const { name, email, admin } = selectedEmail;
+  const { name, email, admin } = selectedEmail || {};
 
   try {
     const user = JSON.parse(localStorage.getItem("userDoc"));

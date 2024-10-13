@@ -1,6 +1,5 @@
 "use client";
 
-import CheckoutSessions from "@/api/CheckoutSessions";
 import {
   Email,
   AccountCircle,
@@ -12,17 +11,17 @@ import {
 import { useEffect, useState } from "react";
 import { Text, Button, Container, ActionIcon } from "@mantine/core";
 import getSuburbByLatLng from "@/api/getSuburbByLatLng";
-import { postInvoice, updateDoc } from "@/api/firebase/functions/upload";
+import { postInvoice } from "@/api/firebase/functions/upload";
 import { useRouter } from "next/navigation";
 import Loading from "./Loading";
 import "@mantine/dates/styles.css";
 import sendBookingEmail from "@/api/sendBookingEmail";
 import DimensionsTable from "./ItemDimensions/DimensionsTable";
 import ProcessPrice from "@/api/price_calculation/index";
+import StripeWrapper from "@/components/stripe/StripeWrapper";
 
 export default function BookCheckout({
   formData,
-  cat,
   action,
   back,
   payment,
@@ -49,100 +48,26 @@ export default function BookCheckout({
   // Function to handle form submission
   const handleSubmit = async () => {
     if (invoice) {
-      if (payment === true) {
-        const res = await postInvoice(
-          { ...invoice, payment: "pending" },
-          "place_bookings"
-        );
-        const stripe = await CheckoutSessions(
-          invoice.totalPriceWithGST + invoice.totalTollsCost,
-          res
-        );
-        await updateDoc("place_bookings", res, {
-          ...invoice,
-          payment: "pending",
-          stripeSessionId: stripe.sessionId,
-        });
-        await sendBookingEmail(invoice, res, res?.contact);
-        await sendBookingEmail(invoice, res, res?.contact, invoice?.email);
+      const pickupSuburb = await getSuburbByLatLng(
+        invoice.address?.Origin?.label
+      );
 
-        // console.log(stripe);
-        nav.push(stripe.url);
-      } else {
-        const pickupSuburb = await getSuburbByLatLng(
-          invoice.address?.Origin?.label
-        );
+      const deliverySuburb = await getSuburbByLatLng(
+        invoice.address?.Destination?.label
+      );
 
-        const deliverySuburb = await getSuburbByLatLng(
-          invoice.address?.Destination?.label
-        );
+      const delivery = { ...invoice, pickupSuburb, deliverySuburb };
 
-        const delivery = { ...invoice, pickupSuburb, deliverySuburb };
+      const res = await postInvoice(delivery, "place_bookings", selectedEmail);
+      sendBookingEmail(invoice, res, res?.name || invoice?.contact);
 
-        console.log(delivery);
-
-        const res = await postInvoice(
-          delivery,
-          "place_bookings",
-          selectedEmail
-        );
-        sendBookingEmail(invoice, res, res?.name || invoice?.contact);
-
-        nav.push(`/RecentInvoices/${res}`);
-      }
+      nav.push(`/RecentInvoices/${res}`);
     }
   };
 
   if (loading === true) {
     return <Loading />;
   }
-
-  const renderDetails = (title, details) => (
-    <div>
-      <Text tt="uppercase" size="lg" fw={900} c={"rgba(59, 58, 58, 1)"}>
-        {title || "Something went wrong"}
-      </Text>
-      {details &&
-        details
-          .filter((detail) => detail)
-          .map((detail, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              {/* Render icon if available */}
-              <h5
-                tt="uppercase"
-                fw={700}
-                style={{
-                  color: "grey",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <ActionIcon
-                  variant="light"
-                  mr={20}
-                  p={20}
-                  radius={"lg"}
-                  c={"red"}
-                >
-                  {detail?.icon ? detail?.icon : null}
-                </ActionIcon>{" "}
-                {(detail && detail.label) || "Empty"}:
-              </h5>
-              <h6 tt="uppercase" fw={500} style={{ width: "15rem" }}>
-                {(detail && detail.value) || "empty"}
-              </h6>
-            </div>
-          ))}
-    </div>
-  );
 
   return (
     <Container
@@ -259,16 +184,20 @@ export default function BookCheckout({
       <br />
       <br />
       <br />
-      <Button
-        fullWidth
-        variant="filled"
-        color="green"
-        onClick={handleSubmit}
-        marginTop="lg"
-        style={{ borderRadius: "8px" }}
-      >
-        Confirm Booking
-      </Button>
+      {!payment ? (
+        <Button
+          fullWidth
+          variant="filled"
+          color="green"
+          onClick={handleSubmit}
+          marginTop="lg"
+          style={{ borderRadius: "8px" }}
+        >
+          Confirm Booking
+        </Button>
+      ) : (
+        <StripeWrapper formData={formData} />
+      )}
       {back ? (
         <Button
           fullWidth
@@ -285,3 +214,50 @@ export default function BookCheckout({
     </Container>
   );
 }
+
+const renderDetails = (title, details) => (
+  <div>
+    <Text tt="uppercase" size="lg" fw={900} c={"rgba(59, 58, 58, 1)"}>
+      {title || "Something went wrong"}
+    </Text>
+    {details &&
+      details
+        .filter((detail) => detail)
+        .map((detail, index) => (
+          <div
+            key={index}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            {/* Render icon if available */}
+            <h5
+              tt="uppercase"
+              fw={700}
+              style={{
+                color: "grey",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ActionIcon
+                variant="light"
+                mr={20}
+                p={20}
+                radius={"lg"}
+                c={"red"}
+              >
+                {detail?.icon ? detail?.icon : null}
+              </ActionIcon>{" "}
+              {(detail && detail.label) || "Empty"}:
+            </h5>
+            <h6 tt="uppercase" fw={500} style={{ width: "15rem" }}>
+              {(detail && detail.value) || "empty"}
+            </h6>
+          </div>
+        ))}
+  </div>
+);

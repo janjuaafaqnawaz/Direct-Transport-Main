@@ -14,19 +14,19 @@ export default function DeliveryOptions() {
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <DeliveryOption
-              href={"/PriceTheJob/Delivery/same_day"}
+              href={"/CreateJob/Delivery/same_day"}
               icon={"/icons/SAME_DAY.png"}
               title="Same Day"
               description="Get your items delivered within hours"
             />
             <DeliveryOption
-              href={"/PriceTheJob/Delivery/next_day"}
+              href={"/CreateJob/Delivery/next_day"}
               icon={"/icons/NEXT_DAY.png"}
               title="Next Day"
               description="Receive your package by tomorrow"
             />
             <DeliveryOption
-              href={"/PriceTheJob/Delivery/three_four_day"}
+              href={"/CreateJob/Delivery/three_four_day"}
               icon={"/icons/3-4_Day.png"}
               title="3-4 Day"
               description="Standard delivery at a lower cost"

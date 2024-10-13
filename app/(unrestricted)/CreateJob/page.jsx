@@ -8,7 +8,7 @@ export default function Page() {
     <div className="mt-36 flex flex-col align-middle">
       <div className="flex flex-wrap justify-center items-center gap-10 w-full">
         <Link
-          href="/PriceTheJob/Delivery/same_day"
+          href="/CreateJob/Delivery/same_day"
           className="group w-96 h-80 relative rounded-lg overflow-hidden"
         >
           <Image
@@ -31,7 +31,7 @@ export default function Page() {
         </Link>
 
         <Link
-          href="/PriceTheJob/Delivery"
+          href="/CreateJob/Delivery"
           className="group w-96 h-80 relative rounded-lg overflow-hidden"
         >
           <Image
