@@ -103,6 +103,9 @@ export default function MyDocument({ datesRange, invoices, user }) {
             </View>
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>GST</Text>
+            </View>{" "}
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Total</Text>
             </View>
           </View>
 
@@ -175,6 +178,11 @@ export default function MyDocument({ datesRange, invoices, user }) {
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>
                         ${(booking?.gst).toFixed(2) || 0}
+                      </Text>
+                    </View>{" "}
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>
+                        ${(booking?.totalPriceWithGST).toFixed(2) || 0}
                       </Text>
                     </View>
                   </View>
