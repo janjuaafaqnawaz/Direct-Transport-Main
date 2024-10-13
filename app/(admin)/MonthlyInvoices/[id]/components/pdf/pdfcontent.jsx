@@ -182,7 +182,11 @@ export default function MyDocument({ datesRange, invoices, user }) {
                     </View>{" "}
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>
-                        ${(booking?.totalPriceWithGST).toFixed(2) || 0}
+                        $
+                        {(
+                          Number(booking?.totalPriceWithGST) +
+                          Number(booking?.totalTollsCost)
+                        ).toFixed(2) || 0}
                       </Text>
                     </View>
                   </View>
