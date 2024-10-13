@@ -1,212 +1,58 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { MenuItem, TextField } from "@mui/material";
-import { Button } from "@mantine/core";
-import { serviceOptions } from "@/components/static";
-import { PlacesAutocomplete, CAP } from "@/components/Index";
-import { fetchFrequentAddresses } from "@/api/firebase/functions/fetch";
-import ItemDimensions from "@/components/ItemDimensions";
-import ReviewBooking from "@/components/ReviewBooking";
-import CheckoutSummary from "@/components/CheckoutSummary";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 export default function Page() {
-  const initialFormData = {
-    contact: "",
-    service: "",
-    date: null,
-    time: null,
-    pieces: "",
-    pickupReference1: "",
-    items: [],
-    distanceData: {},
-    address: {
-      Origin: {},
-      Destination: {},
-    },
-  };
-
-  const [formData, setFormData] = useState(initialFormData);
-  const [show, setShow] = useState("");
-  const [frequentAddresses, setFrequentAddresses] = useState([]);
-  // const [showFrequentOrigins, setShowFrequentOrigins] = useState(true);
-  // const [showFrequentDestinations, setShowFrequentDestinations] =
-  //   useState(true);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleRefresh = () => {
-    setRefreshKey((prevKey) => prevKey + 1);
-    setFormData({
-      ...formData,
-      address: {
-        Origin: {},
-        Destination: {},
-      },
-    });
-    // setShowFrequentOrigins(true), setShowFrequentDestinations(true);
-  };
-  console.log(frequentAddresses, formData);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await fetchFrequentAddresses();
-        setFrequentAddresses(data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    }
-    fetchData();
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const styleField = {
-    width: "100%",
-    margin: ".8rem 0",
-    minWidth: "10rem",
-  };
-
-  if (show === "checkout") {
-    return (
-      <ReviewBooking
-        form={formData}
-        cat={"place_job"}
-        edit={false}
-        action={(e) => {
-          setShow(e);
-        }}
-        back={true}
-        diseble={true}
-        payment={true}
-        noEmail={true}
-        fetchTolls={true}
-        selectedEmail={""}
-      />
-    );
-  } else if (show === "summary") {
-    const requiredFields = ["Service", "Items", "Address"];
-    const emptyFields = requiredFields.filter(
-      (field) =>
-        !formData[field.toLowerCase()] ||
-        (Array.isArray(formData[field.toLowerCase()]) &&
-          formData[field.toLowerCase()].length === 0)
-    );
-
-    if (emptyFields.length === 0) {
-      return (
-        <CheckoutSummary
-          formData={formData}
-          updatedForm={(updatedForm) => {
-            setFormData(updatedForm);
-          }}
-          action={(e) => {
-            setShow(e);
-          }}
-        />
-      );
-    } else {
-      console.log(
-        `Please fill in the following fields: ${emptyFields.join(", ")}`
-      );
-    }
-  }
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          maxWidth: "25rem",
-          margin: "auto",
-        }}
-      >
-        <h1>PRICE A JOB</h1>
-        <div style={styleField} key={refreshKey}>
-          <PlacesAutocomplete
-            onLocationSelect={(loc) =>
-              setFormData({
-                ...formData,
-                address: { ...formData.address, Origin: loc },
-              })
-            }
-            pickup={true}
-            width={true}
+    <div className="mt-36 flex flex-col align-middle">
+      <div className="flex flex-wrap justify-center items-center gap-10 w-full">
+        <Link
+          href="/PriceTheJob/Delivery/same_day"
+          className="group w-96 h-80 relative rounded-lg overflow-hidden"
+        >
+          <Image
+            src="/images/Country NSW Deliveries.jpg"
+            alt="Sydney Metro Deliveries"
+            width={300}
+            height={300}
+            className="object-cover w-full h-full transition-transform group-hover:scale-110"
           />
+          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+            <p className="text-3xl text-center font-semibold text-white">
+              Sydney Metro <br /> Deliveries
+            </p>
+          </div>
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+            <Button className="w-28 mb-8" auto color="primary">
+              Book Now
+            </Button>
+          </div>
+        </Link>
 
-          <PlacesAutocomplete
-            onLocationSelect={(loc) =>
-              setFormData({
-                ...formData,
-                address: { ...formData.address, Destination: loc },
-              })
-            }
-            width={true}
+        <Link
+          href="/PriceTheJob/Delivery"
+          className="group w-96 h-80 relative rounded-lg overflow-hidden"
+        >
+          <Image
+            src="/images/Sydney Metro Deliveries.jpg"
+            alt="Country NSW Deliveries"
+            width={300}
+            height={300}
+            className="object-cover w-full h-full transition-transform group-hover:scale-110"
           />
-        </div>
-
-        <TextField
-          size="small"
-          label="Level of Service"
-          helperText="Please select any level of service"
-          style={styleField}
-          name="service"
-          select
-          value={formData.service}
-          onChange={handleChange}
-          variant="outlined"
-        >
-          {serviceOptions.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              <p style={{ width: "auto" }}>
-                {option.value}
-                <span
-                  style={{
-                    fontSize: ".8rem",
-                    color: "gray",
-                    marginLeft: "1.2rem",
-                  }}
-                >
-                  {option.disc}
-                </span>
-              </p>
-            </MenuItem>
-          ))}
-        </TextField>
-
-        <ItemDimensions
-          handleItems={(items) => setFormData({ ...formData, items: items })}
-          defaultItems={formData?.items}
-        />
-        <Button
-          w={180}
-          color="#1384e1"
-          mt={3}
-          variant="filled"
-          onClick={() => {
-            setShow("summary");
-          }}
-        >
-          Price A Job
-        </Button>
-        <Button w={180} color="#1384e1" mt={3} variant="filled">
-          Client Service
-        </Button>
-        <Button
-          w={180}
-          color="lime"
-          mt={3}
-          variant="filled"
-          onClick={handleRefresh}
-        >
-          Clear Address
-        </Button>
+          <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+            <p className="text-3xl text-center font-semibold text-white">
+              Regional/Country NSW Deliveries
+            </p>
+          </div>
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+            <Button className="w-28 mb-8" auto color="primary">
+              Book Now
+            </Button>
+          </div>
+        </Link>
       </div>
-    </>
+    </div>
   );
 }
