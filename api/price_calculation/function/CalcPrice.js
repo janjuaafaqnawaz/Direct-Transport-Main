@@ -57,7 +57,7 @@ export default async function CalcPrice({
       isDestinationInside,
       itemCounts,
     }));
-    console.log("Same day pricing applying");
+    // console.log("Same day pricing applying");
   } else {
     ({ price, returnType } = await determineNFDayPricingAndReturnType({
       distance,
@@ -74,7 +74,7 @@ export default async function CalcPrice({
       priceSettings,
       booking_type,
     }));
-    console.log("Near future pricing applying");
+    // console.log("Near future pricing applying");
   }
 
   const { charges, serviceCharge } = await ServiceCharges(
@@ -104,7 +104,7 @@ export default async function CalcPrice({
       },
     };
     const requestBodyStr = JSON.stringify(requestBody);
-    console.log({ requestBodyStr, requestBody });
+    // console.log({ requestBodyStr, requestBody });
     tolls = await fetchTollsData(requestBodyStr);
   }
 
@@ -205,12 +205,12 @@ async function determineNFDayPricingAndReturnType({
 
   const futureRate = priceSettings[booking_type]?.services[returnType];
 
-  console.log("Near Future", {
-    priceSettings,
-    returnType,
-    futureRate,
-    booking_type,
-  });
+  // console.log("Near Future", {
+  //   priceSettings,
+  //   returnType,
+  //   futureRate,
+  //   booking_type,
+  // });
 
   const finalPrice = distance * Number(futureRate);
 

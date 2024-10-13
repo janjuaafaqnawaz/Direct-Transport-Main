@@ -121,6 +121,17 @@ async function fetchUserData() {
     return null;
   }
 }
+async function fetchUserDataByEmail(email) {
+  const user = JSON.parse(localStorage.getItem("user"));
+  try {
+    const userData = await fetchDocById(email, "users");
+    localStorage.setItem("userDoc", JSON.stringify(userData));
+    return userData;
+  } catch (error) {
+    notify(error.message);
+    return null;
+  }
+}
 
 async function userRole() {
   try {
@@ -281,4 +292,5 @@ export {
   deleteUserAcc,
   verifyAuth,
   verifyAuthNotNav,
+  fetchUserDataByEmail,
 };

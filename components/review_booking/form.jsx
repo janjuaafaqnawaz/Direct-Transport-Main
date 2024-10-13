@@ -172,7 +172,7 @@ function Form({
   if (showCheckout) {
     return (
       <BookCheckout
-        formData={{ ...formData, type }}
+        formData={{ ...formData, type, selectedEmail }}
         cat={"place_bookings"}
         job={true}
         payment={payment}
