@@ -1,10 +1,5 @@
 "use client";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import {
   collection,
   doc,
@@ -17,15 +12,13 @@ import {
   where,
 } from "firebase/firestore";
 import { app } from "../config";
-import { toast } from "react-toastify";
 import { fetchAllEmail, fetchAllFirstNames, fetchDocById } from "./fetch";
 import { deleteDocument } from "./upload";
-// useRouter
 
 const auth = getAuth(app);
 const db = getFirestore();
 
-const notify = (msg) => toast(msg);
+const notify = (msg) => console.log(msg);
 
 async function signUpWithEmail(email, password, userData) {
   try {

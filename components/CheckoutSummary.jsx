@@ -65,10 +65,7 @@ const CheckoutSummary = ({ formData, action, updatedForm }) => {
       try {
         const finaleData = await ProcessPrice(invoice);
         setInvoice(finaleData);
-        console.log("Checkout Summary Invoice Processed Data:", {
-          finaleData,
-          formData,
-        });
+
         setLoading(false);
       } catch (error) {
         console.log(error);

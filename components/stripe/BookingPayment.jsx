@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import getSuburbByLatLng from "@/api/getSuburbByLatLng";
-
 import { Divider } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -15,26 +14,27 @@ import sendBookingEmail from "@/api/sendBookingEmail";
 
 export default function BookingPayment({ formData }) {
   const router = useRouter();
-
   const stripe = useStripe();
   const elements = useElements();
   const [name, setName] = useState("");
-  const [email, setEmail] = useState(" ");
+  const [email, setEmail] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [clientSecret, setClientSecret] = useState("");
+
+  const total = formData.totalPriceWithGST.toFixed(2) || 0.0;
 
   useEffect(() => {
     fetch("/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: formData.totalPriceWithGST.toFixed(2) }),
+      body: JSON.stringify({ amount: total }),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setClientSecret(data.clientSecret);
       });
-  }, [formData]);
+  }, [total]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -57,14 +57,17 @@ export default function BookingPayment({ formData }) {
 
     if (error) {
       toast.error(error.message);
-    } else if (paymentIntent.status === "succeeded") {
+      setIsProcessing(false);
+      return;
+    }
+
+    if (paymentIntent.status === "succeeded") {
       toast.success("Payment successful!");
 
       try {
         const pickupSuburb = await getSuburbByLatLng(
           formData.address?.Origin?.label
         );
-
         const deliverySuburb = await getSuburbByLatLng(
           formData.address?.Destination?.label
         );
@@ -77,12 +80,13 @@ export default function BookingPayment({ formData }) {
           payment: "paid",
           stripeSessionId: paymentIntent.id,
         };
+
         const res = await postInvoice(invoice, "place_bookings");
         await sendBookingEmail(invoice, res, invoice.contact);
-        await sendBookingEmail(invoice, res, email);
+        await sendBookingEmail(invoice, res, name, email);
 
-        router.push(`/RecentInvoices/${res}`);
-        toast.success("Booking created successfully with ID: " + res.docId);
+        router.push(`/CreateJob`);
+        toast.success("Booking created successfully with ID: " + res);
       } catch (error) {
         toast.error("Error adding booking: " + error.message);
       }
@@ -110,20 +114,20 @@ export default function BookingPayment({ formData }) {
               <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
                 className="w-full bg-gray-100 text-purple-600 placeholder-purple-400"
                 required
               />
             </div>
             <div>
-              <Label htmlFor="name">Email</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="John Doe"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@mail.com"
                 className="w-full bg-gray-100 text-purple-600 placeholder-purple-400"
                 required
               />
@@ -148,9 +152,7 @@ export default function BookingPayment({ formData }) {
           {/* Order Summary Section */}
           <div className="rounded-xl w-full max-w-md bg-gradient-to-br from-gray-100 to-purple-100 p-8 lg:p-12">
             <h2 className="text-xl text-gray-600 mb-2">Order Summary</h2>
-            <p className="text-5xl font-bold mb-8">
-              ${formData.totalPriceWithGST.toFixed(2)}
-            </p>
+            <p className="text-5xl font-bold mb-8">${total}</p>
 
             <div className="space-y-4">
               {formData.items?.map((item, index) => (
@@ -158,11 +160,9 @@ export default function BookingPayment({ formData }) {
                   <div>
                     <p className="font-semibold">{item.type}</p>
                   </div>
-                  <p className="font-semibold">
-                    <p className="text-xs text-gray-600">
-                      {`${item.height}x${item.width}x${item.length}`} (x
-                      {item.qty})
-                    </p>
+                  <p className="font-semibold text-xs text-gray-600">
+                    {`${item.height}x${item.width}x${item.length}`} (x{item.qty}
+                    )
                   </p>
                 </div>
               ))}

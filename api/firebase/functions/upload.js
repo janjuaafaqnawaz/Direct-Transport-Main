@@ -15,9 +15,9 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { app } from "../config";
-import { toast } from "react-toastify";
 import SendEmailToClients from "@/api/emails/SendEmailToClients";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
+import toast from "react-hot-toast";
 
 const notify = (msg) => toast(msg);
 

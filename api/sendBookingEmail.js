@@ -21,17 +21,17 @@ async function sendBookingEmail(data, id, name, email) {
     };
 
     await emailjs.send(
-      "service_f67p0db", // Your service ID from email.js
-      "template_na429zf", // Your template ID from email.js
+      "service_f67p0db",
+      "template_na429zf",
       templateParams,
-      "Mo93nAQPsQ-HJMrAi" // Your user ID from email.js
+      "Mo93nAQPsQ-HJMrAi"
     );
 
-    console.log("Email sent successfully");
+    console.log("Email sent successfully to: " + email);
     return true;
   } catch (error) {
     console.error("Error while processing data:", error);
-    return null; // Return null to indicate error
+    return null;  s
   }
 }
 

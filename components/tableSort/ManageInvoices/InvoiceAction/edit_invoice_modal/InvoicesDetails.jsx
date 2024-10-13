@@ -19,6 +19,7 @@ import DateTime from "@/components/fields/DateTime";
 import { Button, Chip } from "@nextui-org/react";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import PdfButton from "@/components/PdfButton";
+import { PaidTwoTone } from "@mui/icons-material";
 
 export default function InvoicesDetails({ invoice, admin, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +38,7 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
     dropCompanyName: invoice?.dropCompanyName || "",
     pickupPhone: invoice?.pickupPhone || "",
     deliveryPhone: invoice?.deliveryPhone || "",
+    payment: invoice?.payment || "",
   });
 
   console.log(invoice);
@@ -96,6 +98,14 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
       <div className="min-h-screen flex justify-center items-center">
         <Card shadow="lg" padding="lg" className="w-full max-w-4xl">
           <Stack spacing="md">
+            {formData?.payment === "paid" && (
+              <Group grow wrap="nowrap" align="flex-end">
+                <Text className="font-semibold">Payment</Text>
+                <Text>
+                  <PaidTwoTone className="text-green-500 mb-1" /> Paid via card
+                </Text>
+              </Group>
+            )}
             <Group grow wrap="nowrap" align="flex-end">
               <Text className="font-semibold">Job No.</Text>
               <Text>{invoice.docId}</Text>

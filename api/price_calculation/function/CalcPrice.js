@@ -12,7 +12,6 @@ import determinePriceBySkid from "./determine_price_by_item/determinePriceBySkid
 import { fetchTollsData } from "@/api/fetchTolls";
 import TruckPricing from "./truck_pricing";
 import LongDistancePricing from "./long_distance_pricing";
-import toast from "react-hot-toast";
 
 export default async function CalcPrice({
   distanceData,
