@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 export default function determineReturnAndServiceTypes(
   serviceType,
   returnType,
@@ -6,6 +8,7 @@ export default function determineReturnAndServiceTypes(
   const serviceCodes = ["G", "X", "D", "AF", "W"];
 
   if (serviceCodes.some((code) => returnType.includes(code))) {
+    toast.error("Something went wrong while calculating service type");
     return returnType;
   }
 
@@ -13,7 +16,7 @@ export default function determineReturnAndServiceTypes(
 
   let code = job;
 
-  if (type === "same_day") {
+  if (type !== "next_day" && type !== "three_four_day") {
     switch (serviceType) {
       case "Standard":
         code += "G";
