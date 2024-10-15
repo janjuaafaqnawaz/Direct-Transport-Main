@@ -85,11 +85,11 @@ function BookingTable({ bookings }) {
           <TableHead>From</TableHead>
           <TableHead>To</TableHead>
           <TableHead>Service</TableHead>
-          <TableHead>Current Status</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Pickup</TableHead>
           <TableHead>Delivery</TableHead>
-          <TableHead>Cost (ex GST)</TableHead>
-          <TableHead>Item Qty</TableHead>
+          <TableHead className="w-28">Cost (ex GST)</TableHead>
+          <TableHead>Items</TableHead>
           <TableHead>POD</TableHead>
         </TableRow>
       </TableHeader>
