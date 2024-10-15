@@ -16,7 +16,7 @@ import "tailwindcss/tailwind.css";
 import ItemDimensions from "@/components/ItemDimensions";
 import { formatDate, formatTime } from "@/api/DateAndTime/format";
 import DateTime from "@/components/fields/DateTime";
-import { Button, Chip } from "@nextui-org/react";
+import { Button, Chip, Image } from "@nextui-org/react";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import PdfButton from "@/components/PdfButton";
 import { PaidTwoTone } from "@mui/icons-material";
@@ -304,6 +304,13 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
               />
             </Group>
             <Divider my="sm" />
+            {invoice?.signUrl && (
+              <Image
+                src={invoice?.signUrl}
+                alt="POD"
+                className="w-60 h-auto my-4 rounded-lg"
+              />
+            )}
           </Stack>
         </Card>
       </div>

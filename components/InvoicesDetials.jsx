@@ -157,11 +157,11 @@ const InvoiceDetails = ({ invoice, admin }) => {
       value: `$${invoice?.gst}`,
     },
 
-    ...(invoice?.driverEmail
+    ...(invoice?.driverName
       ? [
           {
             label: "Booking assigned to rider",
-            value: invoice?.driverEmail,
+            value: invoice?.driverName,
           },
         ]
       : []),
@@ -209,6 +209,13 @@ const InvoiceDetails = ({ invoice, admin }) => {
                 />
               </PhotoView>
             ))}
+          {invoice?.signUrl && (
+            <Image
+              src={invoice?.signUrl}
+              alt="POD"
+              className="w-60 h-auto my-4 rounded-lg"
+            />
+          )}
         </div>
       </Container>
     </section>
