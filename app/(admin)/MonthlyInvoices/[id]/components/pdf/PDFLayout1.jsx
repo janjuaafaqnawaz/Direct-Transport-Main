@@ -5,7 +5,7 @@ import styles from "./pdf.styles";
 import getTotalInvoicePrice from "./getTotalInvoicePrice";
 import { format } from "date-fns";
 
-export default function PDFLayout1({ datesRange, invoices, user }) {
+export default function MyDocument({ datesRange, invoices, user }) {
   const { start, end } = datesRange;
   const { totalPrice, totalGst, totalTolls, totalUnloading } =
     getTotalInvoicePrice(invoices);
@@ -103,6 +103,9 @@ export default function PDFLayout1({ datesRange, invoices, user }) {
             </View>
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>GST</Text>
+            </View>{" "}
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Total</Text>
             </View>
           </View>
 
@@ -175,6 +178,15 @@ export default function PDFLayout1({ datesRange, invoices, user }) {
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>
                         ${(booking?.gst).toFixed(2) || 0}
+                      </Text>
+                    </View>{" "}
+                    <View style={styles.tableCol}>
+                      <Text style={styles.tableCell}>
+                        $
+                        {(
+                          Number(booking?.totalPriceWithGST) +
+                          Number(booking?.totalTollsCost)
+                        ).toFixed(2) || 0}
                       </Text>
                     </View>
                   </View>

@@ -42,8 +42,7 @@ export default function History({ email }) {
         {pdfs.length > 0 &&
           pdfs.map((pdf, ind) => {
             return (
-                <TableRow key={ind}>
-                  
+              <TableRow key={ind}>
                 <TableCell>{pdf?.firstName || pdf?.email}</TableCell>
                 <TableCell>
                   {format(pdf.createdAt.toDate(), "dd/MM/yyyy HH:mm:ss")}
