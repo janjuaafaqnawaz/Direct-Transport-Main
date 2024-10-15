@@ -79,7 +79,7 @@ export default function App({ booking }) {
                   ? "Booking assigned to the driver:" +
                     " " +
                     booking.driverEmail
-                  : "Assign this booking to riders"}
+                  : "Assign this booking to drivers"}
               </ModalHeader>
               <ModalBody>
                 <p>

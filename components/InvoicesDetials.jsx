@@ -160,7 +160,7 @@ const InvoiceDetails = ({ invoice, admin }) => {
     ...(invoice?.driverName
       ? [
           {
-            label: "Booking assigned to rider",
+            label: "Booking assigned to driver",
             value: invoice?.driverName,
           },
         ]
