@@ -1,129 +1,148 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { format } from "date-fns";
+import { PackageSearch } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Paper,
-} from "@mui/material";
-import { Button, Image } from "@mantine/core";
-import Link from "next/link";
-import { format } from "date-fns";
+} from "@/components/ui/table";
+import { PhotoView } from "react-photo-view";
+import { useDisclosure } from "@mantine/hooks";
+import { Modal, ScrollArea } from "@mantine/core";
 
-const BookingTable = ({ bookings }) => {
-  function calculateTotalQuantity(data) {
-    // Initialize total quantity
-    let totalQty = 0;
+export function ImgsDialog({ imgs }) {
+  const [opened, { open, close }] = useDisclosure(false); // Manage modal state
 
-    // Check if items array exists in data
-    if (data.items && Array.isArray(data.items)) {
-      // Iterate through each item in the items array
-      data.items.forEach((item) => {
-        // If the item has a qty property, add its value to totalQty
-        if (item.qty) {
-          totalQty += parseInt(item.qty, 10);
-        }
-      });
-    }
+  return (
+    <>
+      <div onClick={open} style={{ cursor: "pointer" }}>
+        {imgs && imgs.length > 0 ? (
+          <Image
+            src={imgs[0] || ""}
+            alt={`Image`}
+            width={100}
+            height={100}
+            className="w-28 h-28 object-cover rounded-lg"
+          />
+        ) : (
+          <span className="h-28 ">No images available.</span>
+        )}
+      </div>
 
-    return totalQty;
+      <Modal opened={opened} onClose={close} title="Images">
+        <ScrollArea style={{ height: 500 }}>
+          <div className="flex flex-wrap gap-2">
+            {imgs && imgs.length > 0 ? (
+              imgs.map((url, index) => (
+                <PhotoView key={index} src={url}>
+                  <Image
+                    src={url}
+                    alt={`Image ${url}`}
+                    width={100}
+                    height={100}
+                    className="w-28 h-28 object-cover rounded-lg"
+                  />
+                </PhotoView>
+              ))
+            ) : (
+              <span>No images available.</span>
+            )}
+          </div>
+        </ScrollArea>
+      </Modal>
+    </>
+  );
+}
+
+function calculateTotalQuantity(data) {
+  let totalQty = 0;
+  if (data.items && Array.isArray(data.items)) {
+    data.items.forEach((item) => {
+      if (item.qty) {
+        totalQty += parseInt(item.qty, 10);
+      }
+    });
   }
+  return totalQty;
+}
 
+function BookingTable({ bookings }) {
   return (
-    <TableContainer component={Paper} className="table-container">
-      <Table className="booking-table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Job No</TableCell>
-            <TableCell>Date & Time</TableCell>
-            <TableCell>From</TableCell>
-            <TableCell>To</TableCell>
-            <TableCell>Service</TableCell>
-            <TableCell>Current Status</TableCell>
-            <TableCell>Pickup</TableCell>
-            <TableCell>Delivery</TableCell>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Job No</TableHead>
+          <TableHead>Date & Time</TableHead>
+          <TableHead>From</TableHead>
+          <TableHead>To</TableHead>
+          <TableHead>Service</TableHead>
+          <TableHead>Current Status</TableHead>
+          <TableHead>Pickup</TableHead>
+          <TableHead>Delivery</TableHead>
+          <TableHead>Cost (ex GST)</TableHead>
+          <TableHead>Item Qty</TableHead>
+          <TableHead>POD</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {bookings?.map((booking) => (
+          <TableRow key={booking?.docId}>
+            <TableCell>{booking?.docId}</TableCell>
             <TableCell>
-              Cost <br /> ex GST{" "}
+              {format(
+                new Date(
+                  booking?.createdAt?.seconds * 1000 +
+                    booking?.createdAt.nanoseconds / 1000000
+                ),
+                "dd/MM/yyyy hh:mm a"
+              )}
             </TableCell>
-            <TableCell>Item Qty</TableCell>
-            <TableCell>POD</TableCell>
+            <TableCell>{booking?.address?.Origin?.label}</TableCell>
+            <TableCell>{booking?.address?.Destination?.label}</TableCell>
+            <TableCell>{booking?.service}</TableCell>
+            <TableCell>{booking?.currentStatus || "Pending"}</TableCell>
+            <TableCell>
+              {booking?.progressInformation?.pickedup || "Pending"}
+            </TableCell>
+            <TableCell>
+              {booking?.progressInformation?.delivered || "Pending"}
+            </TableCell>
+            <TableCell>${booking?.totalPrice}</TableCell>
+            <TableCell>{calculateTotalQuantity(booking)}</TableCell>
+            <TableCell>
+              <ImgsDialog imgs={booking.images} />
+            </TableCell>
           </TableRow>
-        </TableHead>
-        <TableBody>
-          {bookings.map((booking) => (
-            <TableRow key={booking.docId}>
-              <TableCell>{booking.docId}</TableCell>
-              <TableCell>
-                {format(
-                  new Date(
-                    booking?.createdAt?.seconds * 1000 +
-                      booking.createdAt.nanoseconds / 1000000
-                  ),
-                  "dd/MM/yyyy hh:mm a"
-                )}
-              </TableCell>
-              <TableCell>{booking.address.Origin.label}</TableCell>
-              <TableCell>{booking.address.Destination.label}</TableCell>
-              <TableCell>{booking.service}</TableCell>
-              <TableCell>{booking?.currentStatus || "Pending"}</TableCell>
-              <TableCell>
-                {booking?.progressInformation?.pickedup || "Pending"}
-              </TableCell>
-              <TableCell>
-                {booking?.progressInformation?.delivered || "Pending"}
-              </TableCell>
-              <TableCell>
-                <p>${booking?.totalPrice}</p>
-              </TableCell>
-              <TableCell>{calculateTotalQuantity(booking)}</TableCell>
-
-              <TableCell>
-                {booking?.images
-                  ? booking?.images.map((url, index) => (
-                      <Image
-                        key={index}
-                        src={url}
-                        alt={`Image ${url}`}
-                        style={{
-                          width: 100,
-                          height: 100,
-                          objectFit: "cover",
-                          borderRadius: "10px",
-                          marginBottom: 10,
-                        }}
-                      />
-                    ))
-                  : "..."}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+        ))}
+      </TableBody>
+    </Table>
   );
-};
+}
 
-const BookingsQuery = ({ bookings }) => {
+export default function BookingsQuery({ bookings }) {
   return (
-    <section
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "10px",
-      }}
-    >
-      <h2>Track Booking</h2>
-      <BookingTable bookings={bookings} />
-      <Link style={{ textDecoration: "none" }} href="/ClientServices">
-        <Button variant="filled" color="#1384e1" size="lg">
-          Client Services
-        </Button>
-      </Link>
-    </section>
+    <div className="mt-20">
+      <CardTitle className=" text-2xl font-bold flex items-center gap-2">
+        <PackageSearch className="w-6 h-6" />
+        Track Booking
+      </CardTitle>
+      <div className="overflow-x-auto">
+        <BookingTable bookings={bookings} />
+      </div>
+      <div className="mt-6 flex justify-center">
+        <Link href="/ClientServices" passHref>
+          <Button size="lg">Client Services</Button>
+        </Link>
+      </div>
+    </div>
   );
-};
-
-export default BookingsQuery;
+}
