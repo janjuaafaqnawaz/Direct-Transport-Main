@@ -1,7 +1,8 @@
 export default async function calculateServiceCharges(
   price,
   requestQuote,
-  serviceType
+  serviceType,
+  returnType
 ) {
   let charges = price;
   let serviceCharge = 0;

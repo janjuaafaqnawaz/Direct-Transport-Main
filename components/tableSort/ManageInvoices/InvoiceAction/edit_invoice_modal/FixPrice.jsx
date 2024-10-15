@@ -92,15 +92,11 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   const handleAutoCalcSubmit = async () => {
     try {
       const booking = await ProcessPrice(invoice);
-      const returnType = determineReturnAndServiceTypes(
-        booking.service,
-        booking.returnType
-      );
       toast("Updated Successfully");
-      const final = { ...booking, returnType };
-      setInvoice(final);
-      setBooking(final);
-      await updateDoc("place_bookings", invoice.docId, final);
+      setInvoice(booking);
+      setBooking(booking);
+      await updateDoc("place_bookings", invoice.docId, booking);
+      toast("Updated Successfully");
     } catch (error) {
       console.log({ error });
     }

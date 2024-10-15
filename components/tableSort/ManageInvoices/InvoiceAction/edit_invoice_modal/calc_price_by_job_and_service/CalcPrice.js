@@ -4,6 +4,7 @@ import GstCharges from "@/api/price_calculation/function/helper/gst_charges";
 import BasePrice from "@/api/price_calculation/function/truck_pricing/helper/base_price";
 import MinuteRate from "@/api/price_calculation/function/truck_pricing/helper/minute_rate";
 import userPriceSettings from "@/api/price_calculation/function/helper/userPriceSettings";
+import determineReturnAndServiceTypes from "@/api/price_calculation/function/helper/determineReturnAndServiceTypes";
 
 export default async function CalcPrice({ rate, min_rate, gst, formData }) {
   const priceSettings = await userPriceSettings();
@@ -14,13 +15,13 @@ export default async function CalcPrice({ rate, min_rate, gst, formData }) {
     Object.entries(resTruckRate).map(([key, value]) => [key, Number(value)])
   );
 
-  const { service, returnType, distance, max_volume } = formData;
+  const { service, distance, max_volume } = formData;
 
+  let returnType = formData.returnType;
   let price = 0;
   let gst_charges = 0;
   let serviceCharges = 0;
   const requestQuote = false;
-  const serviceType = service;
 
   try {
     const minute_rate = MinuteRate(distance);
@@ -38,10 +39,8 @@ export default async function CalcPrice({ rate, min_rate, gst, formData }) {
     const { charges, serviceCharge } = await ServiceCharges(
       price,
       requestQuote,
-      serviceType
+      service
     );
-
-    console.log({ charges, serviceCharge });
 
     price = charges;
     serviceCharges = serviceCharge;
@@ -55,6 +54,8 @@ export default async function CalcPrice({ rate, min_rate, gst, formData }) {
       serviceCharges,
     };
 
+    returnType = determineReturnAndServiceTypes(service, returnType);
+
     console.log({
       rate,
       min_rate,
@@ -64,9 +65,10 @@ export default async function CalcPrice({ rate, min_rate, gst, formData }) {
       gst_charges,
       serviceCharges,
       booking,
+      returnType,
     });
 
-    return booking;
+    return { ...booking, returnType };
   } catch (err) {
     console.error(`CalcPrice Error: ${err.message}`);
     throw new Error(`Error in price calculation: ${err.message}`);
