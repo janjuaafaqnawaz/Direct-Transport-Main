@@ -8,7 +8,7 @@ export default function determineReturnAndServiceTypes(
   const serviceCodes = ["G", "X", "D", "AF", "W"];
 
   if (serviceCodes.some((code) => returnType.includes(code))) {
-    toast.error("Something went wrong while calculating service type");
+    console.error("Something went wrong while calculating service type");
     return returnType;
   }
 
