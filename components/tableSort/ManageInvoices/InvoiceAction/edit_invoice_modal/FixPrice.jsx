@@ -29,42 +29,43 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   }, [booking]);
 
   const handleSubmit = async () => {
-    const res = await fetchDocById("minWaitTime", "data");
-    const minWaitTimeRate = res.minWaitTimeRate;
-
     try {
+      // Fetching minimum wait time rate and GST
+      const priceSettings = await fetchDocById("price_settings", "data");
+
+      const gstVal = Number(priceSettings?.same_day?.gst?.GST);
+      const minWaitTimeRate = Number(
+        priceSettings?.same_day?.minWaitTime?.minWaitTimeRate
+      );
+
+      // Display both values in a formatted toast message
+      // toast.success(`Min Wait Time Rate: ${minWaitTimeRate}, GST: ${gstVal}`);
+
       setLoad(true);
 
-      const res = await fetchDocById("GST", "data");
-      if (!res || !res.GST) {
-        throw new Error("Failed to fetch GST value");
-      }
+      // Extracting relevant invoice values with fallback
+      const totalPrice = Number(invoice?.totalPrice) || 0;
+      const serviceCharges = Number(invoice?.serviceCharges) || 0;
+      const wTP = Number(invoice?.WaitingTimeAtPickupDefault) || 0;
+      const wTD = Number(invoice?.WaitingTimeAtDropDefault) || 0;
 
-      const gstVal = parseFloat(res.GST);
-      if (isNaN(gstVal)) {
-        throw new Error("Invalid GST value");
-      }
-
-      // const totalTollsCost = Number(invoice.totalTollsCost) || 0;
-      const totalPrice = Number(invoice.totalPrice) || 0;
-      const serviceCharges = Number(invoice.serviceCharges) || 0;
-
-      const wTP = invoice?.WaitingTimeAtPickupDefault || 0;
-      const wTD = invoice?.WaitingTimeAtDropDefault || 0;
-
+      // Calculating waiting time charges
       const WaitingTimeAtPickup = wTP <= 10 ? 0 : (wTP - 10) * minWaitTimeRate;
       const WaitingTimeAtDrop = wTD <= 10 ? 0 : (wTD - 10) * minWaitTimeRate;
 
-      const charges_sum =
+      // Summing up charges
+      const chargesSum =
         totalPrice + serviceCharges + WaitingTimeAtPickup + WaitingTimeAtDrop;
-      const gst = (charges_sum * gstVal) / 100;
-      const totalPriceWithGST = charges_sum + gst;
+      const gst = (chargesSum * gstVal) / 100;
+      const totalPriceWithGST = chargesSum + gst;
 
+      // Determining return type and service type
       const returnType = determineReturnAndServiceTypes(
-        invoice.service,
-        invoice.returnType
+        invoice?.service,
+        invoice?.returnType
       );
 
+      // Creating updated invoice object
       const updatedInvoice = {
         ...invoice,
         totalPrice,
@@ -72,20 +73,20 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         gst: Number(gst.toFixed(2)),
         WaitingTimeAtPickup,
         WaitingTimeAtDrop,
-        returnType: returnType,
+        returnType,
       };
 
+      // Updating state and database
       setInvoice(updatedInvoice);
       setBooking(updatedInvoice);
-
       console.log(updatedInvoice);
 
-      await updateDoc("place_bookings", invoice.docId, updatedInvoice);
+      // Persist updated invoice
+      await updateDoc("place_bookings", invoice?.docId, updatedInvoice);
     } catch (error) {
       console.error("Error updating invoice:", error);
     } finally {
       setLoad(false);
-      // toggleShowPrice();
     }
   };
 
