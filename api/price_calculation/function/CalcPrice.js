@@ -171,7 +171,6 @@ export default async function CalcPrice({
     ...formData,
   };
 }
-
 async function determineNFDayPricingAndReturnType({
   distance,
   max_volume,
@@ -203,18 +202,18 @@ async function determineNFDayPricingAndReturnType({
     isLdDisabled: true,
   });
 
-  const futureRate = priceSettings[booking_type]?.services[returnType];
+  const futureRate = priceSettings?.[booking_type]?.services?.[returnType] ?? 1;
 
-  // console.log("Near Future", {
-  //   priceSettings,
-  //   returnType,
-  //   futureRate,
-  //   booking_type,
-  // });
+  if (futureRate === 1) {
+    console.warn(
+      `Warning: No future rate found for booking type: ${booking_type} and return type: ${returnType}.`
+    );
+  }
 
+  // Ensure that distance is a valid number before multiplication
   const finalPrice = distance * Number(futureRate);
 
-  return { price: finalPrice, returnType };
+  return { price: finalPrice || basePrice, returnType };
 }
 
 async function determinePricingAndReturnType({
@@ -246,7 +245,7 @@ async function determinePricingAndReturnType({
   let price = 0;
   let returnType = "N/A";
 
-  if (!isOriginInside || (!isDestinationInside && !isLdDisabled)) {
+  if ((!isOriginInside || !isDestinationInside) && isLdDisabled === false) {
     ({ price, returnType } = await LongDistancePricing(
       max_volume,
       long_distance,
