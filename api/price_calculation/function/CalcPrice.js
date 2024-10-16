@@ -114,7 +114,10 @@ export default async function CalcPrice({
     booking_type
   );
 
-  const additional = priceSettings?.same_day?.additional?.additional || 0;
+  const additional =
+    priceSettings?.same_day?.additional?.additional ||
+    priceSettings?.additional?.additional ||
+    0;
 
   console.info({
     pricing: {
