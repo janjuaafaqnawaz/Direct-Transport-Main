@@ -215,7 +215,10 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
             </Button>
           </DropdownTrigger>
           <DropdownMenu
-            onAction={(e) => setInvoice({ ...invoice, returnType: e })}
+            onAction={(e) => {
+              setInvoice({ ...invoice, returnType: e });
+              toast.success("Selected");
+            }}
             aria-label="Static Actions"
           >
             <DropdownItem key="Courier">Courier</DropdownItem>
@@ -236,7 +239,10 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
             </Button>
           </DropdownTrigger>
           <DropdownMenu
-            onAction={(e) => setInvoice({ ...invoice, service: e })}
+            onAction={(e) => {
+              setInvoice({ ...invoice, service: e });
+              toast.error("Please select Job Type");
+            }}
             aria-label="Static Actions"
           >
             <DropdownItem key="Standard">Standard</DropdownItem>

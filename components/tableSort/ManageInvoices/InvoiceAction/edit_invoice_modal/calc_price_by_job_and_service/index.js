@@ -25,11 +25,14 @@ export default async function ProcessPrice(formData) {
     }
 
     // Destructure the necessary fields from priceSettings with type checking
+    const job_type_price_settings = priceSettings?.same_day;
+
     const {
+      long_distance,
       minServices: min_rate,
       services: rate,
       gst: { GST: gst } = { GST: 0 },
-    } = priceSettings;
+    } = job_type_price_settings;
 
     // Validate if all necessary settings exist and have correct types
     if (

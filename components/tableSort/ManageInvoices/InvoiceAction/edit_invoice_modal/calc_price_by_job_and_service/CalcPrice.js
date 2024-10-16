@@ -84,6 +84,15 @@ function calculatePrice(
   minute_rate,
   max_volume
 ) {
+  console.log({
+    returnType,
+    distance,
+    rate,
+    min_rate,
+    truckRate,
+    minute_rate,
+  });
+
   switch (returnType) {
     case "LD":
       return distance * (max_volume && max_volume <= 1000 ? 2.1 : 2.5);
