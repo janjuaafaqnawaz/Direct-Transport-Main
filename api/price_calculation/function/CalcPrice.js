@@ -114,6 +114,8 @@ export default async function CalcPrice({
     booking_type
   );
 
+  const additional = priceSettings?.same_day?.additional?.additional || 0;
+
   console.info({
     pricing: {
       price,
@@ -121,6 +123,8 @@ export default async function CalcPrice({
       requestQuote,
       returnType,
       booking_type,
+      additional: booking_type === "same_day" ? additional : 0,
+      priceSettings,
     },
 
     extra_charges: {
@@ -158,7 +162,7 @@ export default async function CalcPrice({
 
   return {
     gst: Number(toFixedSafe(gst_charges, 2)),
-    totalPrice: toFixedSafe(price, 2),
+    totalPrice: toFixedSafe(price + additional || 0, 2),
     totalPriceWithGST: Number(toFixedSafe(price + gst_charges, 2)),
     totalTolls: tolls?.totalTolls || 0,
     totalTollsCost: tolls?.totalTollsCost || 0,
@@ -168,6 +172,7 @@ export default async function CalcPrice({
     distanceData: distanceData,
     serviceCharges,
     distance,
+    additional,
     ...formData,
   };
 }

@@ -162,6 +162,13 @@ export default function BookCheckout({
                   value: "$" + invoice?.serviceCharges,
                 }
               : null,
+            invoice?.additional && invoice.additional > 0
+              ? {
+                  icon: <AttachMoney />,
+                  label: "Additional Charges",
+                  value: "$" + invoice.additional,
+                }
+              : null,
             {
               icon: <AttachMoney />,
               label: "Price including GST",

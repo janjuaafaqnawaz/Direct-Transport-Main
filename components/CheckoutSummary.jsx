@@ -142,11 +142,19 @@ const CheckoutSummary = ({ formData, action, updatedForm }) => {
                   value: "$" + invoice?.serviceCharges,
                 }
               : null,
+
             {
               icon: <AttachMoney />,
               label: "Price",
               value: "$" + invoice?.totalPrice,
             },
+            invoice?.additional && invoice.additional > 0
+              ? {
+                  icon: <AttachMoney />,
+                  label: "Additional Charges",
+                  value: "$" + invoice.additional,
+                }
+              : null,
             {
               icon: <AttachMoney />,
               label: "GST",
