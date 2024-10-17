@@ -92,7 +92,13 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
 
   const handleAutoCalcSubmit = async () => {
     try {
-      const booking = await ProcessPrice(invoice);
+      const type =
+        invoice?.returnType[0] === "C"
+          ? "Courier"
+          : invoice?.returnType[0] + invoice?.returnType[1];
+      // toast(type);
+      const booking = await ProcessPrice({ ...invoice, returnType: type });
+
       toast("Updated Successfully");
       setInvoice(booking);
       setBooking(booking);
@@ -218,7 +224,6 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
           <DropdownMenu
             onAction={(e) => {
               setInvoice({ ...invoice, returnType: e });
-              toast.success("Selected");
             }}
             aria-label="Static Actions"
           >
@@ -242,7 +247,6 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
           <DropdownMenu
             onAction={(e) => {
               setInvoice({ ...invoice, service: e });
-              toast.error("Please select Job Type");
             }}
             aria-label="Static Actions"
           >
