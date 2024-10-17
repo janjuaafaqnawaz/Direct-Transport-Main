@@ -38,6 +38,7 @@ async function signUpWithEmail(email, password, userData) {
     await saveUserDataToUserDoc(email, userData);
 
     notify("Sign up successful!");
+    window.location.reload();
     return true;
   } catch (error) {
     notify(error.message);
@@ -77,8 +78,7 @@ async function signInWithEmail(usernameOrEmail, password) {
     await saveUserDataToUserDoc(userData.email, userData);
     localStorage.setItem("user", JSON.stringify(userData));
     await fetchUserData();
-    // location.reload();
-    window.location.href = "/";
+    window.location.reload();
     notify("Sign in successful!");
     return true;
   } catch (error) {
