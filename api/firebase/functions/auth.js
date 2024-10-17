@@ -78,7 +78,8 @@ async function signInWithEmail(usernameOrEmail, password) {
     await saveUserDataToUserDoc(userData.email, userData);
     localStorage.setItem("user", JSON.stringify(userData));
     await fetchUserData();
-    window.location.reload();
+    // window.location.reload();
+    window.location.href = "/ClientServices";
     notify("Sign in successful!");
     return true;
   } catch (error) {

@@ -119,7 +119,7 @@ export default function StatsGridIcons() {
 
   return (
     <div className={classes.root}>
-      <SimpleGrid className="max-w-[97vw] ml-[1.2vw]" cols={{ base: 1, sm: 4 }}>
+      <SimpleGrid className="max-w-[97vw] ml-[1.2vw]" cols={{ base: 1, sm: 3 }}>
         {stats}
       </SimpleGrid>
     </div>

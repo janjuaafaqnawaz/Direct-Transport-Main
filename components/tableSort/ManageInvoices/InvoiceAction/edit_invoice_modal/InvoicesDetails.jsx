@@ -156,10 +156,10 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
               />
             </Group>
             <Group grow wrap="nowrap" align="flex-end">
-              <Text className="font-semibold">Delivery Company Name :</Text>
+              <Text className="font-semibold">Delivery Company Name:</Text>
               <TextInput
                 value={formData?.dropCompanyName}
-                onChange={handleChangeAddressLabel("dropCompanyName")}
+                onChange={handleChange("dropCompanyName")}
                 className="w-64"
               />
             </Group>
