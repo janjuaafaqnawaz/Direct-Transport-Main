@@ -6,6 +6,7 @@ import Services from "./Services";
 import MinServicesPrices from "./MinServicesPrices";
 import GST from "./GST";
 import TruckServices from "./TruckServices";
+import Additional from "./Additional";
 import WaitTimeRate from "./WaitTimeRate";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -78,7 +79,7 @@ export default function PriceSettings({
     return <Loading />;
   }
 
-  const { gst, minWaitTime, minServices, services, truckServices } =
+  const { gst, minWaitTime, minServices, services, truckServices, additional } =
     priceSettings;
 
   const sections = [
@@ -121,6 +122,16 @@ export default function PriceSettings({
         <GST
           handleChange={(key, value) => handleChange("gst", key, value)}
           settings={gst}
+        />
+      ),
+    },
+    gst && {
+      key: "additional",
+      title: "Additional",
+      component: (
+        <Additional
+          handleChange={(key, value) => handleChange("additional", key, value)}
+          settings={additional}
         />
       ),
     },
