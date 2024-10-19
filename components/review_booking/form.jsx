@@ -15,7 +15,6 @@ import DateTime from "@/components/fields/DateTime";
 import { formatDate, formatTime } from "@/api/DateAndTime/format";
 import isPointInGeofence from "@/api/price_calculation/function/helper/isPointInGeofence";
 import toast from "react-hot-toast";
-import { Cross } from "lucide-react";
 import { ErrorOutline } from "@mui/icons-material";
 
 function Form({
@@ -40,7 +39,7 @@ function Form({
     useState(true);
   const [locationsError, setLocationsError] = useState(false);
 
-  console.log(formData.address);
+  console.log(formData);
 
   useEffect(() => {
     async function fetchData() {
@@ -96,11 +95,14 @@ function Form({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name && value) {
-      setFormData({ ...formData, [name]: value });
-    } else {
+    if (name && value !== undefined) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
     }
   };
+
   const handle_address = async (name, e, overwrite) => {
     const updatedAddress = overwrite ? e : { ...formData.address[name], ...e };
     if (type === "same_day") {
