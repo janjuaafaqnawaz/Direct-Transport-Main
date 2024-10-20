@@ -13,8 +13,8 @@ const nextConfig = {
   },
   /* config options here */
   experimental: {
-    // …
     serverComponentsExternalPackages: ["@react-pdf/renderer"],
+    reactCompiler: true,
   },
 };
 
