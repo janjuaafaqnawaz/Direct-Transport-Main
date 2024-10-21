@@ -59,7 +59,8 @@ export default function History({ email }) {
 
     try {
       const templateParams = {
-        toEmail: cleanEmail,
+        toEmail: "bookings@courierssydney.com.au",
+        // cleanEmail
         url: url,
       };
 
