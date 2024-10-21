@@ -21,10 +21,10 @@ async function sendBookingEmail(data, id, name, email) {
     };
 
     await emailjs.send(
-      "service_f67p0db",
-      "template_na429zf",
+      "service_i9cmmnr",
+      "template_3n14tbk",
       templateParams,
-      "Mo93nAQPsQ-HJMrAi"
+      "vYni03aqa3sHW_yf9"
     );
 
     console.log("Email sent successfully to: " + email);

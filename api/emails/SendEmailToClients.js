@@ -8,10 +8,10 @@ async function SendEmailToClients(toEmail) {
     };
 
     await emailjs.send(
-      "service_f67p0db", // Your service ID from email.js
-      "template_yg9cora", // Your template ID from email.js
+      "service_i9cmmnr", // Your service ID from email.js
+      "template_mgshxy4", // Your template ID from email.js
       templateParams,
-      "Mo93nAQPsQ-HJMrAi" // Your user ID from email.js
+      "vYni03aqa3sHW_yf9" // Your user ID from email.js
     );
 
     console.log("Email sent successfully");

@@ -64,10 +64,10 @@ export default function History({ email }) {
       };
 
       await emailjs.send(
-        "service_f67p0db",
-        "template_5v4aown",
+        "service_i9cmmnr",
+        "template_n4vn10i",
         templateParams,
-        "Mo93nAQPsQ-HJMrAi"
+        "vYni03aqa3sHW_yf9"
       );
 
       console.log("Email sent successfully");
