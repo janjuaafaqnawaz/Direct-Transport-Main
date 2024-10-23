@@ -157,7 +157,7 @@ function DriverNote({
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          Manage notes for the driver's
+          Manage notes for the drivers
         </p>
         {statusEntries.map((entry, index) => (
           <div key={index} className="p-2">
