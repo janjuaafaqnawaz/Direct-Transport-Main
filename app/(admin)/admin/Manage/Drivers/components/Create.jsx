@@ -1,29 +1,53 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  TextInput,
-  NumberInput,
-  Group,
-  LoadingOverlay,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { signUpWithEmail } from "@/api/firebase/functions/auth";
-import { toast } from "react-toastify";
-import { Button } from "@nextui-org/react";
 import { updateDoc } from "@/api/firebase/functions/upload";
+import { Edit, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { toast } from "react-hot-toast";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+
+async function uploadImageToFirestore(image) {
+  const storage = getStorage();
+
+  const imageName = `images/${Date.now()}_${image.name}`;
+  const storageRef = ref(storage, imageName);
+
+  await uploadBytes(storageRef, image);
+
+  const downloadURL = await getDownloadURL(storageRef);
+
+  return downloadURL;
+}
 
 export default function Create({ edit, driver }) {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     firstName: "",
     phone: "",
     companyAddress: "",
     password: "",
     email: "",
+    vehicleDetails: "",
+    abn: "",
+    paymentPercentage: "",
+    startDate: "",
+    dateOfBirth: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [vehiclePicture, setVehiclePicture] = useState(null);
+  const [driverLicense, setDriverLicense] = useState(null);
 
   useEffect(() => {
     if (driver) {
@@ -36,122 +60,195 @@ export default function Create({ edit, driver }) {
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
+  const handleFileChange = (event, setter) => {
+    const file = event.target.files[0];
+    setter(file);
+  };
+
   const handleCreateOrUpdate = async () => {
     const { password, email } = form;
 
     setIsLoading(true);
     try {
+      // Only upload the files if they are selected
+      const vehiclePictureURL = vehiclePicture
+        ? await uploadImageToFirestore(vehiclePicture)
+        : driver?.vehiclePicture || "";
+
+      const driverLicenseURL = driverLicense
+        ? await uploadImageToFirestore(driverLicense)
+        : driver?.driverLicense || "";
+
       const userData = {
         ...form,
         role: "driver",
+        vehiclePicture: vehiclePictureURL,
+        driverLicense: driverLicenseURL,
       };
+
       if (edit) {
-        // Assuming updateDoc is defined and imported
         await updateDoc("users", email, userData);
-        toast("User updated successfully.");
+        toast.success("User updated successfully.");
       } else {
         const res = await signUpWithEmail(email, password, userData);
         if (res) {
-          toast("User created successfully.");
+          toast.success("User created successfully.");
         } else {
-          toast("Failed to create user. Please try again.");
+          toast.error("Failed to create user. Please try again.");
         }
       }
     } catch (error) {
       console.error("Error creating/updating user:", error);
-      toast("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
-      close();
+      setOpen(false);
     }
   };
 
   return (
-    <>
-      <Button
-        size={edit ? "" : "lg"}
-        onClick={open}
-        color="primary"
-        className="mr-2"
-      >
-        {edit ? "Edit Driver" : "Add Driver"}
-      </Button>
-
-      <Modal
-        opened={opened}
-        onClose={close}
-        title={edit ? "Edit Driver" : "Create New Driver"}
-        centered
-      >
-        <LoadingOverlay visible={isLoading} overlayBlur={2} />
-
-        <TextInput
-          label="Name"
-          name="firstName"
-          placeholder="Name"
-          value={form.firstName}
-          onChange={handleChange}
-          mb={10}
-          required
-          fullWidth
-        />
-
-        <NumberInput
-          label="Phone"
-          name="phone"
-          placeholder="Phone"
-          value={form.phone}
-          onChange={(value) =>
-            setForm((prevForm) => ({ ...prevForm, phone: value }))
-          }
-          required
-          fullWidth
-        />
-
-        <TextInput
-          label="Address"
-          name="companyAddress"
-          placeholder="Address"
-          value={form.companyAddress}
-          onChange={handleChange}
-          mb={10}
-          required
-          fullWidth
-        />
-
-        <TextInput
-          label="Password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          mb={10}
-          required={!edit}
-          disabled={edit}
-          fullWidth
-        />
-
-        <TextInput
-          label="Email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          mb={10}
-          required={!edit}
-          disabled={edit}
-          fullWidth
-        />
-
-        <Group position="right" mt="md">
-          <Button fullWidth color="primary" variant="flat" onClick={close}>
-            Close
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Edit className="mr-2 h-4 w-4" />{" "}
+          {edit ? "Edit Driver" : "Add Driver"}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-5xl w-full">
+        <DialogHeader>
+          <DialogTitle>
+            {edit ? "Edit Driver" : "Create New Driver"}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-4">
+          {/* Form fields */}
+          <div className="flex flex-col">
+            <Label htmlFor="firstName">Name</Label>
+            <Input
+              id="firstName"
+              name="firstName"
+              value={form.firstName}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={form.phone}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col sm:col-span-2">
+            <Label htmlFor="companyAddress">Address</Label>
+            <Textarea
+              id="companyAddress"
+              name="companyAddress"
+              value={form.companyAddress}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              disabled={edit}
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              disabled={edit}
+            />
+          </div>
+          <div className="flex flex-col sm:col-span-2">
+            <Label htmlFor="vehicleDetails">Vehicle Details</Label>
+            <Textarea
+              id="vehicleDetails"
+              name="vehicleDetails"
+              value={form.vehicleDetails}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="vehiclePicture">Vehicle Picture</Label>
+            <Input
+              id="vehiclePicture"
+              name="vehiclePicture"
+              type="file"
+              onChange={(e) => handleFileChange(e, setVehiclePicture)}  
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="driverLicense">Driver License</Label>
+            <Input
+              id="driverLicense"
+              name="driverLicense"
+              type="file"
+              onChange={(e) => handleFileChange(e, setDriverLicense)}  
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="abn">ABN Number</Label>
+            <Input
+              id="abn"
+              name="abn"
+              value={form.abn}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="paymentPercentage">Payment Percentage</Label>
+            <Input
+              id="paymentPercentage"
+              name="paymentPercentage"
+              type="number"
+              value={form.paymentPercentage}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="startDate">Start Date</Label>
+            <Input
+              id="startDate"
+              name="startDate"
+              type="date"
+              value={form.startDate}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="dateOfBirth">Date of Birth</Label>
+            <Input
+              id="dateOfBirth"
+              name="dateOfBirth"
+              type="date"
+              value={form.dateOfBirth}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+        <div className="flex justify-end gap-4">
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancel
           </Button>
-          <Button fullWidth color="primary" onClick={handleCreateOrUpdate}>
+          <Button onClick={handleCreateOrUpdate} disabled={isLoading}>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {edit ? "Update" : "Create"}
           </Button>
-        </Group>
-      </Modal>
-    </>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

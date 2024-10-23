@@ -36,25 +36,11 @@ export default function Page() {
             className="pl-8"
           />
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setSelectedUser(null)}>
-              <Search className="mr-2 h-4 w-4" /> Add Driver
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {selectedUser ? "Modify Driver" : "Create Driver"}
-              </DialogTitle>
-            </DialogHeader>
-            <Create
-              edit={!!selectedUser}
-              driver={selectedUser}
-              onClose={() => setIsDialogOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        <Create
+          edit={!!selectedUser}
+          driver={selectedUser}
+          onClose={() => setIsDialogOpen(false)}
+        />
       </div>
       <Divider className="my-6" />
       <DriverTable filter={filter} />

@@ -12,14 +12,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Trash2, History, Edit, RefreshCw } from "lucide-react";
+import DriverDetailsDialog from "./Overview";
+import { Trash2, History, RefreshCw } from "lucide-react";
 import { deleteUserAcc } from "@/api/firebase/functions/auth";
 import useAdminContext from "@/context/AdminProvider";
 import Create from "./Create";
@@ -41,7 +35,6 @@ export default function DriverTable({ filter }) {
 
   const handleDeleteUser = async (email) => {
     const res = await deleteUserAcc(email);
-    // Additional logic after deletion if needed
   };
 
   return (
@@ -98,11 +91,11 @@ export default function DriverTable({ filter }) {
                   <Badge variant="outline">{index + 1}</Badge>
                 </TableCell>
                 <TableCell className="font-medium">
-                  {driver?.firstName}
+                  <DriverDetailsDialog driverDetails={driver} />
                 </TableCell>
                 <TableCell>{driver?.phone || "N/A"}</TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{driver?.role}</Badge>
+                  <Badge variant="secondary" className="bg-gray-700">{driver?.role}</Badge>
                 </TableCell>
                 <TableCell>{driver?.email}</TableCell>
                 <TableCell className="text-right">
@@ -124,19 +117,7 @@ export default function DriverTable({ filter }) {
                   >
                     <History className="mr-2 h-4 w-4" /> History
                   </Button>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="mr-2">
-                        <Edit className="mr-2 h-4 w-4" /> Edit
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Edit Driver</DialogTitle>
-                      </DialogHeader>
-                      <Create edit={true} driver={driver} />
-                    </DialogContent>
-                  </Dialog>
+                  <Create edit={true} driver={driver} />
                   <Button variant="outline" size="sm">
                     <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
                   </Button>
