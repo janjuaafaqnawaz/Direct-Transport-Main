@@ -11,7 +11,6 @@ export default function StatsGridIcons() {
   const { allBookings, allUsers, allDrivers, totalBookings } =
     useAdminContext();
 
-  // Get the current date and time in Australian Eastern Standard Time (AEST)
   const currentDate = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Australia/Sydney" })
   );
@@ -48,25 +47,19 @@ export default function StatsGridIcons() {
       title: "Bookings",
       value: totalBookings,
       diff: 34,
-      href: "/admin/ManageBookings",
+      href: "/admin/Manage/Bookings",
     },
-    // {
-    //   title: getCurrentMonthName(),
-    //   value: getCurrentMonthBookings,
-    //   diff: 18,
-    //   href: "/admin/ManageBookings",
-    // },
     {
       title: "Users",
       value: allUsers.length,
       diff: 13,
-      href: "/admin/manageusers",
+      href: "/admin/Manage/Users",
     },
     {
       title: "Drivers",
       value: allDrivers.length,
       diff: 18,
-      href: "/admin/drivers",
+      href: "/admin/Manage/Drivers",
     },
   ];
 
