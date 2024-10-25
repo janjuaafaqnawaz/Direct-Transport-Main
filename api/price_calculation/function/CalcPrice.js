@@ -259,7 +259,7 @@ async function determinePricingAndReturnType({
   let price = 0;
   let returnType = "N/A";
 
-  if ((!isOriginInside || !isDestinationInside) && isLdDisabled === false) {
+  if ((!isOriginInside || !isDestinationInside) && isLdDisabled !== true) {
     ({ price, returnType } = await LongDistancePricing(
       max_volume,
       long_distance,
