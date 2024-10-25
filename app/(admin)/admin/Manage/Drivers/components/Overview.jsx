@@ -159,53 +159,54 @@ function DriverNote({
         <p className="text-sm text-muted-foreground">
           Manage notes for the drivers
         </p>
-        {statusEntries.map((entry, index) => (
-          <div key={index} className="p-2">
-            <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
-              <div className="space-y-2">
-                <Label htmlFor={`date-${index}`}>Date</Label>
-                <div className="relative">
-                  <CalendarIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    id={`date-${index}`}
-                    type="date"
-                    className="pl-10"
-                    value={format(new Date(entry.date), "yyyy-MM-dd")}
-                    onChange={(e) =>
-                      handleDateChange(index, new Date(e.target.value))
-                    }
-                  />
+        {statusEntries &&
+          statusEntries.map((entry, index) => (
+            <div key={index} className="p-2">
+              <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
+                <div className="space-y-2">
+                  <Label htmlFor={`date-${index}`}>Date</Label>
+                  <div className="relative">
+                    <CalendarIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      id={`date-${index}`}
+                      type="date"
+                      className="pl-10"
+                      value={format(new Date(entry.date), "yyyy-MM-dd")}
+                      onChange={(e) =>
+                        handleDateChange(index, new Date(e.target.value))
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`reason-${index}`}>Reason</Label>
+                  <Select
+                    value={entry.reason}
+                    onValueChange={(value) => handleReasonChange(index, value)}
+                  >
+                    <SelectTrigger id={`reason-${index}`}>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="started-late">Late</SelectItem>
+                      <SelectItem value="day-off">Day Off</SelectItem>
+                      <SelectItem value="sick-day">Sick Day</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-end">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleDeleteEntry(index)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">Delete entry</span>
+                  </Button>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor={`reason-${index}`}>Reason</Label>
-                <Select
-                  value={entry.reason}
-                  onValueChange={(value) => handleReasonChange(index, value)}
-                >
-                  <SelectTrigger id={`reason-${index}`}>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="started-late">Late</SelectItem>
-                    <SelectItem value="day-off">Day Off</SelectItem>
-                    <SelectItem value="sick-day">Sick Day</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-end">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleDeleteEntry(index)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Delete entry</span>
-                </Button>
-              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline" onClick={handleAddEntry}>
