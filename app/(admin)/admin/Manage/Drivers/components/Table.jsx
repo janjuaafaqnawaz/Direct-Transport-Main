@@ -91,11 +91,15 @@ export default function DriverTable({ filter }) {
                   <Badge variant="outline">{index + 1}</Badge>
                 </TableCell>
                 <TableCell className="font-medium">
-                  <DriverDetailsDialog driverDetails={driver} />
+                  {/* <DriverDetailsDialog driverDetails={driver} /> */}
+
+                  {driver?.firstName}
                 </TableCell>
                 <TableCell>{driver?.phone || "N/A"}</TableCell>
                 <TableCell>
-                  <Badge variant="secondary" className="bg-gray-700">{driver?.role}</Badge>
+                  <Badge variant="secondary" className="bg-gray-700">
+                    {driver?.role}
+                  </Badge>
                 </TableCell>
                 <TableCell>{driver?.email}</TableCell>
                 <TableCell className="text-right">
