@@ -172,7 +172,7 @@ export default function Create({ edit, driver }) {
               disabled={edit}
             />
           </div>
-          <div className="flex flex-col sm:col-span-2">
+          {/* <div className="flex flex-col sm:col-span-2">
             <Label htmlFor="vehicleDetails">Vehicle Details</Label>
             <Textarea
               id="vehicleDetails"
@@ -237,7 +237,7 @@ export default function Create({ edit, driver }) {
               value={form.dateOfBirth}
               onChange={handleChange}
             />
-          </div>
+          </div> */}
         </div>
         <div className="flex justify-end gap-4">
           <Button variant="outline" onClick={() => setOpen(false)}>
