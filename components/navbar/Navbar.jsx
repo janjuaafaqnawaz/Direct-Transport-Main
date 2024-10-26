@@ -9,32 +9,40 @@ import Reports from "./Reports";
 import { Button, ButtonGroup } from "@mantine/core";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-const getUserRole = () => {
-  if (typeof window !== "undefined") {
-    const userDoc = JSON.parse(localStorage.getItem("userDoc") || "{}");
-    return userDoc.role || null;
-  }
-  return null;
-};
+import { fetchUserData } from "@/api/firebase/functions/auth";
 
 const Navbar = () => {
   const router = useRouter();
-  const [userPagesToRender, setUserPagesToRender] = useState(authPages);
+  const [userPagesToRender, setUserPagesToRender] = useState([]);
   const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userRole = getUserRole();
-    setRole(userRole);
+    const fetchUserAndSetData = async () => {
+      try {
+        const user = await fetchUserData();
+        const userRole = user?.role || "auth";
+        setRole(userRole);
 
-    const pages = {
-      admin: adminPages,
-      business: businessPages,
-      user: userPages,
-      auth: authPages,
+        const pages = {
+          admin: adminPages,
+          business: businessPages,
+          user: userPages,
+          auth: authPages,
+        };
+
+        setUserPagesToRender(pages[userRole] || authPages);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    setUserPagesToRender(pages[userRole] || authPages);
+
+    fetchUserAndSetData();
   }, []);
+
+  if (loading) return null; // Avoid rendering Navbar until loading is complete
 
   return (
     <nav
@@ -44,16 +52,15 @@ const Navbar = () => {
         alignItems: "center",
         marginTop: 20,
       }}
+      className="navbar"
     >
-      <Link href={userPagesToRender ? "http://courierssydney.com.au" : "/"}>
+      <Link href="http://courierssydney.com.au">
         <Image
-          src={
-            "https://courierssydney.com.au/wp-content/uploads/2023/11/Direct-Transport-Solutions-2.png"
-          }
+          src="https://courierssydney.com.au/wp-content/uploads/2023/11/Direct-Transport-Solutions-2.png"
           alt="logo"
           width={150}
           height={150}
-          style={{ width: "80%", height: "auto" }}
+          className="logo"
         />
       </Link>
       <Hidden mdDown>
@@ -73,33 +80,26 @@ const Navbar = () => {
 export default Navbar;
 
 const ButtonsSection = ({ userPagesToRender, router, role }) => (
-  <div>
-    <ButtonGroup className="gap-[2px]">
-      {userPagesToRender.map((val, ind) => (
-        <Button
-          key={ind}
-          onClick={() => router.push(val.link)}
-          variant="light"
-          color="#1384e1"
-        >
-          {val.label}
-        </Button>
-      ))}
-      {role === "admin" ? <Reports /> : null}
-    </ButtonGroup>
-  </div>
+  <ButtonGroup className="gap-[2px]">
+    {userPagesToRender.map((val, ind) => (
+      <Button
+        key={ind}
+        onClick={() => router.push(val.link)}
+        variant="light"
+        color="#1384e1"
+      >
+        {val.label}
+      </Button>
+    ))}
+    {role === "admin" && <Reports />}
+  </ButtonGroup>
 );
 
 const MenuSection = ({ userPagesToRender }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
   return (
     <>
@@ -112,8 +112,8 @@ const MenuSection = ({ userPagesToRender }) => {
         onClose={handleMenuClose}
       >
         {userPagesToRender.map((val, ind) => (
-          <Link style={{ textDecoration: "none" }} key={ind} href={val.link}>
-            <MenuItem style={{ color: "grey" }} onClick={handleMenuClose}>
+          <Link key={ind} href={val.link} passHref>
+            <MenuItem onClick={handleMenuClose} style={{ color: "grey" }}>
               {val.label}
             </MenuItem>
           </Link>

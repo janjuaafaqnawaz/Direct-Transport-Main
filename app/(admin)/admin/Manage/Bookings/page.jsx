@@ -26,11 +26,17 @@ export default function App() {
     }
   };
 
+  const archivedBookings = allBookings.filter(
+    (item) => item?.isArchived === true
+  );
+  const unArchivedBookings = allBookings.filter(
+    (item) => item?.isArchived !== true
+  );
+
   const futureBookings = useMemo(() => {
     const today = startOfDay(new Date());
-    // || booking.createdAt < today
     return allBookings.filter((booking) => {
-      if (!booking.date) return false;
+      if (!booking.date || booking.isArchived) return false;
       const bookingDate = parseDate(booking.date);
       return bookingDate && isFuture(bookingDate) && bookingDate > today;
     });
@@ -39,7 +45,7 @@ export default function App() {
   const todaysBookings = useMemo(
     () =>
       allBookings.filter((booking) => {
-        if (!booking.date) return false;
+        if (!booking.date || booking.isArchived) return false;
         const bookingDate = parseDate(booking.date);
         return bookingDate && isToday(bookingDate);
       }),
@@ -96,10 +102,21 @@ export default function App() {
             </CardBody>
           </Card>
         </Tab>
-        <Tab title={`All bookings ${newBookingsCount(allBookings)}`}>
+        <Tab title={`All bookings ${newBookingsCount(unArchivedBookings)}`}>
           <Card>
             <CardBody>
-              <ManageInvoices invoice={allBookings} title={"Booking"} />
+              <ManageInvoices invoice={unArchivedBookings} title={"Booking"} />
+            </CardBody>
+          </Card>
+        </Tab>
+        <Tab title={`Archived ${archivedBookings.length}`}>
+          <Card>
+            <CardBody>
+              <ManageInvoices
+                isArchived={true}
+                invoice={archivedBookings}
+                title={"Archived Bookings"}
+              />
             </CardBody>
           </Card>
         </Tab>
