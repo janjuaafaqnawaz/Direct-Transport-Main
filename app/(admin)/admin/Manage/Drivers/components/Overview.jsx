@@ -98,7 +98,7 @@ function DriverNote({
   driverDetails = { email: "driver@example.com", statusEntries: [] },
 }) {
   const [statusEntries, setStatusEntries] = useState(
-    driverDetails.statusEntries
+    driverDetails?.statusEntries || []
   );
   const [isSaving, setIsSaving] = useState(false);
 
@@ -121,7 +121,8 @@ function DriverNote({
   };
 
   const handleAddEntry = () => {
-    setStatusEntries([...statusEntries, { date: new Date(), reason: "" }]);
+    const entries = [...statusEntries, { date: new Date(), reason: "" }];
+    setStatusEntries(entries);
   };
 
   const handleDeleteEntry = (index) => {
@@ -159,7 +160,7 @@ function DriverNote({
         <p className="text-sm text-muted-foreground">
           Manage notes for the drivers
         </p>
-        {statusEntries.map((entry, index) => (
+        {statusEntries?.map((entry, index) => (
           <div key={index} className="p-2">
             <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
               <div className="space-y-2">
