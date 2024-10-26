@@ -83,10 +83,6 @@ export default async function CalcPrice({
     service
   );
 
-  price = charges;
-  serviceCharges = serviceCharge;
-  gst_charges = await GstCharges(price, gst);
-
   if (service !== "Standard") {
     const origin = formData.address.Origin.coordinates;
     const destination = formData.address.Destination.coordinates;
@@ -115,9 +111,15 @@ export default async function CalcPrice({
   );
 
   const additional =
-    priceSettings?.same_day?.additional?.additional ||
-    priceSettings?.additional?.additional ||
-    0;
+    booking_type === "same_day"
+      ? priceSettings?.same_day?.additional?.additional ||
+        priceSettings?.additional?.additional ||
+        0
+      : 0;
+
+  price = charges;
+  serviceCharges = serviceCharge;
+  gst_charges = await GstCharges(Number(price) + Number(additional), gst);
 
   console.info({
     pricing: {
@@ -126,7 +128,7 @@ export default async function CalcPrice({
       requestQuote,
       returnType,
       booking_type,
-      additional: booking_type === "same_day" ? additional : 0,
+      additional,
       priceSettings,
     },
 
