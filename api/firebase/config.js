@@ -1,14 +1,14 @@
-"use client"
+"use client";
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC5YFlQwsRe0egpJsgKdLflBjo_1UHQV74",
-    authDomain: "couriers-946ec.firebaseapp.com",
-    projectId: "couriers-946ec",
-    storageBucket: "couriers-946ec.appspot.com",
-    messagingSenderId: "828818568390",
-    appId: "1:828818568390:web:aa706c769c69c92f8093c7",
-    measurementId: "G-HD9NTD86S6"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 
 export const app = initializeApp(firebaseConfig);
