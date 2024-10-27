@@ -79,6 +79,9 @@ export default function MyDocument({ booking }) {
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>GST</Text>
             </View>{" "}
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Total</Text>
+            </View>
           </View>
 
           {/* Body */}
@@ -126,6 +129,15 @@ export default function MyDocument({ booking }) {
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}>${(booking?.gst).toFixed(2)}</Text>
             </View>{" "}
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCell}>
+                $
+                {(
+                  Number(booking?.totalPriceWithGST) +
+                  Number(booking?.totalTollsCost)
+                ).toFixed(2) || 0}
+              </Text>
+            </View>
           </View>
 
           <View style={{ width: "100%", marginBottom: 20, marginTop: 20 }}>
