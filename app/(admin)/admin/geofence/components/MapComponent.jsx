@@ -12,7 +12,6 @@ import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import L from "leaflet"; // Import Leaflet
-import { LocationCity } from "@mui/icons-material";
 
 const customIcon = new L.Icon({
   iconUrl: "/icons/location.png",
