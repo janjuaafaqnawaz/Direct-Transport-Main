@@ -11,7 +11,15 @@ import {
 import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
+import L from "leaflet"; // Import Leaflet
 import { LocationCity } from "@mui/icons-material";
+
+const customIcon = new L.Icon({
+  iconUrl: "/icons/location.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
 
 const MapComponent = ({
   geofenceCoords,
@@ -62,7 +70,7 @@ const MapComponent = ({
         />
         <Polygon positions={geofenceCoords} />
         {newAddressCoords && (
-          <Marker icon={<LocationCity />} position={newAddressCoords} />
+          <Marker icon={customIcon} position={newAddressCoords} />
         )}
       </FeatureGroup>
     </MapContainer>
