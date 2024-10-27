@@ -140,16 +140,24 @@ const AdminProvider = ({ children }) => {
     };
   }, []); // Run once on component mount
 
+  const archivedBookings = allBookings.filter(
+    (item) => item?.isArchived === true
+  );
+  const unArchivedBookings = allBookings.filter(
+    (item) => item?.isArchived !== true
+  );
+
   return (
     <AdminContext.Provider
       value={{
-        allBookings,
+        allBookings: unArchivedBookings,
         allUsers,
         allDrivers,
-        priceSettings, // Provide price settings in context
+        priceSettings,
         fetchNextBookingsPage: () => fetchBookingsWithPagination(false),
         isLoading,
-        totalBookings, // Provide total bookings count to the context
+        totalBookings,
+        archivedBookings,
       }}
     >
       {children}

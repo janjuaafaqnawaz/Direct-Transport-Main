@@ -11,6 +11,7 @@ import {
 import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
+import { LocationCity } from "@mui/icons-material";
 
 const MapComponent = ({
   geofenceCoords,
@@ -60,7 +61,9 @@ const MapComponent = ({
           }}
         />
         <Polygon positions={geofenceCoords} />
-        {newAddressCoords && <Marker position={newAddressCoords} />}
+        {newAddressCoords && (
+          <Marker icon={<LocationCity />} position={newAddressCoords} />
+        )}
       </FeatureGroup>
     </MapContainer>
   );

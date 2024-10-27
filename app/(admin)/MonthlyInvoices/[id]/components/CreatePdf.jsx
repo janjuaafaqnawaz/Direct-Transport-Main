@@ -71,7 +71,7 @@ export default function CreatePdf({ datesRange, user }) {
     async function fetchData() {
       try {
         const bookings = await placeBookingsExistingAccsMonthly(user.email);
-        setMyBookings(bookings);
+        setMyBookings(bookings?.filter((item) => item?.isArchived !== true));
       } catch (error) {
         console.error("Error Creating PDF:", error);
       } finally {

@@ -91,8 +91,8 @@ export default function History({ email }) {
         <TableColumn>Issue</TableColumn>
         <TableColumn>Dates</TableColumn>
         <TableColumn>Download</TableColumn>
-        <TableColumn>Send to Client</TableColumn>
         <TableColumn>Delete</TableColumn>
+        <TableColumn>Send to Client</TableColumn>
       </TableHeader>
       <TableBody emptyContent={"No rows to display."}>
         {pdfs.map((pdf) => {

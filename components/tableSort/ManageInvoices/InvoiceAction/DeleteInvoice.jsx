@@ -30,7 +30,7 @@ export default function DeleteInvoice({ isArchived, id, booking }) {
       }
     } catch (error) {
       console.error("Error updating or deleting document:", error);
-      toast.error("Error occurred while processing your request.");
+      // toast.error("Error occurred while processing your request.");
     } finally {
       close();
     }

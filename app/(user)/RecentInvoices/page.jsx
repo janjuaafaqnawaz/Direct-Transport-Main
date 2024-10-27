@@ -12,7 +12,9 @@ export default function Page() {
     const fetchData = async () => {
       try {
         const fetchedPlace_booking = await fetchPlace_booking();
-        setPlace_booking(fetchedPlace_booking);
+        setPlace_booking(
+          fetchedPlace_booking.filter((item) => item?.isArchived !== true)
+        );
       } catch (error) {
         console.error("Error fetching place bookings:", error);
       }
