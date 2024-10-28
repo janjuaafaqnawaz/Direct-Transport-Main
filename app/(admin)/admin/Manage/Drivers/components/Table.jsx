@@ -115,7 +115,7 @@ export default function DriverTable({ filter }) {
                     variant="outline"
                     size="sm"
                     onClick={() =>
-                      router.push(`/admin/Drivers/${driver?.email}`)
+                      router.push(`/admin/Manage/Drivers/${driver?.email}`)
                     }
                     className="mr-2"
                   >
