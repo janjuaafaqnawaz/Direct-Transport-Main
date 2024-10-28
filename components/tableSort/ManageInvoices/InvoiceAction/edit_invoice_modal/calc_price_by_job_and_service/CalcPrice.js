@@ -8,7 +8,7 @@ import determineReturnAndServiceTypes from "@/api/price_calculation/function/hel
 
 export default async function CalcPrice({ rate, min_rate, gst, formData }) {
   const priceSettings = await userPriceSettings();
-  console.log({ priceSettings });
+  // console.log({ priceSettings });
 
   const resTruckRate = priceSettings?.truckServices ?? {};
   const truckRate = Object.fromEntries(
@@ -22,6 +22,12 @@ export default async function CalcPrice({ rate, min_rate, gst, formData }) {
   let gst_charges = 0;
   let serviceCharges = 0;
   const requestQuote = false;
+
+  if (returnType === "10") {
+    returnType = "10T";
+  } else if (returnType === "12") {
+    returnType = "12T";
+  }
 
   try {
     const minute_rate = MinuteRate(distance);
