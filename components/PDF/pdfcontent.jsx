@@ -34,7 +34,7 @@ export default function MyDocument({ booking }) {
               1353 The Horsley Dr Wetherill Park NSW 2164
             </Text>
             <Text style={styles.para}>
-              Email: bookings@courierssydney.com.au
+              Email: bookings@directtransport.com.au
             </Text>
           </View>
         </View>
@@ -170,7 +170,7 @@ export default function MyDocument({ booking }) {
           <Text style={styles.heading}>Direct Transport Solutions Pty Ltd</Text>
           <Text style={styles.para}>
             ABN 87 658 348 808| 1353 The Horsley Dr Wetherill Park NSW 2164 |
-            Phone: (02) 9030 0333| Email: bookings@courierssydney.com.au
+            Phone: (02) 9030 0333| Email: bookings@directtransport.com.au
           </Text>
           {/* <Text style={styles.heading}>REMITTANCE ADVICE</Text>
           <Text style={styles.para}>Please make your payment to `{">>>"}`</Text>

@@ -224,7 +224,7 @@ export default function MyDocument({ datesRange, invoices, user }) {
           <Text style={styles.heading}>Direct Transport Solutions Pty Ltd</Text>
           <Text style={styles.para}>
             ABN 87 658 348 808| 1353 The Horsley Dr Wetherill Park NSW 2164 |
-            Phone: (02) 9030 0333| Email: bookings@courierssydney.com.au
+            Phone: (02) 9030 0333| Email: bookings@directtransport.com.au
           </Text>
         </View>
       </Page>
