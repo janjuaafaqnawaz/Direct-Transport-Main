@@ -17,6 +17,7 @@ import React, { useEffect, useState } from "react";
 import determineReturnAndServiceTypes from "@/api/price_calculation/function/helper/determineReturnAndServiceTypes";
 import ProcessPrice from "./calc_price_by_job_and_service/index";
 import toast from "react-hot-toast";
+import { useCallback } from "react";
 
 export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   const [invoice, setInvoice] = useState({});
@@ -28,44 +29,28 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
     }
   }, [booking]);
 
-  const handleSubmit = async () => {
-    try {
-      // Fetching minimum wait time rate and GST
+  const handleSubmit = useCallback(async () => {
+      setLoad(true);
+      try {
       const priceSettings = await fetchDocById("price_settings", "data");
-
       const gstVal = Number(priceSettings?.same_day?.gst?.GST);
       const minWaitTimeRate = Number(
         priceSettings?.same_day?.minWaitTime?.minWaitTimeRate
       );
-
-      // Display both values in a formatted toast message
-      // toast.success(`Min Wait Time Rate: ${minWaitTimeRate}, GST: ${gstVal}`);
-
-      setLoad(true);
-
-      // Extracting relevant invoice values with fallback
       const totalPrice = Number(invoice?.totalPrice) || 0;
       const serviceCharges = Number(invoice?.serviceCharges) || 0;
       const wTP = Number(invoice?.WaitingTimeAtPickupDefault) || 0;
       const wTD = Number(invoice?.WaitingTimeAtDropDefault) || 0;
-
-      // Calculating waiting time charges
       const WaitingTimeAtPickup = wTP <= 10 ? 0 : (wTP - 10) * minWaitTimeRate;
       const WaitingTimeAtDrop = wTD <= 10 ? 0 : (wTD - 10) * minWaitTimeRate;
-
-      // Summing up charges
       const chargesSum =
         totalPrice + serviceCharges + WaitingTimeAtPickup + WaitingTimeAtDrop;
       const gst = (chargesSum * gstVal) / 100;
       const totalPriceWithGST = chargesSum + gst;
-
-      // Determining return type and service type
       const returnType = determineReturnAndServiceTypes(
         invoice?.service,
         invoice?.returnType
       );
-
-      // Creating updated invoice object
       const updatedInvoice = {
         ...invoice,
         totalPrice,
@@ -75,39 +60,33 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         WaitingTimeAtDrop,
         returnType,
       };
-
-      // Updating state and database
       setInvoice(updatedInvoice);
       setBooking(updatedInvoice);
       console.log(updatedInvoice);
-
-      // Persist updated invoice
       await updateDoc("place_bookings", invoice?.docId, updatedInvoice);
     } catch (error) {
       console.error("Error updating invoice:", error);
     } finally {
       setLoad(false);
     }
-  };
+  }, [invoice, setInvoice, setBooking]);
 
-  const handleAutoCalcSubmit = async () => {
+  const handleAutoCalcSubmit = useCallback(async () => {
     try {
       const type =
         invoice?.returnType[0] === "C"
           ? "Courier"
           : invoice?.returnType[0] + invoice?.returnType[1];
-      // toast(type);
-      const booking = await ProcessPrice({ ...invoice, returnType: type });
-
+          const booking = await ProcessPrice({ ...invoice, returnType: type });
       toast("Updated Successfully");
-      setInvoice(booking);
       setBooking(booking);
+      setInvoice(booking);
       await updateDoc("place_bookings", invoice.docId, booking);
       toast("Updated Successfully");
     } catch (error) {
       console.log({ error });
     }
-  };
+  }, [invoice, setInvoice, setBooking]);
 
   const icon = (
     <IconClock12 style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
