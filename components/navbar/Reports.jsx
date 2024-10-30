@@ -36,7 +36,7 @@ export default function Reports() {
 
       // Calculate the total price of all bookings, parsing each price as a number
       const total = bookings.reduce(
-        (sum, booking) => sum + Number(booking?.totalPrice || 0),
+        (sum, booking) => sum + Number(booking?.totalPriceWithGST || 0),
         0
       );
       setTotalPrice(total.toFixed(2)); // Format the total to 2 decimal places
