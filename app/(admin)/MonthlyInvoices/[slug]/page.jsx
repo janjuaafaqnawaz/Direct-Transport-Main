@@ -106,6 +106,7 @@ export default function Page(params) {
           users={filteredUsers.filter((user) =>
             isRoleDriver ? user.role === "driver" : user.role !== "driver"
           )}
+          isRoleDriver={isRoleDriver}
         />
       </div>
     </Container>

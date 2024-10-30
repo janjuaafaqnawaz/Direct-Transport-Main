@@ -8,9 +8,8 @@ import DatePick from "./DatePick";
 import History from "./History";
 import CreatePdf from "./CreatePdf";
 
-export default function PDFDetails(params) {
+export default function PDFDetails({ email }) {
   const [datesRange, setDatesRange] = useState({});
-  const email = decodeURIComponent(params.params.id);
   const { allUsers } = useAdminContext();
 
   const user = allUsers.find(

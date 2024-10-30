@@ -1,7 +1,7 @@
-import { getPreviousMonthDates } from "@/api/DateAndTime";
 import { Table } from "@mantine/core";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+
 const PDFDownloadLink = dynamic(
   () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
   {
@@ -10,9 +10,7 @@ const PDFDownloadLink = dynamic(
   }
 );
 
-export default function UserTable({ users, bookings }) {
-  const { startDateStr, endDateStr } = getPreviousMonthDates();
-
+export default function UserTable({ users, bookings, isRoleDriver }) {
   const getBadgeColor = (bookingCount) => {
     if (bookingCount > 20) return "green";
     if (bookingCount > 0) return "blue";
@@ -20,62 +18,36 @@ export default function UserTable({ users, bookings }) {
   };
 
   const rows = users.map((user, key) => {
-    const bookingCount = bookings[user.email]?.length || 0;
-    const badgeColor = getBadgeColor(bookingCount);
-
     return (
-      <Table.Tr key={key}>
-        <Table.Td>{key + 1}</Table.Td>
-        <Table.Td>{user.firstName}</Table.Td>
-        {/* <Table.Td>
-          {startDateStr} - {endDateStr}
-        </Table.Td>
-        <Table.Td>
-          <Tooltip label={`Bookings: ${bookingCount}`} withArrow>
-            <Badge color={badgeColor}>{bookingCount}</Badge>
-          </Tooltip>
-        </Table.Td> */}
-        <Table.Td>
-          {/* {bookingCount !== 0 ? (
-            <PDFDownloadLink
-              document={
-                <MyDocument invoices={bookings[user.email]} user={user} />
-              }
-              fileName={`monthly_bookings_${user.firstName}.pdf`}
-              style={{
-                textDecoration: "none",
-                padding: "10px",
-                color: "#fff",
-                backgroundColor: "#e5383b",
-                border: "none",
-                borderRadius: "30px",
-                margin: "10px",
-                cursor: "pointer",
-              }}
-            >
-              {({ blob, url, loading, error }) =>
-                loading ? "Loading..." : "PDF"
-              }
-            </PDFDownloadLink>
-          ) : null} */}
-          <Link href={`/MonthlyInvoices/${user.email}`}>Go</Link>
-        </Table.Td>
-      </Table.Tr>
+      <tr key={key} className="hover:bg-gray-100 border-b">
+        <td className="py-4 px-6 text-center">{key + 1}</td>
+        <td className="py-4 px-6 text-left">{user.firstName}</td>
+        <td className="py-4 px-6 text-center">
+          <Link
+            href={`/MonthlyInvoices/${isRoleDriver ? "drivers" : "users"}/${
+              user.email
+            }`}
+            className="text-blue-600 hover:underline"
+          >
+            Go
+          </Link>
+        </td>
+      </tr>
     );
   });
 
   return (
-    <Table verticalSpacing={20} highlightOnHover striped>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>No</Table.Th>
-          <Table.Th>Company</Table.Th>
-          {/* <Table.Th>Date</Table.Th>
-          <Table.Th>Total Bookings</Table.Th> */}
-          <Table.Th>Action</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>{rows}</Table.Tbody>
-    </Table>
+    <div className="overflow-x-auto">
+      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+        <thead className="bg-gray-800 text-white">
+          <tr>
+            <th className="py-4 px-6 text-left">No</th>
+            <th className="py-4 px-6 text-left">Company</th>
+            <th className="py-4 px-6 text-left">Action</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>
   );
 }
