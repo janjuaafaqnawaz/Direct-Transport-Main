@@ -2,47 +2,17 @@
 import { getFormattedDateStr, getFormattedTime } from "@/api/DateAndTime";
 import { getDrivers } from "@/api/firebase/functions/fetch";
 import { updateDoc } from "@/api/firebase/functions/upload";
-import { ActionIcon } from "@mantine/core";
-import { DriveEta } from "@mui/icons-material";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  useDisclosure,
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-} from "@nextui-org/react";
+import { Button, Combobox, useCombobox } from "@mantine/core";
 import { useEffect, useState } from "react";
 import NotifyUser from "@/api/NotifyUser";
+import useAdminContext from "@/context/AdminProvider";
 
 export default function App({ booking }) {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [isLoading, setIsLoading] = useState(true);
-  const [drivers, setDrivers] = useState([]);
-
-  useEffect(() => {
-    const fetchDrivers = async () => {
-      try {
-        const fetchedDrivers = await getDrivers();
-        setDrivers(fetchedDrivers);
-      } catch (error) {
-        console.error("Error fetching drivers:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDrivers();
-  }, []);
+  const [isLoading, setIsLoading] = useState(false); // Avoid initial loading state here if not required
+  const { allDrivers, loading } = useAdminContext();
 
   const handleAssignedEmail = async (email, firstName) => {
+    setIsLoading(true);
     try {
       const updatedBooking = {
         ...booking,
@@ -58,99 +28,61 @@ export default function App({ booking }) {
         `Direct Transport Solution`,
         `New Booking ${booking.docId}`
       );
-
-      onClose();
     } catch (error) {
       console.error("Error assigning booking to driver:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+  });
+
+  const options = allDrivers.map((driver) => (
+    <Combobox.Option
+      value={driver.email} // Use a unique value for identification
+      key={driver.email} // Use email as key if unique
+      onClick={() => handleAssignedEmail(driver.email, driver.firstName)}
+    >
+      {driver.firstName}
+    </Combobox.Option>
+  ));
+
   return (
     <>
-      <ActionIcon mx={1} bg={"lime"} onClick={onOpen} size="xl">
-        <DriveEta />
-      </ActionIcon>
-      <Modal size="4xl" isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                {booking?.driverEmail
-                  ? "Booking assigned to the driver:" +
-                    " " +
-                    booking.driverEmail
-                  : "Assign this booking to drivers"}
-              </ModalHeader>
-              <ModalBody>
-                <p>
-                  Assigned to {booking?.driverName} on {""}
-                  {booking?.driverAssignedDate || "-"}
-                  {"-"}
-                  {booking?.driverAssignedTime || "-"}
-                </p>
-                <Table aria-label="Example static collection table">
-                  <TableHeader>
-                    <TableColumn>Name</TableColumn>
-                    <TableColumn>Email</TableColumn>
-                    <TableColumn>Phone</TableColumn>
-                    <TableColumn>Address</TableColumn>
-                    <TableColumn>Assign</TableColumn>
-                  </TableHeader>
-                  <TableBody emptyContent={"No drivers available"}>
-                    {drivers.length > 0
-                      ? drivers.map(
-                          (
-                            { firstName, email, phone, companyAddress },
-                            index
-                          ) => (
-                            <TableRow key={index}>
-                              <TableCell className="text-gray-500 text-sm w-32">
-                                {firstName}
-                              </TableCell>
-                              <TableCell className=" text-gray-700">
-                                {email}
-                              </TableCell>
-                              <TableCell className="text-gray-500 text-sm w-60">
-                                {phone || ""}
-                              </TableCell>
-                              <TableCell className="text-gray-500 w-80 text-sm">
-                                {companyAddress || ""}
-                              </TableCell>
-                              <TableCell className="text-gray-500 text-sm">
-                                <Button
-                                  onClick={() =>
-                                    handleAssignedEmail(email, firstName)
-                                  }
-                                  color="primary"
-                                  fullWidth
-                                  isLoading={isLoading}
-                                  variant={
-                                    email === booking?.driverEmail
-                                      ? "flat"
-                                      : "solid"
-                                  }
-                                >
-                                  {email === booking?.driverEmail
-                                    ? "Assigned"
-                                    : "Assign"}
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          )
-                        )
-                      : null}
-                  </TableBody>
-                </Table>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      <Combobox
+        store={combobox}
+        onOptionSubmit={(val) => {
+          const selectedDriver = allDrivers.find(
+            (driver) => driver.email === val
+          );
+          if (selectedDriver) {
+            handleAssignedEmail(selectedDriver.email, selectedDriver.firstName);
+          }
+          combobox.closeDropdown();
+        }}
+      >
+        <Combobox.Target>
+          <Button
+            size="md"
+            mx={2}
+            mt={-16}
+            w={120}
+            loading={isLoading || loading} // Combine the loading states
+            style={{ textTransform: "uppercase", fontSize: "12px" }}
+            variant="light"
+            color="yellow"
+            onClick={() => combobox.toggleDropdown()}
+          >
+            {booking?.driverName || "Select"}
+          </Button>
+        </Combobox.Target>
+
+        <Combobox.Dropdown>
+          <Combobox.Options>{options}</Combobox.Options>
+        </Combobox.Dropdown>
+      </Combobox>
     </>
   );
 }

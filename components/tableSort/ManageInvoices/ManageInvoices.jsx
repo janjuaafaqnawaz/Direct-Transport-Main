@@ -112,11 +112,17 @@ export default function ManageInvoices({ isArchived, invoice, hideAction }) {
       : {
           field: "actions",
           headerName: "Actions",
-          width: 400,
+          width: 500,
           renderCell: (params) => (
             <>
               <Tooltip label="Pick Status">
                 <StatusDropdown booking={params.row} />
+              </Tooltip>
+              <Tooltip label="Assign Driver">
+                <Assigned booking={params.row || ""} />
+              </Tooltip>{" "}
+              <Tooltip label="Assign Driver">
+                <Notes booking={params.row || ""} />
               </Tooltip>
               <Tooltip label="Edit Invoice">
                 <EditInvoice id={params.row.docId || ""} />
@@ -127,12 +133,6 @@ export default function ManageInvoices({ isArchived, invoice, hideAction }) {
                 id={params.row.docId}
                 booking={params.row}
               />
-              <Tooltip label="Assign Driver">
-                <Assigned booking={params.row || ""} />
-              </Tooltip>{" "}
-              <Tooltip label="Assign Driver">
-                <Notes booking={params.row || ""} />
-              </Tooltip>
             </>
           ),
         },
