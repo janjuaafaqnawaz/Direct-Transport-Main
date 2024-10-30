@@ -9,6 +9,7 @@ import EditInvoice from "./InvoiceAction/edit_invoice_modal/Modal";
 import Assigned from "./InvoiceAction/Assigned";
 import InvoicePOD from "./InvoiceAction/pod_invoice_modal/Modal";
 import { Chip } from "@nextui-org/react";
+import Notes from "./InvoiceAction/notes/Notes";
 
 export default function ManageInvoices({ isArchived, invoice, hideAction }) {
   const sortedInvoices = [...invoice].sort(
@@ -121,10 +122,16 @@ export default function ManageInvoices({ isArchived, invoice, hideAction }) {
                 <EditInvoice id={params.row.docId || ""} />
               </Tooltip>
               <InvoicePOD id={params.row.docId || ""} />
-              <DeleteInvoice isArchived={isArchived} id={params.row.docId} booking={params.row}/>
-
+              <DeleteInvoice
+                isArchived={isArchived}
+                id={params.row.docId}
+                booking={params.row}
+              />
               <Tooltip label="Assign Driver">
                 <Assigned booking={params.row || ""} />
+              </Tooltip>{" "}
+              <Tooltip label="Assign Driver">
+                <Notes booking={params.row || ""} />
               </Tooltip>
             </>
           ),
