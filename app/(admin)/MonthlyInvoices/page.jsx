@@ -31,7 +31,7 @@ export default function Page() {
         </Link>
 
         <Link
-          href="/MonthlyInvoices/drivers"
+          href="/MonthlyInvoices/driver"
           className="group w-96 h-80 relative rounded-lg overflow-hidden"
         >
           <Image

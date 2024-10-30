@@ -6,13 +6,17 @@ import UserTable from "../components/Table";
 import { getPreviousMonthDates } from "@/api/DateAndTime";
 import useAdminContext from "@/context/AdminProvider";
 
-export default function Page() {
+export default function Page(params) {
+  const role = decodeURIComponent(params.params.slug);
+  const isRoleDriver = role === "driver" ? true : false;
+
   const [filteredUsers, setFilteredUsers] = useState([]); // State for filtered allUsers
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0); // Add progress state
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
   const { allUsers, allBookings } = useAdminContext();
 
+  console.log(params, role, filteredUsers);
   async function placeBookingsExistingAccsMonthly(email) {
     const { startDate, endDate } = getPreviousMonthDates();
 
@@ -99,7 +103,9 @@ export default function Page() {
         />
         <UserTable
           bookings={allBookings}
-          users={filteredUsers.filter((user) => user.role !== "driver")}
+          users={filteredUsers.filter((user) =>
+            isRoleDriver ? user.role === "driver" : user.role !== "driver"
+          )}
         />
       </div>
     </Container>
