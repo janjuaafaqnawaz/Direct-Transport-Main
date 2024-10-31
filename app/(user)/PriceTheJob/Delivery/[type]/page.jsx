@@ -9,6 +9,8 @@ import CheckoutSummary from "@/components/CheckoutSummary";
 import Form from "@/components/review_booking/form";
 import ServicesFields from "@/components/fields/ServicesFields";
 import FrequentAddress from "@/components/fields/FrequentAddress";
+import isPointInGeofence from "@/api/price_calculation/function/helper/isPointInGeofence";
+import toast from "react-hot-toast";
 
 export default function Page({ params }) {
   const [formData, setFormData] = useState(initialFormData);
@@ -39,6 +41,26 @@ export default function Page({ params }) {
     width: "100%",
     margin: ".8rem 0",
     minWidth: "10rem",
+  };
+
+  const handleCheckout = async () => {
+    if (params.type !== "same_day") {
+      const { isOriginInside, isDestinationInside } = await isPointInGeofence(
+        formData.address
+      );
+      console.log(isOriginInside, isDestinationInside);
+
+      if (!isOriginInside || !isDestinationInside) {
+        setShow("summary");
+        toast.success("Address saved and is within the allowed area.");
+      } else {
+        toast.error(
+          "Both addresses are inside the non allowed area. Please select valid locations."
+        );
+      }
+    } else {
+      setShow("summary");
+    }
   };
 
   if (show === "checkout") {
@@ -167,9 +189,7 @@ export default function Page({ params }) {
               color="#1384e1"
               mt={3}
               variant="filled"
-              onClick={() => {
-                setShow("summary");
-              }}
+              onClick={handleCheckout}
             >
               Price A Job
             </Button>
