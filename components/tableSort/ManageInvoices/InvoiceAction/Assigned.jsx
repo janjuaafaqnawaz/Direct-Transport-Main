@@ -65,10 +65,10 @@ export default function App({ booking }) {
       >
         <Combobox.Target>
           <Button
-            size="md"
-            mx={2}
+            size="compact-md"
             mt={-16}
-            w={120}
+            w={90}
+            h={50}
             loading={isLoading || loading} // Combine the loading states
             style={{ textTransform: "uppercase", fontSize: "12px" }}
             variant="light"

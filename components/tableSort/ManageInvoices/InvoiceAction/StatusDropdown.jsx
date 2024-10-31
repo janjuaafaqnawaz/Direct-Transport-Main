@@ -58,9 +58,10 @@ export default function StatusDropdown({ booking }) {
     >
       <Combobox.Target>
         <Button
-          size="md"
+          size="compact-md"
           mt={-16}
-          w={120}
+          w={90}
+          h={50}
           loading={loading}
           style={{ textTransform: "uppercase", fontSize: "12px" }}
           variant="light"

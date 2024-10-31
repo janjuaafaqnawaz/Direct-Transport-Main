@@ -58,17 +58,17 @@ export default function ManageInvoices({ isArchived, invoice, hideAction }) {
             )
           : "err",
     },
-    { field: "userName", headerName: "Customer", width: 150 },
+    { field: "userName", headerName: "Customer", width: 100 },
     {
       field: "pickupSuburb",
       headerName: "Pickup Suburb",
-      width: 150,
+      width: 100,
       valueGetter: (value, row) => row?.pickupSuburb,
     },
     {
       field: "deliverySuburb",
       headerName: "Delivery Suburb",
-      width: 150,
+      width: 100,
       valueGetter: (value, row) => row?.deliverySuburb,
     },
     {
@@ -96,7 +96,7 @@ export default function ManageInvoices({ isArchived, invoice, hideAction }) {
       : {
           field: "driverName",
           headerName: "Driver Name",
-          width: 150,
+          width: 90,
           valueGetter: (value, row) => toCapitalize(row?.driverName) || "N/A",
         },
     hideAction
@@ -105,7 +105,7 @@ export default function ManageInvoices({ isArchived, invoice, hideAction }) {
           field: "payment",
           headerName: "Payment",
           valueGetter: (value, row) => row?.payment || "Manual",
-          width: 80,
+          width: 70,
         },
     hideAction
       ? null
