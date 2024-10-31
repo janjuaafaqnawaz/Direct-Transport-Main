@@ -8,8 +8,6 @@ import PdfButton from "./pdf/PdfButton";
 import { Loader } from "@mantine/core";
 
 function convertToISOString(dateString, hours = 11, minutes = 25, seconds = 4) {
-  console.log({ dateString });
-
   if (!dateString || typeof dateString !== "string") {
     console.error("Invalid date string:", dateString);
     return null;

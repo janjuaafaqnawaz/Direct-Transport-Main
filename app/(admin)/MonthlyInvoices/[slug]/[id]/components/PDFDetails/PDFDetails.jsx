@@ -7,8 +7,9 @@ import React, { useState } from "react";
 import DatePick from "./DatePick";
 import History from "./History";
 import CreatePdf from "./CreatePdf";
+import CreatePdfForDrivers from "./CreatePdfForDrivers";
 
-export default function PDFDetails({ email }) {
+export default function PDFDetails({ email, isRoleDriver }) {
   const [datesRange, setDatesRange] = useState({});
   const { allUsers } = useAdminContext();
 
@@ -33,7 +34,11 @@ export default function PDFDetails({ email }) {
       />
       <DatePick handleDatesRange={(date) => setDatesRange(date)} />
 
-      <CreatePdf datesRange={datesRange} user={user} />
+      {isRoleDriver ? (
+        <CreatePdf datesRange={datesRange} user={user} />
+      ) : (
+        <CreatePdfForDrivers datesRange={datesRange} user={user} />
+      )}
 
       <History email={email} />
     </Container>
