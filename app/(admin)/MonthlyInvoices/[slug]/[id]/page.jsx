@@ -4,7 +4,7 @@ import PDFDetails from "./components/PDFDetails/PDFDetails";
 export default function page(params) {
   const email = decodeURIComponent(params.params.id);
   const role = decodeURIComponent(params.params.slug);
-  const isRoleDriver = role === "driver" ? true : false;
+  const isRoleDriver = role === "drivers" ? true : false;
 
   return (
     <div>

@@ -12,6 +12,7 @@ import CreatePdfForDrivers from "./CreatePdfForDrivers";
 export default function PDFDetails({ email, isRoleDriver }) {
   const [datesRange, setDatesRange] = useState({});
   const { allUsers } = useAdminContext();
+  console.log(isRoleDriver);
 
   const user = allUsers.find(
     (user) => user.email.toLowerCase() === email.toLowerCase()
