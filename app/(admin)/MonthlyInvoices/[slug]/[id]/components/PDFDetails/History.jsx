@@ -23,6 +23,10 @@ export default function History({ email }) {
     const get = async () => {
       try {
         const pdfs = await fetchMyPdfsOfDoc(email);
+        pdfs.sort(
+          (a, b) =>
+            b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()
+        );
         setPdfs(pdfs);
       } catch (err) {
         setError("Failed to fetch PDFs.");
@@ -95,7 +99,7 @@ export default function History({ email }) {
         <TableColumn>Send to Client</TableColumn>
       </TableHeader>
       <TableBody emptyContent={"No rows to display."}>
-        {pdfs.map((pdf) => {
+        {pdfs?.map((pdf, index) => {
           return (
             <TableRow key={pdf.id}>
               <TableCell>{pdf?.firstName || pdf?.userName}</TableCell>
