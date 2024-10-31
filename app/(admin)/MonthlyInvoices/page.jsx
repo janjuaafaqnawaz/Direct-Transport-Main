@@ -20,12 +20,12 @@ export default function Page() {
           />
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
             <p className="text-3xl text-center font-semibold text-white">
-              Create and Manage <br /> users PDFs
+              Create and Manage <br /> Users PDFs
             </p>
           </div>
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <Button className="w-28 mb-8" auto color="primary">
-              Book Now
+              Go to details
             </Button>
           </div>
         </Link>
@@ -43,12 +43,12 @@ export default function Page() {
           />
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
             <p className="text-3xl text-center font-semibold text-white">
-              Create and Manage <br /> driver PDFs
+              Create and Manage <br /> Driver PDFs
             </p>
           </div>
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             <Button className="w-28 mb-8" auto color="primary">
-              Book Now
+              Go to details
             </Button>
           </div>
         </Link>
