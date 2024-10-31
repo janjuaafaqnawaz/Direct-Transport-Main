@@ -6,39 +6,14 @@ import useAdminContext from "@/context/AdminProvider";
 import { parse } from "date-fns";
 import PdfButton from "./pdf/PdfButton";
 import { Loader } from "@mantine/core";
-
-function convertToISOString(dateString, hours = 11, minutes = 25, seconds = 4) {
-  if (!dateString || typeof dateString !== "string") {
-    console.error("Invalid date string:", dateString);
-    return null;
-  }
-
-  const [day, month, year] = dateString.split("/");
-
-  // Check if the date components are valid numbers
-  if (!day || !month || !year || isNaN(day) || isNaN(month) || isNaN(year)) {
-    console.error("Invalid date components:", { day, month, year });
-    return null;
-  }
-
-  const date = new Date(
-    Date.UTC(year, month - 1, day, hours, minutes, seconds)
-  );
-
-  if (isNaN(date)) {
-    console.error("Invalid Date:", date);
-    return null;
-  }
-
-  return date.toISOString();
-}
+import convertToISOString from "./convertToISOString";
 
 export default function CreatePdf({ datesRange, user }) {
   const [loading, setLoading] = useState(true);
   const [myBookings, setMyBookings] = useState([]);
   const { allBookings } = useAdminContext();
 
-  async function placeBookingsExistingAccsMonthly(email) {
+  async function placeBookingsExistingAccsMonthly() {
     const { start, end } = datesRange;
 
     const startDate = parse(start, "dd/MM/yyyy", new Date());
@@ -51,7 +26,13 @@ export default function CreatePdf({ datesRange, user }) {
     try {
       return allBookings.filter((booking) => {
         const bookingDate = new Date(convertToISOString(booking.date));
-
+        console.error(
+          "Email is missing in booking or user object.",
+          "driverEmail",
+          booking.driverEmail,
+          "userEmail",
+          user?.email
+        );
         return (
           booking.userEmail.toLowerCase() === user.email.toLowerCase() &&
           bookingDate >= startDate &&

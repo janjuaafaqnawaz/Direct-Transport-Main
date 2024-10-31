@@ -11,6 +11,7 @@ import LayoutSelector from "./PdfLayout";
 import toast from "react-hot-toast";
 import PDFLayout1 from "./PDFLayout1";
 import PDFLayout2 from "./PDFLayout2";
+import PDFLayoutDriver from "./PDFLayoutDriver";
 
 const storage = getStorage(app);
 
@@ -22,13 +23,28 @@ const PDFDownloadLink = dynamic(
   }
 );
 
-export default function PdfButton({ user, bookings, datesRange }) {
+export default function PdfButton({
+  user,
+  bookings,
+  datesRange,
+  driverLayout,
+  pdfId,
+}) {
   const [uploading, setUploading] = useState(false);
   const bookingCount = bookings.length;
   const [selectedLayout, setSelectedLayout] = useState("Layout1");
 
   const getPDFDocument = () => {
-    if (selectedLayout === "Layout2") {
+    if (driverLayout) {
+      return (
+        <PDFLayoutDriver
+          datesRange={datesRange}
+          invoices={bookings}
+          user={user}
+          pdfId={pdfId}
+        />
+      );
+    } else if (selectedLayout === "Layout2") {
       return (
         <PDFLayout2 datesRange={datesRange} invoices={bookings} user={user} />
       );
@@ -59,6 +75,7 @@ export default function PdfButton({ user, bookings, datesRange }) {
           url: downloadURL,
           createdAt: new Date(),
           datesRange,
+          pdfId,
         },
         "generatedPdfs"
       );
@@ -76,10 +93,12 @@ export default function PdfButton({ user, bookings, datesRange }) {
 
   return (
     <>
-      <LayoutSelector
-        selectedLayout={selectedLayout}
-        setSelectedLayout={setSelectedLayout}
-      />
+      {!driverLayout && (
+        <LayoutSelector
+          selectedLayout={selectedLayout}
+          setSelectedLayout={setSelectedLayout}
+        />
+      )}
       <div className="flex justify-center space-x-4">
         {bookingCount > 0 && (
           <>

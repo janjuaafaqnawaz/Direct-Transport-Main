@@ -17,6 +17,8 @@ export default function PDFDetails({ email, isRoleDriver }) {
     (user) => user.email.toLowerCase() === email.toLowerCase()
   );
 
+  // console.log(email, user);
+
   if (!user) {
     console.log("User not found");
     return null;

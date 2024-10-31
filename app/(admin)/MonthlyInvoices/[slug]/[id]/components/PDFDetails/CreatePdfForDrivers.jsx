@@ -6,41 +6,15 @@ import useAdminContext from "@/context/AdminProvider";
 import { parse } from "date-fns";
 import PdfButton from "./pdf/PdfButton";
 import { Loader } from "@mantine/core";
-
-function convertToISOString(dateString, hours = 11, minutes = 25, seconds = 4) {
-  console.log({ dateString });
-
-  if (!dateString || typeof dateString !== "string") {
-    console.error("Invalid date string:", dateString);
-    return null;
-  }
-
-  const [day, month, year] = dateString.split("/");
-
-  // Check if the date components are valid numbers
-  if (!day || !month || !year || isNaN(day) || isNaN(month) || isNaN(year)) {
-    console.error("Invalid date components:", { day, month, year });
-    return null;
-  }
-
-  const date = new Date(
-    Date.UTC(year, month - 1, day, hours, minutes, seconds)
-  );
-
-  if (isNaN(date)) {
-    console.error("Invalid Date:", date);
-    return null;
-  }
-
-  return date.toISOString();
-}
+import convertToISOString from "./convertToISOString";
 
 export default function CreatePdfForDrivers({ datesRange, user }) {
   const [loading, setLoading] = useState(true);
   const [myBookings, setMyBookings] = useState([]);
   const { allBookings } = useAdminContext();
+  const pdfId = "#" + myBookings[0]?.id + "778";
 
-  async function placeBookingsExistingAccsMonthly(email) {
+  async function placeBookingsExistingAccsMonthly() {
     const { start, end } = datesRange;
 
     const startDate = parse(start, "dd/MM/yyyy", new Date());
@@ -48,14 +22,23 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
     const toDate = parse(end, "dd/MM/yyyy", new Date());
     toDate.setHours(23, 59, 59, 999);
 
-    // console.log({ startDate, toDate });
-
     try {
       return allBookings.filter((booking) => {
+        if (!booking.driverEmail || !user?.email) {
+          console.error(
+            "Email is missing in booking or user object.",
+            "driverEmail",
+            booking.driverEmail,
+            "userEmail",
+            user?.email
+          );
+          return false;
+        }
+
         const bookingDate = new Date(convertToISOString(booking.date));
 
         return (
-          booking.userEmail.toLowerCase() === user.email.toLowerCase() &&
+          booking.driverEmail.toLowerCase() === user.email.toLowerCase() &&
           bookingDate >= startDate &&
           bookingDate <= toDate
         );
@@ -88,7 +71,13 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
   return (
     <div style={{ borderRadius: 30, backgroundColor: "#f8f9fa", padding: 50 }}>
       {myBookings.length > 0 ? (
-        <PdfButton user={user} bookings={myBookings} datesRange={datesRange} />
+        <PdfButton
+          user={user}
+          bookings={myBookings}
+          datesRange={datesRange}
+          driverLayout={true}
+          pdfId={pdfId}
+        />
       ) : null}
     </div>
   );
