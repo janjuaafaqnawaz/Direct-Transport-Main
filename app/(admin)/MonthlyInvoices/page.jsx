@@ -20,7 +20,7 @@ export default function Page() {
           />
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
             <p className="text-3xl text-center font-semibold text-white">
-              Create and Manage <br /> Users PDFs
+              Customer Monthly <br /> Invoices
             </p>
           </div>
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
@@ -43,7 +43,8 @@ export default function Page() {
           />
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
             <p className="text-3xl text-center font-semibold text-white">
-              Create and Manage <br /> Driver PDFs
+              Driver Monthly <br />
+              Invoices
             </p>
           </div>
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
