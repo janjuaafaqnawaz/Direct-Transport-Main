@@ -12,6 +12,7 @@ export default function CreatePdf({ datesRange, user }) {
   const [loading, setLoading] = useState(true);
   const [myBookings, setMyBookings] = useState([]);
   const { allBookings } = useAdminContext();
+  console.log({ myBookings, user });
 
   async function placeBookingsExistingAccsMonthly() {
     const { start, end } = datesRange;
@@ -26,13 +27,13 @@ export default function CreatePdf({ datesRange, user }) {
     try {
       return allBookings.filter((booking) => {
         const bookingDate = new Date(convertToISOString(booking.date));
-        console.error(
-          "Email is missing in booking or user object.",
-          "driverEmail",
-          booking.driverEmail,
-          "userEmail",
-          user?.email
-        );
+        // console.error(
+        //   "Email is missing in booking or user object.",
+        //   "driverEmail & userEmail",
+        //   booking.userEmail,
+        //   "userEmail",
+        //   user?.email
+        // );
         return (
           booking.userEmail.toLowerCase() === user.email.toLowerCase() &&
           bookingDate >= startDate &&

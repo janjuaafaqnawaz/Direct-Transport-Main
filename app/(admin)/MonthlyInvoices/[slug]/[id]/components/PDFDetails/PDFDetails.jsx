@@ -37,9 +37,9 @@ export default function PDFDetails({ email, isRoleDriver }) {
       <DatePick handleDatesRange={(date) => setDatesRange(date)} />
 
       {isRoleDriver ? (
-        <CreatePdf datesRange={datesRange} user={user} />
-      ) : (
         <CreatePdfForDrivers datesRange={datesRange} user={user} />
+      ) : (
+        <CreatePdf datesRange={datesRange} user={user} />
       )}
 
       <History email={email} />
