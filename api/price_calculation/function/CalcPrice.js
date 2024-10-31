@@ -12,6 +12,7 @@ import determinePriceBySkid from "./determine_price_by_item/determinePriceBySkid
 import { fetchTollsData } from "@/api/fetchTolls";
 import TruckPricing from "./truck_pricing";
 import LongDistancePricing from "./long_distance_pricing";
+import toast from "react-hot-toast";
 
 export default async function CalcPrice({
   distanceData,
@@ -202,6 +203,15 @@ async function determineNFDayPricingAndReturnType({
   priceSettings,
   booking_type,
 }) {
+  if (isOriginInside && isDestinationInside) {
+    toast.error(
+      "Both addresses are inside the non allowed area. Please select valid locations."
+    );
+    setTimeout(() => {
+      navigate("/ClientServices");
+    }, 4000);
+  }
+
   // Destructure the response from determinePricingAndReturnType
   const { price: basePrice, returnType } = await determinePricingAndReturnType({
     distance,
