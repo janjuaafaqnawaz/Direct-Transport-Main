@@ -66,6 +66,7 @@ export default function History({ email }) {
         toEmail: "bookings@directtransport.com.au",
         // cleanEmail
         url: url,
+        download: url,
       };
 
       await emailjs.send(
