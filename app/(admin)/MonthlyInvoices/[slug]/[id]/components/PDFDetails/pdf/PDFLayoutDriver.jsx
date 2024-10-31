@@ -50,20 +50,20 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
         {/* Table */}
         <View style={styles.table}>
           <View style={styles.tableRow}>
-            <View style={styles.tableColHeader}>
+            <View style={[styles.tableColHeader, { width: "50%" }]}>
               <Text style={styles.tableCellHeader}>DATE</Text>
             </View>
-            <View style={styles.tableColHeader}>
+            <View style={[styles.tableColHeader, { width: "50%" }]}>
               <Text style={styles.tableCellHeader}>Total Bookings</Text>
             </View>
           </View>
 
           {Object.entries(bookingsByDate).map(([date, bookings]) => (
             <View style={styles.tableRow} key={date}>
-              <View style={styles.tableCol}>
+              <View style={[styles.tableCol, { width: "50%" }]}>
                 <Text style={styles.tableCell}>{date}</Text>
               </View>
-              <View style={styles.tableCol}>
+              <View style={[styles.tableCol, { width: "50%" }]}>
                 <Text style={styles.tableCell}>{bookings.length}</Text>
               </View>
             </View>
