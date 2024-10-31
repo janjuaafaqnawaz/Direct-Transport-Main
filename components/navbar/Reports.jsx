@@ -1,12 +1,30 @@
-import React, { useState } from "react";
-import { Modal, Button, Group } from "@mantine/core";
+import React, { useMemo, useState } from "react";
+import { Modal, Button, Group, showNotification } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-// import { showNotification } from "@mantine/notifications";
-import { getBookingsOnlyBetweenDates } from "@/api/firebase/functions/fetch";
+import useAdminContext from "@/context/AdminProvider";
+import { parse, startOfDay } from "date-fns"; // Import necessary date functions
+
+function formatDateToDDMMYYYY(date) {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+const parseDate = (dateString) => {
+  try {
+    const parsedDate = parse(dateString, "dd/MM/yyyy", new Date());
+    return startOfDay(parsedDate);
+  } catch (error) {
+    console.error("Error parsing date:", error, "Date string:", dateString);
+    return null;
+  }
+};
 
 export default function Reports() {
+  const { allBookings } = useAdminContext();
   const [opened, setOpened] = useState(false);
-  const [loading, setLoading] = useState(false); // Added loading state
+  const [loading, setLoading] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [formData, setFormData] = useState({
@@ -17,29 +35,47 @@ export default function Reports() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const bookings = await getBookingsOnlyBetweenDates(
-        formData.fromDate,
-        formData.toDate
-      );
+      const { fromDate, toDate } = formData;
 
-      if (!bookings.length) {
-        // showNotification({
-        //   title: "No Bookings Found",
-        //   message: "No bookings were found for the selected dates.",
-        //   color: "red",
-        // });
+      // Check if both dates are selected
+      if (!fromDate || !toDate) {
+        showNotification({
+          title: "Error",
+          message: "Please select both From and To dates.",
+          color: "red",
+        });
+        return;
+      }
+
+      // Parse the dates
+      const fromDateParsed = startOfDay(fromDate);
+      const toDateParsed = startOfDay(toDate);
+
+      // Filter bookings based on date range
+      const filteredBookings = allBookings.filter((booking) => {
+        if (!booking.date) return false;
+        const bookingDate = parseDate(booking.date); // Assuming booking.date is in "DD/MM/YYYY" format
+        return (
+          bookingDate &&
+          bookingDate >= fromDateParsed &&
+          bookingDate <= toDateParsed
+        );
+      });
+
+      console.log(filteredBookings);
+
+      if (!filteredBookings.length) {
         setLoading(false);
         return;
       }
 
-      setBookings(bookings);
+      setBookings(filteredBookings);
 
-      // Calculate the total price of all bookings, parsing each price as a number
-      const total = bookings.reduce(
-        (sum, booking) => sum + Number(booking?.totalPriceWithGST || 0),
+      const total = filteredBookings.reduce(
+        (sum, booking) => sum + Number(booking?.totalPriceWithGST),
         0
       );
-      setTotalPrice(total.toFixed(2)); // Format the total to 2 decimal places
+      setTotalPrice(total.toFixed(2));
     } catch (error) {
       console.error(error);
       showNotification({
@@ -71,7 +107,7 @@ export default function Reports() {
             placeholder="From Date"
             value={formData.fromDate}
             onChange={(date) => setFormData({ ...formData, fromDate: date })}
-            valueFormat="DD MM YYYY"
+            valueFormat="DD/MM/YYYY"
           />
         </div>
 
@@ -82,7 +118,7 @@ export default function Reports() {
             label="To Date"
             value={formData.toDate}
             onChange={(date) => setFormData({ ...formData, toDate: date })}
-            valueFormat="DD MM YYYY"
+            valueFormat="DD/MM/YYYY"
           />
         </div>
 
@@ -106,23 +142,15 @@ export default function Reports() {
             </h3>
             <div className="inline-block">
               <span className="text-5xl font-extrabold text-white drop-shadow-md">
-                ${totalPrice.toLocaleString()}
+                ${Number(totalPrice).toLocaleString()}
               </span>
               <div className="mt-2 text-teal-100 font-medium">
-                {bookings?.length === 1
+                {bookings.length === 1
                   ? "1 Booking"
-                  : `${bookings?.length} Bookings`}
+                  : `${bookings.length} Bookings`}
               </div>
             </div>
           </div>
-          {/* <div className="mt-4 flex justify-center space-x-2">
-            <span className="inline-block bg-teal-200 rounded-full px-3 py-1 text-sm font-semibold text-teal-800">
-              #Revenue
-            </span>
-            <span className="inline-block bg-emerald-200 rounded-full px-3 py-1 text-sm font-semibold text-emerald-800">
-              #Growth
-            </span>
-          </div> */}
         </div>
       </Modal>
     </>

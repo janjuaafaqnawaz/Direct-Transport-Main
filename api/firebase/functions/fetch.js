@@ -311,11 +311,15 @@ async function getBookingsOnlyBetweenDates(fromDateString, toDateString) {
     const toDate = new Date(toDateString);
     toDate.setHours(23, 59, 59, 999);
 
+    
+    const fromDateFormatted = formatDateToDDMMYYYY(fromDate);
+    const toDateFormatted = formatDateToDDMMYYYY(toDate);
+    
     // Query Firestore to get bookings within the date range
     const baseQuery = query(
       collectionRef,
-      where("createdAt", ">=", fromDate),
-      where("createdAt", "<=", toDate)
+      where("date", ">=", fromDate),
+      where("date", "<=", toDate)
     );
 
     const querySnapshot = await getDocs(baseQuery);

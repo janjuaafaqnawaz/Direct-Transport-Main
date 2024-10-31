@@ -10,6 +10,7 @@ import { Button, ButtonGroup } from "@mantine/core";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { fetchUserData } from "@/api/firebase/functions/auth";
+import { AdminProvider } from "@/context/AdminProvider";
 
 const getUserRole = () => {
   if (typeof window !== "undefined") {
@@ -109,7 +110,11 @@ const ButtonsSection = ({ userPagesToRender, router, role }) => (
           {val.label}
         </Button>
       ))}
-      {role === "admin" ? <Reports /> : null}
+      {role === "admin" ? (
+        <AdminProvider>
+          <Reports />
+        </AdminProvider>
+      ) : null}
     </ButtonGroup>
   </div>
 );
