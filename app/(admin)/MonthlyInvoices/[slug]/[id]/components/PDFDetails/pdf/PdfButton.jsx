@@ -75,7 +75,7 @@ export default function PdfButton({
           url: downloadURL,
           createdAt: new Date(),
           datesRange,
-          pdfId,
+          pdfId: pdfId || "",
         },
         "generatedPdfs"
       );
