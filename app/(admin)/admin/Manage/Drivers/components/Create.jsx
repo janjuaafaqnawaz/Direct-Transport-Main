@@ -90,7 +90,10 @@ export default function Create({ edit, driver }) {
         await updateDoc("users", email, userData);
         toast.success("User updated successfully.");
       } else {
-        const res = await signUpWithEmail(email, password, userData);
+        const res = await signUpWithEmail(email, password, {
+          ...userData,
+          CustomPrice,
+        });
         if (res) {
           toast.success("User created successfully.");
         } else {
@@ -252,3 +255,33 @@ export default function Create({ edit, driver }) {
     </Dialog>
   );
 }
+
+const CustomPrice = {
+  minServices: {
+    "2T": "90",
+    "1T": "30",
+    HT: "20",
+    Courier: "10",
+  },
+  gst: {
+    GST: 10,
+  },
+  services: {
+    Courier: "0.90",
+    "1T": "1.80",
+    HT: "1.20",
+    "2T": "90",
+  },
+  minWaitTime: {
+    minWaitTimeRate: 0.75,
+  },
+  truckServices: {
+    "8T": "140",
+    "4T": "120",
+    "12T": "160",
+    "1T": "2",
+    "10T": "150",
+    "2T": "90",
+    "6T": "130",
+  },
+};
