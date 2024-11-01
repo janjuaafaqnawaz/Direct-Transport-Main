@@ -12,12 +12,16 @@ export default function getTotalInvoicePrice(invoices) {
   const totalUnloading = invoices.reduce((accumulator, invoice) => {
     return accumulator + invoice.unloading || 0;
   }, 0);
-  console.log(Number(totalTolls).toFixed(2));
+
+  const totalPriceWithGST = invoices.reduce((accumulator, invoice) => {
+    return accumulator + invoice.totalPriceWithGST || 0;
+  }, 0);
 
   return {
     totalPrice: totalPrice.toFixed(2),
     totalGst: totalGst.toFixed(2),
     totalTolls: Number(totalTolls).toFixed(2),
     totalUnloading: totalUnloading.toFixed(2),
+    totalPriceWithGST: totalPriceWithGST.toFixed(2),
   };
 }

@@ -44,6 +44,9 @@ export default function Create({ edit, driver }) {
     paymentPercentage: "",
     startDate: "",
     dateOfBirth: "",
+    emergencyContact: "",
+    driverNumber: "",
+    bankDetails: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [vehiclePicture, setVehiclePicture] = useState(null);
@@ -238,6 +241,35 @@ export default function Create({ edit, driver }) {
               name="dateOfBirth"
               type="date"
               value={form.dateOfBirth}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="emergencyContact">Emergency Contact</Label>
+            <Input
+              id="emergencyContact"
+              name="emergencyContact"
+              value={form.emergencyContact}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="driverNumber">Driver Number</Label>
+            <Input
+              id="driverNumber"
+              name="driverNumber"
+              value={form.driverNumber}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col col-span-2">
+            <Label htmlFor="bankDetails">
+              bank details - Accounts name BSB and Account Number
+            </Label>
+            <Input
+              id="bankDetails"
+              name="bankDetails"
+              value={form.bankDetails}
               onChange={handleChange}
             />
           </div>
