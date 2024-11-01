@@ -17,7 +17,11 @@ export default async function userPriceSettings(selectedEmail) {
     }
 
     const universal_price = await fetchDocById("price_settings", "data");
-    const private_price = user?.CustomPrice || "No Custom Price Set";
+    const private_price =
+      {
+        ...(user?.CustomPrice || {}),
+        ...(universal_price?.services || {}),
+      } || universal_price;
     const usingCustomPrice = user?.usePrice || false;
 
     const userPriceSettings = usingCustomPrice
