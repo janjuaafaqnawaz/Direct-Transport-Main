@@ -1,10 +1,12 @@
-import toast from "react-hot-toast";
-
 export default function determineReturnAndServiceTypes(
   serviceType,
   returnType,
   type
 ) {
+  if (returnType === "LD") {
+    return returnType;
+  }
+
   const serviceCodes = ["G", "X", "D", "AF", "W"];
 
   if (serviceCodes.some((code) => returnType.includes(code))) {

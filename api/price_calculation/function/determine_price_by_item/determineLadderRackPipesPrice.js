@@ -24,8 +24,8 @@ export default async function determineLadderRackPipesPrice(
 
   if (distance >= 87 && total_weight >= 500) {
     price = distance * 3.5;
-    returnType = "4T";
-    console.log("line 26 satisfying", price, returnType);
+    returnType = "LD";
+    // console.log("satisfying", price, returnType);
   } else {
     if (total_weight < 100) {
       if (longest_length <= 400) {

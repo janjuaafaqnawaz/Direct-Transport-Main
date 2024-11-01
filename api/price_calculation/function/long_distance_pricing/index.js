@@ -47,7 +47,7 @@ export default async function LongDistancePricing(
       min_rate,
       items
     ));
-    price = basedOnPrice(returnType, long_distance, distance);
+    price = basedOnPrice(returnType, long_distance, distance, price);
     returnType = returnType;
   } else if (max_volume > 1000 || longest_length > 270) {
     const { cost, costType } = await TruckPricing(distance, items);
@@ -88,7 +88,9 @@ export default async function LongDistancePricing(
   return { price, returnType };
 }
 
-const basedOnPrice = (costType, long_distance, distance) => {
+const basedOnPrice = (costType, long_distance, distance, price) => {
+  if (costType === "LD") return price;
+
   return Math.max(
     distance * Number(long_distance.services[costType]),
     Number(long_distance.minServices[costType])
