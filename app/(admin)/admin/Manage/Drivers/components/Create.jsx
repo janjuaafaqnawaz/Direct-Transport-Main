@@ -116,7 +116,7 @@ export default function Create({ edit, driver }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Edit className="mr-2 h-4 w-4" />{" "}
+          <Edit className="mr-2 h-4 w-4" />
           {edit ? "Edit Driver" : "Add Driver"}
         </Button>
       </DialogTrigger>
@@ -262,14 +262,33 @@ export default function Create({ edit, driver }) {
               onChange={handleChange}
             />
           </div>
-          <div className="flex flex-col col-span-2">
-            <Label htmlFor="bankDetails">
-              bank details - Accounts name BSB and Account Number
-            </Label>
+          <div className="flex flex-col col-span-2 ">
+            <Label htmlFor="bankDetails">Bank details</Label>
+          </div>
+          <div className="flex flex-col ">
+            <Label htmlFor="accountsName">Accounts name</Label>
             <Input
-              id="bankDetails"
-              name="bankDetails"
-              value={form.bankDetails}
+              id="accountsName"
+              name="accountsName"
+              value={form.accountsName}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col ">
+            <Label htmlFor="BSB">BSB</Label>
+            <Input
+              id="BSB"
+              name="BSB"
+              value={form.BSB}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col ">
+            <Label htmlFor="accountNumber">Account Number</Label>
+            <Input
+              id="accountNumber"
+              name="accountNumber"
+              value={form.accountNumber}
               onChange={handleChange}
             />
           </div>
