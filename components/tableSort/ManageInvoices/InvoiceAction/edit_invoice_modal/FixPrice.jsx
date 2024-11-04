@@ -34,6 +34,7 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
       const updatedInvoice = await CalculateWaitTime(invoice);
       setInvoice(updatedInvoice);
       setBooking(updatedInvoice);
+
       await updateDoc("place_bookings", invoice?.docId, updatedInvoice);
     } catch (error) {
       console.error("Error updating invoice:", error);
