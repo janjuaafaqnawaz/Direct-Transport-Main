@@ -137,7 +137,7 @@ export default function PriceSettings({
     },
     minWaitTime && {
       key: "waitTimeRate",
-      title: "Wait Time Rate",
+      title: "Wait Time Rate  Ute/Van",
       component: (
         <WaitTimeRate
           handleChange={(key, value) => handleChange("minWaitTime", key, value)}

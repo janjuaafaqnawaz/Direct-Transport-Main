@@ -1,6 +1,5 @@
 "use client";
 
-import { fetchDocById } from "@/api/firebase/functions/fetch";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import { Group, Input, NumberInput, rem } from "@mantine/core";
 import {
@@ -14,10 +13,10 @@ import {
 } from "@nextui-org/react";
 import { IconClock12 } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
-import determineReturnAndServiceTypes from "@/api/price_calculation/function/helper/determineReturnAndServiceTypes";
 import ProcessPrice from "./calc_price_by_job_and_service/index";
 import toast from "react-hot-toast";
 import { useCallback } from "react";
+import CalculateWaitTime from "./helper/CalculateWaitTime";
 
 export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   const [invoice, setInvoice] = useState({});
@@ -30,39 +29,11 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
   }, [booking]);
 
   const handleSubmit = useCallback(async () => {
-      setLoad(true);
-      try {
-      const priceSettings = await fetchDocById("price_settings", "data");
-      const gstVal = Number(priceSettings?.same_day?.gst?.GST);
-      const minWaitTimeRate = Number(
-        priceSettings?.same_day?.minWaitTime?.minWaitTimeRate
-      );
-      const totalPrice = Number(invoice?.totalPrice) || 0;
-      const serviceCharges = Number(invoice?.serviceCharges) || 0;
-      const wTP = Number(invoice?.WaitingTimeAtPickupDefault) || 0;
-      const wTD = Number(invoice?.WaitingTimeAtDropDefault) || 0;
-      const WaitingTimeAtPickup = wTP <= 10 ? 0 : (wTP - 10) * minWaitTimeRate;
-      const WaitingTimeAtDrop = wTD <= 10 ? 0 : (wTD - 10) * minWaitTimeRate;
-      const chargesSum =
-        totalPrice + serviceCharges + WaitingTimeAtPickup + WaitingTimeAtDrop;
-      const gst = (chargesSum * gstVal) / 100;
-      const totalPriceWithGST = chargesSum + gst;
-      const returnType = determineReturnAndServiceTypes(
-        invoice?.service,
-        invoice?.returnType
-      );
-      const updatedInvoice = {
-        ...invoice,
-        totalPrice,
-        totalPriceWithGST: Number(totalPriceWithGST.toFixed(2)),
-        gst: Number(gst.toFixed(2)),
-        WaitingTimeAtPickup,
-        WaitingTimeAtDrop,
-        returnType,
-      };
+    setLoad(true);
+    try {
+      const updatedInvoice = await CalculateWaitTime(invoice);
       setInvoice(updatedInvoice);
       setBooking(updatedInvoice);
-      console.log(updatedInvoice);
       await updateDoc("place_bookings", invoice?.docId, updatedInvoice);
     } catch (error) {
       console.error("Error updating invoice:", error);
@@ -77,7 +48,7 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
         invoice?.returnType[0] === "C"
           ? "Courier"
           : invoice?.returnType[0] + invoice?.returnType[1];
-          const booking = await ProcessPrice({ ...invoice, returnType: type });
+      const booking = await ProcessPrice({ ...invoice, returnType: type });
       toast("Updated Successfully");
       setBooking(booking);
       setInvoice(booking);
