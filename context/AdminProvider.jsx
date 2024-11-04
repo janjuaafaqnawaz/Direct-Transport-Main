@@ -167,6 +167,7 @@ const AdminProvider = ({ children }) => {
         isLoading,
         totalBookings,
         archivedBookings,
+        priceSettings,
       }}
     >
       {children}
