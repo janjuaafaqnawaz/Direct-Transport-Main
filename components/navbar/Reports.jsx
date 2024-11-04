@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
-import { Modal, Button, Group, showNotification } from "@mantine/core";
+import React, { useState } from "react";
+import { Modal, Button, Group } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import useAdminContext from "@/context/AdminProvider";
-import { parse, startOfDay } from "date-fns"; // Import necessary date functions
+import { parse, startOfDay } from "date-fns";
+import toast from "react-hot-toast";
 
 function formatDateToDDMMYYYY(date) {
   const day = String(date.getDate()).padStart(2, "0");
@@ -39,11 +40,7 @@ export default function Reports() {
 
       // Check if both dates are selected
       if (!fromDate || !toDate) {
-        showNotification({
-          title: "Error",
-          message: "Please select both From and To dates.",
-          color: "red",
-        });
+        toast.error("Please select both From and To dates.");
         return;
       }
 
@@ -78,11 +75,7 @@ export default function Reports() {
       setTotalPrice(total.toFixed(2));
     } catch (error) {
       console.error(error);
-      showNotification({
-        title: "Error",
-        message: "Something went wrong while fetching bookings.",
-        color: "red",
-      });
+      toast.error("Something went wrong while fetching bookings.");
     } finally {
       setLoading(false);
     }

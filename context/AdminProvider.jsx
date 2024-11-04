@@ -16,12 +16,7 @@ const AdminContext = createContext();
 
 const useAdminContext = () => useContext(AdminContext);
 export const db = getFirestore(app);
-const roleOptions = [
-  { value: "admin", label: "Admin" },
-  { value: "business", label: "Business" },
-  { value: "user", label: "User" },
-  { value: "archived", label: "Archived" },
-];
+
 const AdminProvider = ({ children }) => {
   const [allBookings, setAllBookings] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
@@ -32,7 +27,7 @@ const AdminProvider = ({ children }) => {
   const [priceSettings, setPriceSettings] = useState(null); // <-- State for price settings
 
   const [totalBookings, setTotalBookings] = useState(0); // Store total bookings count
-  const BOOKINGS_LIMIT = 1500;
+  const BOOKINGS_LIMIT = 100;
 
   // Function to fetch total document counts in Firestore collection
   const fetchDocumentCounts = async () => {
