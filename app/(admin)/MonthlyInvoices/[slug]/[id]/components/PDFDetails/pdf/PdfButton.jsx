@@ -34,6 +34,8 @@ export default function PdfButton({
   const bookingCount = bookings.length;
   const [selectedLayout, setSelectedLayout] = useState("Layout1");
 
+  console.log({ bookings, user });
+
   const getPDFDocument = () => {
     if (driverLayout) {
       return (
@@ -46,11 +48,21 @@ export default function PdfButton({
       );
     } else if (selectedLayout === "Layout2") {
       return (
-        <PDFLayout2 datesRange={datesRange} invoices={bookings} user={user} />
+        <PDFLayout2
+          datesRange={datesRange}
+          invoices={bookings}
+          user={user}
+          pdfId={pdfId}
+        />
       );
     }
     return (
-      <PDFLayout1 datesRange={datesRange} invoices={bookings} user={user} />
+      <PDFLayout1
+        datesRange={datesRange}
+        invoices={bookings}
+        user={user}
+        pdfId={pdfId}
+      />
     );
   };
 

@@ -3,17 +3,11 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button"; 
 import DriverTable from "./components/Table";
 import Create from "./components/Create";
 import { Divider } from "@nextui-org/react";
+import Link from "next/link";
 
 export default function Page() {
   const [filter, setFilter] = useState("");
@@ -36,11 +30,16 @@ export default function Page() {
             className="pl-8"
           />
         </div>
-        <Create
-          edit={!!selectedUser}
-          driver={selectedUser}
-          onClose={() => setIsDialogOpen(false)}
-        />
+        <div>
+          <Link className="mr-4" href={"/admin/Manage/Archived"}>
+            <Button variant={"outline"}>Archived</Button>
+          </Link>
+          <Create
+            edit={!!selectedUser}
+            driver={selectedUser}
+            onClose={() => setIsDialogOpen(false)}
+          />
+        </div>
       </div>
       <Divider className="my-6" />
       <DriverTable filter={filter} />

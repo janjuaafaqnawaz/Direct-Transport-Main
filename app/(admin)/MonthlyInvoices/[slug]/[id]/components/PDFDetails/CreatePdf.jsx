@@ -12,7 +12,8 @@ export default function CreatePdf({ datesRange, user }) {
   const [loading, setLoading] = useState(true);
   const [myBookings, setMyBookings] = useState([]);
   const { allBookings } = useAdminContext();
-  console.log({ myBookings, user });
+  const pdfId = Math.floor(10000 + Math.random() * 900000);
+  console.log(pdfId);
 
   async function placeBookingsExistingAccsMonthly() {
     const { start, end } = datesRange;
@@ -68,7 +69,12 @@ export default function CreatePdf({ datesRange, user }) {
   return (
     <div style={{ borderRadius: 30, backgroundColor: "#f8f9fa", padding: 50 }}>
       {myBookings.length > 0 ? (
-        <PdfButton user={user} bookings={myBookings} datesRange={datesRange} />
+        <PdfButton
+          user={user}
+          bookings={myBookings}
+          datesRange={datesRange}
+          pdfId={"#" + pdfId}
+        />
       ) : null}
     </div>
   );

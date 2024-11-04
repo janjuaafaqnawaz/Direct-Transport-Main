@@ -12,7 +12,8 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
   const [loading, setLoading] = useState(true);
   const [myBookings, setMyBookings] = useState([]);
   const { allBookings } = useAdminContext();
-  const pdfId = "#" + myBookings[0]?.id + "778";
+  const pdfId = Math.floor(100000 + Math.random() * 900000);
+  console.log(pdfId);
 
   async function placeBookingsExistingAccsMonthly() {
     const { start, end } = datesRange;
@@ -76,7 +77,7 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
           bookings={myBookings}
           datesRange={datesRange}
           driverLayout={true}
-          pdfId={pdfId}
+          pdfId={"#" + pdfId}
         />
       ) : null}
     </div>

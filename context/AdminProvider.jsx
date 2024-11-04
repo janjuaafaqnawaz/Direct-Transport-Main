@@ -16,17 +16,23 @@ const AdminContext = createContext();
 
 const useAdminContext = () => useContext(AdminContext);
 export const db = getFirestore(app);
-
+const roleOptions = [
+  { value: "admin", label: "Admin" },
+  { value: "business", label: "Business" },
+  { value: "user", label: "User" },
+  { value: "archived", label: "Archived" },
+];
 const AdminProvider = ({ children }) => {
   const [allBookings, setAllBookings] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [allDrivers, setAllDrivers] = useState([]);
+  const [allArchivedAccounts, setArchivedAccounts] = useState([]);
   const [lastBookingDoc, setLastBookingDoc] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [priceSettings, setPriceSettings] = useState(null); // <-- State for price settings
 
   const [totalBookings, setTotalBookings] = useState(0); // Store total bookings count
-  const BOOKINGS_LIMIT = 1500;
+  const BOOKINGS_LIMIT = 100;
 
   // Function to fetch total document counts in Firestore collection
   const fetchDocumentCounts = async () => {
@@ -91,8 +97,11 @@ const AdminProvider = ({ children }) => {
         });
 
         // Separate drivers from the user list
-        setAllUsers(documents);
+        setAllUsers(documents.filter((user) => user.role !== "archived"));
         setAllDrivers(documents.filter((user) => user.role === "driver"));
+        setArchivedAccounts(
+          documents.filter((user) => user.role === "archived")
+        );
         setIsLoading(false); // Reset loading state after fetching
       });
 
@@ -153,7 +162,7 @@ const AdminProvider = ({ children }) => {
         allBookings: unArchivedBookings,
         allUsers,
         allDrivers,
-        priceSettings,
+        allArchivedAccounts,
         fetchNextBookingsPage: () => fetchBookingsWithPagination(false),
         isLoading,
         totalBookings,

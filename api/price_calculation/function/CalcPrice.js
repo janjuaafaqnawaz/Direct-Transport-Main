@@ -92,7 +92,9 @@ export default async function CalcPrice({
       to: destination,
       serviceProvider: "here",
       vehicle: {
-        type: "2AxlesTaxi",
+        type: ["6T", "8T", "10T", "12T", "LD"].includes(returnType)
+          ? "2AxlesTruck"
+          : "2AxlesTaxi",
         weight: { value: 20000, unit: "pound" },
         height: { value: 7.5, unit: "meter" },
         length: { value: 7.5, unit: "meter" },
@@ -100,6 +102,7 @@ export default async function CalcPrice({
         emissionClass: "euro_5",
       },
     };
+
     const requestBodyStr = JSON.stringify(requestBody);
     // console.log({ requestBodyStr, requestBody });
     tolls = await fetchTollsData(requestBodyStr);
@@ -137,6 +140,7 @@ export default async function CalcPrice({
       rate,
       min_rate,
       gst_charges,
+      service,
     },
 
     distance_and_volume: {

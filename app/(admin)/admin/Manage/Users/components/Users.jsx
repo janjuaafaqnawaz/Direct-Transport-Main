@@ -32,11 +32,12 @@ import { deleteUserAcc } from "@/api/firebase/functions/auth";
 import sendResetPasswordEmail from "@/api/sendResetPasswordEmail";
 import AddUser from "./AddUser";
 import CustomPrice from "./Pricing";
-
+import Link from "next/link";
 const roleOptions = [
   { value: "admin", label: "Admin" },
   { value: "business", label: "Business" },
   { value: "user", label: "User" },
+  { value: "archived", label: "Archived" },
 ];
 
 export default function Users({ users }) {
@@ -88,24 +89,29 @@ export default function Users({ users }) {
             className="pl-8"
           />
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setSelectedUser(null)}>
-              <UserPlus className="mr-2 h-4 w-4" /> Add User
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {selectedUser ? "Modify User" : "Create User"}
-              </DialogTitle>
-            </DialogHeader>
-            <AddUser
-              data={selectedUser}
-              onClose={() => setIsDialogOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        <div>
+          <Link className="mr-4" href={"/admin/Manage/Archived"}>
+            <Button>Archived</Button>
+          </Link>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setSelectedUser(null)}>
+                <UserPlus className="mr-2 h-4 w-4" /> Add User
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  {selectedUser ? "Modify User" : "Create User"}
+                </DialogTitle>
+              </DialogHeader>
+              <AddUser
+                data={selectedUser}
+                onClose={() => setIsDialogOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="rounded-md border">
@@ -119,6 +125,7 @@ export default function Users({ users }) {
               <TableHead>Pricing</TableHead>
               <TableHead>Reset</TableHead>
               <TableHead>Remove</TableHead>
+              {/* <TableHead>User</TableHead> */}
               <TableHead>Role</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
@@ -136,7 +143,7 @@ export default function Users({ users }) {
                   <TableCell>{email}</TableCell>
                   <TableCell>
                     <Switch
-                    className="bg-slate-300"
+                      className="bg-slate-300"
                       checked={row?.usePrice}
                       onCheckedChange={handleToggle}
                     />
@@ -162,6 +169,32 @@ export default function Users({ users }) {
                       <Trash2 className="mr-2 h-4 w-4" /> Delete
                     </Button>
                   </TableCell>
+                  {/* <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <Button className="capitalize">{row.rule  }</Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="bg-white">
+                        <DropdownMenuLabel>All Rules</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => handleRuleChange(row, "active")}
+                        >
+                          Active
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleRuleChange(row, "archived")}
+                        >
+                          Archived
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteUser(email, password)}
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell> */}
                   <TableCell>
                     <Select
                       value={role}
@@ -174,7 +207,11 @@ export default function Users({ users }) {
                       </SelectTrigger>
                       <SelectContent>
                         {roleOptions.map((option) => (
-                          <SelectItem className="bg-white" key={option.value} value={option.value}>
+                          <SelectItem
+                            className="bg-white"
+                            key={option.value}
+                            value={option.value}
+                          >
                             {option.label}
                           </SelectItem>
                         ))}

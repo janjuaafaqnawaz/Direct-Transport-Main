@@ -87,6 +87,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
                 style={[styles.tableCol, { width: "50%", textAlign: "right" }]}
               >
                 <Text style={[styles.tableCell, { textAlign: "right" }]}>
+                  $
                   {(
                     ((calcDayPayment(bookings) || 0) / 100) *
                     (user?.paymentPercentage || 0)

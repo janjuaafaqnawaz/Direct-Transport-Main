@@ -1,11 +1,11 @@
 "use client";
 
 import { Page, Text, View, Document, Image } from "@react-pdf/renderer";
-import styles from "./pdf.styles";
+import styles from "./userPDFStyles";
 import getTotalInvoicePrice from "./getTotalInvoicePrice";
 import { format } from "date-fns";
 
-export default function MyDocument({ datesRange, invoices, user }) {
+export default function MyDocument({ datesRange, invoices, user, pdfId }) {
   const { start, end } = datesRange;
   const { totalPrice, totalGst, totalTolls, totalUnloading } =
     getTotalInvoicePrice(invoices);
@@ -44,24 +44,86 @@ export default function MyDocument({ datesRange, invoices, user }) {
   return (
     <Document>
       <Page size="A3" style={styles.page}>
-        {/* Header */}
-
         <View style={styles.header}>
-          <Image style={styles.image} alt="logo" src="/pdf_header2.jpg" />
+          <View style={styles.leftHeader}>
+            <Text style={styles.companyName}>
+              Direct Transport Solutions Pty Ltd
+            </Text>
+            <Text style={styles.companyDetails}>
+              bookings@directtransport.com.au
+            </Text>
+            <Text style={styles.companyDetails}>1353 The Horsley Dr</Text>
+            <Text style={styles.companyDetails}>Wetherill park NSW 2164</Text>
+            <Text style={styles.companyDetails}>Tel: 02 9188 0894</Text>
+            <Text style={styles.companyDetails}>ABN 87 658 348 808</Text>
+          </View>
+          <Image alt="logo" style={styles.logo} src="/pdf_header2.jpg" />
+        </View>
 
-          <View>
-            <Text style={styles.heading}>TAX INVOICE</Text>
-            <Text style={styles.para}>{user?.firstName || ""}</Text>
-            <Text style={styles.para}> {user.companyAddress}</Text>
-            <Text style={styles.para}>
-              Invoice period: {start} - {end}
-            </Text>
-            <Text style={styles.para}>Payment Terms - 14 days</Text>
-            <Text style={styles.para}>
-              Date of issue: {format(new Date(), "dd/MM/yyyy")}
-            </Text>
+        <View style={styles.invoiceHeader}>
+          <View style={styles.invoiceDetails}>
+            <View
+              style={{
+                marginTop: 10,
+                flexDirection: "row",
+                display: "flex",
+                width: "50%",
+              }}
+            >
+              <Text style={styles.invoiceTitle}>Tax invoice</Text>
+            </View>
+            <View
+              style={{
+                marginTop: 10,
+                flexDirection: "row",
+                display: "flex",
+                width: "50%",
+              }}
+            >
+              <View style={styles.invoiceRow}>
+                <Text style={styles.label}>Invoice number</Text>
+                <Text style={styles.value}>{pdfId}</Text>
+              </View>
+              <View style={styles.invoiceRow}>
+                <Text style={styles.label}>Issue date</Text>
+                <Text style={styles.value}>
+                  {format(new Date(), "dd/MM/yyyy")}
+                </Text>
+              </View>
+              <View style={styles.invoiceRow}>
+                <Text style={styles.label}>Invoice period</Text>
+                <Text style={styles.value}>
+                  {start} - {end}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View
+            style={{
+              marginTop: 10,
+              flexDirection: "row",
+              display: "flex",
+            }}
+          >
+            <View style={{ width: "50%" }}>
+              <Text style={styles.label}>Bill To:</Text>
+              <Text style={styles.value}>{user?.firstName || ""}</Text>
+              <Text style={styles.value}>{user.email}</Text>
+              <Text style={styles.value}>{user.companyAddress}</Text>
+              <Text style={styles.value}>Australia</Text>
+            </View>
+            <View style={{ width: "50%" }}>
+              {/* <Text style={styles.label}>From</Text>
+              <Text style={styles.value}>1353 The Horsley Dr</Text>
+              <Text style={styles.value}>Wetherill Park NSW 2164</Text>
+              <Text style={styles.value}>bookings@directtransport.com.au</Text>
+              <Text style={styles.value}>ABN 87 658 348 808</Text>
+              <Text style={styles.value}>(02) 9030 0333</Text> */}
+            </View>
           </View>
         </View>
+
         {/* Header */}
         <View style={styles.table}>
           <View style={styles.tableRow}>

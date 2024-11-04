@@ -17,7 +17,18 @@ import { Trash2, History, RefreshCw } from "lucide-react";
 import { deleteUserAcc } from "@/api/firebase/functions/auth";
 import useAdminContext from "@/context/AdminProvider";
 import Create from "./Create";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { updateDoc } from "@/api/firebase/functions/upload";
+const roleOptions = [
+  { value: "driver", label: "Driver" },
+  { value: "archived", label: "Archived" },
+];
 export default function DriverTable({ filter }) {
   const router = useRouter();
   const { allDrivers } = useAdminContext();
@@ -34,7 +45,18 @@ export default function DriverTable({ filter }) {
         );
 
   const handleDeleteUser = async (email) => {
-    const res = await deleteUserAcc(email);
+    await deleteUserAcc(email);
+  };
+
+  const handleStatusChange = async (value, index) => {
+    const updatedUsers = [...filteredDrivers];
+    const changedUser = updatedUsers[index];
+    if (value === "archived") {
+      changedUser.driverOnly = true;
+    }
+    changedUser.role = value;
+
+    await updateDoc("users", changedUser.email, changedUser);
   };
 
   return (
@@ -102,6 +124,27 @@ export default function DriverTable({ filter }) {
                   </Badge>
                 </TableCell>
                 <TableCell>{driver?.email}</TableCell>
+                <TableCell>
+                  <Select
+                    value={driver?.role}
+                    onValueChange={(value) => handleStatusChange(value, index)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roleOptions.map((option) => (
+                        <SelectItem
+                          className="bg-white"
+                          key={option.value}
+                          value={option.value}
+                        >
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </TableCell>
                 <TableCell className="text-right">
                   <Button
                     variant="destructive"

@@ -14,7 +14,9 @@ export default function RootLayout({ children }) {
         const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
         const userRole = userDoc.role || null;
 
-        if (!userRole) {
+        console.log(userDoc);
+
+        if (!userRole || userRole === "archived") {
           nav.push("/Signin");
         } else {
           setLoading(false);

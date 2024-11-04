@@ -19,9 +19,9 @@ export default function RootLayout({ children }) {
         const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
         const role = userDoc.role || null;
 
-        if (!role) {
+        if (!role || role === "archived") {
           nav.push("/Signin");
-        } else if (role !== "admin") {
+        } else if (role === "user" || role === "business") {
           nav.push("/ClientServices");
         } else {
           setLoading(false);

@@ -58,7 +58,7 @@ export default function SignIn() {
     setRole(role);
   }, []);
 
-  if (role !== null) {
+  if (role === "null" && role !== "archived") {
     return <CAP status={"alreadyLoggedIn"} />;
   }
 
