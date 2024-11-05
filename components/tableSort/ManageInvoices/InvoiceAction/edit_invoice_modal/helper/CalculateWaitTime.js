@@ -77,12 +77,18 @@ async function Truck(invoice, priceSettings, normalizedReturnType) {
   };
   const ratePerHour = hourlyRates[normalizedReturnType] || 0;
 
-  // Waiting times in minutes, with initial 15 minutes free for both pickup and drop
-  const wTP = Number(invoice?.WaitingTimeAtPickupDefault) || 0;
-  const wTD = Number(invoice?.WaitingTimeAtDropDefault) || 0;
+  // Waiting time in hours from invoice
+  const wTPHours = Number(invoice?.WaitingTimeAtPickupDefault) || 0;
+  const wTDHours = Number(invoice?.WaitingTimeAtDropDefault) || 0;
 
-  const WaitingTimeAtPickup = wTP > 15 ? ((wTP - 15) / 60) * ratePerHour : 0;
-  const WaitingTimeAtDrop = wTD > 15 ? ((wTD - 15) / 60) * ratePerHour : 0;
+  // 15 minutes converted to hours
+  const fifteenMin = 15 / 60;
+
+  // Calculate adjusted waiting times
+  const WaitingTimeAtPickup =
+    wTPHours < fifteenMin ? 0 : (wTPHours - fifteenMin) * ratePerHour;
+  const WaitingTimeAtDrop =
+    wTDHours < fifteenMin ? 0 : (wTDHours - fifteenMin) * ratePerHour;
 
   const chargesSum =
     totalPrice + serviceCharges + WaitingTimeAtPickup + WaitingTimeAtDrop;
