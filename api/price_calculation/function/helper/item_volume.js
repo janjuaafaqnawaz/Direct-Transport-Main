@@ -10,8 +10,10 @@ export default async function calculateItemsVolume(items) {
   });
 
   const max_volume = Math.max(total_weight, cubic_capacity);
-
   const longest_length = Math.max(...items.map((item) => item.length));
+  const longest_height = Math.max(...items.map((item) => item.height));
+  const longest_width = Math.max(...items.map((item) => item.width));
+
   const total_length = items.reduce((acc, item) => {
     return acc + parseInt(item.length) * parseInt(item.qty || 1);
   }, 0);
@@ -23,6 +25,8 @@ export default async function calculateItemsVolume(items) {
     cubic_capacity,
     max_volume,
     longest_length,
+    longest_height,
+    longest_width,
     total_length,
     palletSpaces,
   };

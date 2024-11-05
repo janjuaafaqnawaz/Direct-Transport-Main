@@ -36,8 +36,14 @@ export default async function CalcPrice({
   let requestQuote = false;
 
   const distance = await distanceValueKm(distanceData);
-  const { max_volume, total_weight, longest_length, palletSpaces } =
-    await calculateItemsVolume(items);
+  const {
+    max_volume,
+    total_weight,
+    longest_length,
+    longest_height,
+    longest_width,
+    palletSpaces,
+  } = await calculateItemsVolume(items);
   const itemCounts = await countItemsByType(items);
 
   const { isOriginInside, isDestinationInside } = await isPointInGeofence(
@@ -94,11 +100,7 @@ export default async function CalcPrice({
       type: ["6T", "8T", "10T", "12T", "LD"].includes(returnType)
         ? "2AxlesTruck"
         : "2AxlesTaxi",
-        axles: 2,
-      //   weight: { value: 20000, unit: "pound" },
-      //   height: { value: 7.5, unit: "meter" },
-      //   length: { value: 7.5, unit: "meter" },
-      // emissionClass: "euro_5",
+      axles: 2,
     },
   };
   console.log("requestBody", requestBody);
@@ -111,7 +113,9 @@ export default async function CalcPrice({
   returnType = determineReturnAndServiceTypes(
     service,
     returnType,
-    booking_type
+    booking_type,
+    longest_height,
+    longest_width
   );
 
   const additional =
