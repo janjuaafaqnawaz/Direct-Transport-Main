@@ -84,25 +84,25 @@ export default async function CalcPrice({
     service
   );
 
+  const origin = formData.address.Origin.coordinates;
+  const destination = formData.address.Destination.coordinates;
+  const requestBody = {
+    from: origin,
+    to: destination,
+    serviceProvider: "here",
+    vehicle: {
+      type: ["6T", "8T", "10T", "12T", "LD"].includes(returnType)
+        ? "2AxlesTruck"
+        : "2AxlesTaxi",
+      weight: { value: 20000, unit: "pound" },
+      height: { value: 7.5, unit: "meter" },
+      length: { value: 7.5, unit: "meter" },
+      axles: 4,
+      emissionClass: "euro_5",
+    },
+  };
+  console.log("requestBody", requestBody);
   if (service !== "Standard") {
-    const origin = formData.address.Origin.coordinates;
-    const destination = formData.address.Destination.coordinates;
-    const requestBody = {
-      from: origin,
-      to: destination,
-      serviceProvider: "here",
-      vehicle: {
-        type: ["6T", "8T", "10T", "12T", "LD"].includes(returnType)
-          ? "2AxlesTruck"
-          : "2AxlesTaxi",
-        weight: { value: 20000, unit: "pound" },
-        height: { value: 7.5, unit: "meter" },
-        length: { value: 7.5, unit: "meter" },
-        axles: 4,
-        emissionClass: "euro_5",
-      },
-    };
-
     const requestBodyStr = JSON.stringify(requestBody);
     // console.log({ requestBodyStr, requestBody });
     tolls = await fetchTollsData(requestBodyStr);

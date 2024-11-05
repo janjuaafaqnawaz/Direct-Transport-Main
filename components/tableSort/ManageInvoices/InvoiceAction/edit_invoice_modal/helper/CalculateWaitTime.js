@@ -81,25 +81,26 @@ async function Truck(invoice, priceSettings, normalizedReturnType) {
   const wTP = Number(invoice?.WaitingTimeAtPickupDefault) || 0;
   const wTD = Number(invoice?.WaitingTimeAtDropDefault) || 0;
 
-  const waitingTimeAtPickupCharge =
-    wTP > 15 ? ((wTP - 15) / 60) * ratePerHour : 0;
-  const waitingTimeAtDropCharge =
-    wTD > 15 ? ((wTD - 15) / 60) * ratePerHour : 0;
+  const WaitingTimeAtPickup = wTP > 15 ? ((wTP - 15) / 60) * ratePerHour : 0;
+  const WaitingTimeAtDrop = wTD > 15 ? ((wTD - 15) / 60) * ratePerHour : 0;
 
-  // Sum waiting charges and apply GST
-  const waitingCharges = waitingTimeAtPickupCharge + waitingTimeAtDropCharge;
-  const gstAmount = (gstVal / 100) * (totalPrice + waitingCharges);
+  const chargesSum =
+    totalPrice + serviceCharges + WaitingTimeAtPickup + WaitingTimeAtDrop;
+  const gst = (chargesSum * gstVal) / 100;
+  const totalPriceWithGST = chargesSum + gst;
+  const returnType = determineReturnAndServiceTypes(
+    invoice?.service,
+    invoice?.returnType
+  );
 
   const updatedInvoice = {
     ...invoice,
-    waitingCharges: Number(waitingCharges.toFixed(2)),
-    gstAmount: Number(gstAmount.toFixed(2)),
-    finalTotal: (
-      totalPrice +
-      waitingCharges +
-      gstAmount +
-      serviceCharges
-    ).toFixed(2),
+    totalPrice,
+    totalPriceWithGST: Number(totalPriceWithGST.toFixed(2)),
+    gst: Number(gst.toFixed(2)),
+    WaitingTimeAtPickup,
+    WaitingTimeAtDrop,
+    returnType,
   };
 
   return updatedInvoice;
