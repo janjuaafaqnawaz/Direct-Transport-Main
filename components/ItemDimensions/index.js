@@ -113,11 +113,12 @@ export default function ItemDimensions({
             type="number"
             fullWidth
             style={{ marginBottom: ".5rem" }}
-            label="Height"
-            name="height"
-            value={formData.height}
+            label="Length"
+            name="length"
+            value={formData.length}
             onChange={handleChange}
           />
+
           <TextField
             InputProps={{
               endAdornment: (
@@ -141,9 +142,9 @@ export default function ItemDimensions({
             type="number"
             fullWidth
             style={{ marginBottom: ".5rem" }}
-            label="Length"
-            name="length"
-            value={formData.length}
+            label="Height"
+            name="height"
+            value={formData.height}
             onChange={handleChange}
           />
           <TextField
