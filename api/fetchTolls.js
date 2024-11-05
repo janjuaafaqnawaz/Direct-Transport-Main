@@ -15,40 +15,43 @@ export async function fetchTollsData(requestBodyStr) {
       body: requestBodyStr,
     });
 
+    // Check for HTTP errors
     if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+      throw new Error(
+        `HTTP error! Status: ${res.status}, Message: ${await res.text()}`
+      );
     }
 
     const data = await res.json();
-    console.log("data", data);
+    console.log("Fetched data:", data);
 
+    // Validate the routes data
     if (!data.routes || !Array.isArray(data.routes)) {
       throw new Error("Routes data is missing or invalid.");
     }
 
-    let totalTolls = 0;
     let totalTollsCost = 0;
 
     data.routes.forEach((route) => {
-      if (route.tolls && Array.isArray(route.tolls)) {
-        route.tolls.forEach((toll) => {
-          totalTollsCost += toll.tagCost || toll.cashCost || 0;
-          totalTolls++;
-        });
+      const costs = route.costs || {};
+      console.log("costs", costs);
+
+      const price = costs.tagAndCash || 0;
+
+      if (price > totalTollsCost) {
+        totalTollsCost = price;
       }
     });
 
-    console.log("routes", data.routes);
-
-    return {
-      totalTollsCost:
-        data?.routes[0]?.costs?.maximumTollCost ||
-        data?.routes[0]?.costs?.minimumTollCost,
-      totalTolls: totalTolls,
+    const result = {
+      totalTollsCost: totalTollsCost.toFixed(2),
+      totalTolls: data.routes.length,
       fullResponse: data,
     };
+
+    return result;
   } catch (error) {
     console.error("Error fetching toll data:", error);
-    throw new Error("Failed to fetch toll data");
+    throw new Error("Failed to fetch toll data: " + error.message);
   }
 }

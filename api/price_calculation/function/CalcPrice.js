@@ -84,8 +84,8 @@ export default async function CalcPrice({
     service
   );
 
-  const origin = formData.address.Origin.coordinates;
-  const destination = formData.address.Destination.coordinates;
+  const origin = { address: formData.address.Origin.label };
+  const destination = { address: formData.address.Destination.label };
   const requestBody = {
     from: origin,
     to: destination,
@@ -94,11 +94,11 @@ export default async function CalcPrice({
       type: ["6T", "8T", "10T", "12T", "LD"].includes(returnType)
         ? "2AxlesTruck"
         : "2AxlesTaxi",
-      weight: { value: 20000, unit: "pound" },
-      height: { value: 7.5, unit: "meter" },
-      length: { value: 7.5, unit: "meter" },
-      axles: 4,
-      emissionClass: "euro_5",
+        axles: 2,
+      //   weight: { value: 20000, unit: "pound" },
+      //   height: { value: 7.5, unit: "meter" },
+      //   length: { value: 7.5, unit: "meter" },
+      // emissionClass: "euro_5",
     },
   };
   console.log("requestBody", requestBody);
