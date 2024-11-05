@@ -41,7 +41,9 @@ export async function fetchTollsData(requestBodyStr) {
     console.log("routes", data.routes);
 
     return {
-      totalTollsCost: data?.routes[0]?.costs?.minimumTollCost,
+      totalTollsCost:
+        data?.routes[0]?.costs?.maximumTollCost ||
+        data?.routes[0]?.costs?.minimumTollCost,
       totalTolls: totalTolls,
       fullResponse: data,
     };
