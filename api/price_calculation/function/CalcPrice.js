@@ -277,7 +277,8 @@ async function determinePricingAndReturnType({
 }) {
   const correctSmallReturnType = overCorrectSmallReturnType(
     longest_height,
-    longest_width
+    longest_width,
+    longest_length
   );
 
   const {
