@@ -12,10 +12,10 @@ export default function overCorrectSmallReturnType(
       longest_width > 100 &&
       longest_length > 100
     ) {
-      console.log("Longest width exceeds 1, changing job to '1T'");
+      console.log("Longest width or length exceeds 1, changing job to '1T'");
       return "1T";
     } else {
-      console.log("Longest width and height didn't exceed limits");
+      console.log("Longest width, length and height didn't exceed limits");
       return type;
     }
   };
