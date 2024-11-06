@@ -21,7 +21,7 @@ export default async function ProcessPrice(formData) {
     const API = await fetchDocById("dev", "data");
 
     const min_rate = priceSettings?.minServices;
-    const rate = priceSettings?.services;
+    const rate = priceSettings?.same_day?.services;
     const gst = priceSettings?.gst?.GST;
     const long_distance = priceSettings?.long_distance;
 

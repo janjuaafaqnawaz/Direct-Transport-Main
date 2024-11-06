@@ -362,6 +362,13 @@ async function determinePricingAndReturnType({
     ));
   } else if (total_weight <= 25 && longest_length < 100 && max_volume <= 25) {
     const type = correctSmallReturnType("Courier");
+    console.log("satisfying line 4", {
+      distance,
+      type,
+      rate: rate[type],
+      min_rate: min_rate[type],
+      rateFull: rate,
+    });
     price = calculateBasePrice(distance, rate[type], min_rate[type]);
     returnType = type;
   } else if (total_weight <= 25 && longest_length < 100 && max_volume <= 25) {
