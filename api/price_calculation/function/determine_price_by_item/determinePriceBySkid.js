@@ -4,7 +4,8 @@ export default async function determinePriceBySkid(
   distance,
   count,
   rate,
-  min_rate
+  min_rate,
+  correctSmallReturnType
 ) {
   let price = 0;
   let returnType = "NAN";

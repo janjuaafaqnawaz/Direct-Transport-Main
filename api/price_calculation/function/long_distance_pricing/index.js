@@ -63,13 +63,20 @@ export default async function LongDistancePricing(
         rate,
         min_rate,
         max_volume,
-        items
+        items,
+        correctSmallReturnType
       );
     price = basedOnPrice(palletType, long_distance, distance);
     returnType = palletType;
   } else if (Skid.exist) {
     const { price: skidPrice, returnType: skidType } =
-      await determinePriceBySkid(distance, Skid.count, rate, min_rate);
+      await determinePriceBySkid(
+        distance,
+        Skid.count,
+        rate,
+        min_rate,
+        correctSmallReturnType
+      );
     price = basedOnPrice(skidType, long_distance, distance);
     returnType = skidType;
   } else if (total_weight <= 25 && longest_length < 100 && max_volume <= 25) {

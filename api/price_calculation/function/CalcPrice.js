@@ -335,7 +335,8 @@ async function determinePricingAndReturnType({
       longest_length,
       rate,
       min_rate,
-      items
+      items,
+      correctSmallReturnType
     ));
   } else if (max_volume > 1000 || longest_length > 270) {
     const { cost, costType } = await TruckPricing(distance, items);
@@ -348,14 +349,16 @@ async function determinePricingAndReturnType({
       rate,
       min_rate,
       max_volume,
-      items
+      items,
+      correctSmallReturnType
     ));
   } else if (Skid.exist) {
     ({ price, returnType } = await determinePriceBySkid(
       distance,
       Skid.count,
       rate,
-      min_rate
+      min_rate,
+      correctSmallReturnType
     ));
   } else if (total_weight <= 25 && longest_length < 100 && max_volume <= 25) {
     const type = correctSmallReturnType("Courier");
