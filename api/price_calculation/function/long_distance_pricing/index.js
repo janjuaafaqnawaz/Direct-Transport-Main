@@ -21,7 +21,8 @@ export default async function LongDistancePricing(
   Conduit,
   Tubes,
   Pallet,
-  Skid
+  Skid,
+  correctSmallReturnType
 ) {
   console.log("Using Long Distance");
 
@@ -45,7 +46,8 @@ export default async function LongDistancePricing(
       longest_length,
       rate,
       min_rate,
-      items
+      items,
+      correctSmallReturnType
     ));
     price = basedOnPrice(returnType, long_distance, distance, price);
     returnType = returnType;
@@ -71,13 +73,16 @@ export default async function LongDistancePricing(
     price = basedOnPrice(skidType, long_distance, distance);
     returnType = skidType;
   } else if (total_weight <= 25 && longest_length < 100 && max_volume <= 25) {
-    returnType = "Courier";
+    const type = correctSmallReturnType("Courier");
+    returnType = type;
     price = basedOnPrice(returnType, long_distance, distance);
   } else if (longest_length <= 400 && max_volume <= 500) {
-    returnType = "HT";
+    const type = correctSmallReturnType("HT");
+    returnType = type;
     price = basedOnPrice(returnType, long_distance, distance);
   } else if (max_volume <= 1000) {
-    returnType = "1T";
+    const type = correctSmallReturnType("1T");
+    returnType = type;
     price = basedOnPrice(returnType, long_distance, distance);
   } else {
     const { cost, costType } = await TruckPricing(distance, items);

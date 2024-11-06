@@ -314,7 +314,8 @@ async function determinePricingAndReturnType({
       Conduit,
       Tubes,
       Pallet,
-      Skid
+      Skid,
+      correctSmallReturnType
     ));
     returnType = "LD";
   } else if (

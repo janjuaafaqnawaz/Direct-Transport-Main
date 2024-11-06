@@ -7,7 +7,8 @@ export default async function determinePriceByPallet(
   rate,
   min_rate,
   max_volume,
-  items
+  items,
+  correctSmallReturnType
 ) {
   let price = 0;
   let returnType = "NAN";
@@ -17,8 +18,9 @@ export default async function determinePriceByPallet(
     price = cost;
     returnType = costType;
   } else if (max_volume <= 1000) {
-    price = calculateBasePrice(distance, rate["1T"], min_rate["1T"]);
-    returnType = "1T";
+    const type = correctSmallReturnType("1T");
+    price = calculateBasePrice(distance, rate[type], min_rate[type]);
+    returnType = type;
   } else {
     const { cost, costType } = await TruckPricing(distance, items);
     price = cost;

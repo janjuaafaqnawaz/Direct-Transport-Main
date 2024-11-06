@@ -10,11 +10,13 @@ export default async function determinePriceBySkid(
   let returnType = "NAN";
 
   if (count === 2) {
-    price = calculateBasePrice(distance, rate["1T"], min_rate["1T"]);
-    returnType = "1T";
+    const type = correctSmallReturnType("1T");
+    price = calculateBasePrice(distance, rate[type], min_rate[type]);
+    returnType = type;
   } else {
-    price = calculateBasePrice(distance, rate["HT"], min_rate["HT"]);
-    returnType = "HT";
+    const type = correctSmallReturnType("HT");
+    price = calculateBasePrice(distance, rate[type], min_rate[type]);
+    returnType = type;
   }
 
   return { price, returnType };

@@ -8,7 +8,8 @@ export default async function determineLadderRackPipesPrice(
   longest_length,
   rate,
   min_rate,
-  items
+  items,
+  correctSmallReturnType
 ) {
   let price = 0;
   let returnType = "NAN";
@@ -29,15 +30,18 @@ export default async function determineLadderRackPipesPrice(
   // }
   if (total_weight < 100) {
     if (longest_length <= 400) {
-      price = calculateBasePrice(distance, rate["HT"], min_rate["HT"]);
-      returnType = "HT";
+      const type = correctSmallReturnType("HT");
+      price = calculateBasePrice(distance, rate[type], min_rate[type]);
+      returnType = type;
     } else {
-      price = calculateBasePrice(distance, rate["1T"], min_rate["1T"]);
-      returnType = "1T";
+      const type = correctSmallReturnType("1T");
+      price = calculateBasePrice(distance, rate[type], min_rate[type]);
+      returnType = type;
     }
   } else if (total_weight >= 100 && total_weight < 350) {
-    price = calculateBasePrice(distance, rate["1T"], min_rate["1T"]);
-    returnType = "1T";
+    const type = correctSmallReturnType("1T");
+    price = calculateBasePrice(distance, rate[type], min_rate[type]);
+    returnType = type;
   } else {
     const { cost, costType } = await TruckPricing(distance, items);
     price = cost;
