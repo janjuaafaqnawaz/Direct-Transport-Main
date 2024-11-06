@@ -2,6 +2,7 @@ import distanceValueKm from "./helper/distance_in_km";
 import calculateItemsVolume from "./helper/item_volume";
 import countItemsByType from "./helper/items_count";
 import calculateBasePrice from "./helper/calculateBasePrice";
+import overCorrectSmallReturnType from "./helper/overCorrectSmallReturnType";
 import isPointInGeofence from "./helper/isPointInGeofence";
 import ServiceCharges from "./helper/service_charges";
 import GstCharges from "./helper/gst_charges";
@@ -55,6 +56,8 @@ export default async function CalcPrice({
       distance,
       max_volume,
       longest_length,
+      longest_height,
+      longest_width,
       total_weight,
       rate,
       min_rate,
@@ -70,6 +73,8 @@ export default async function CalcPrice({
       distance,
       max_volume,
       longest_length,
+      longest_height,
+      longest_width,
       total_weight,
       rate,
       min_rate,
@@ -200,6 +205,8 @@ async function determineNFDayPricingAndReturnType({
   distance,
   max_volume,
   longest_length,
+  longest_height,
+  longest_width,
   total_weight,
   rate,
   min_rate,
@@ -225,6 +232,8 @@ async function determineNFDayPricingAndReturnType({
     distance,
     max_volume,
     longest_length,
+    longest_height,
+    longest_width,
     total_weight,
     rate,
     min_rate,
@@ -254,6 +263,8 @@ async function determinePricingAndReturnType({
   distance,
   max_volume,
   longest_length,
+  longest_height,
+  longest_width,
   total_weight,
   rate,
   min_rate,
@@ -264,6 +275,11 @@ async function determinePricingAndReturnType({
   itemCounts,
   isLdDisabled,
 }) {
+  const correctSmallReturnType = overCorrectSmallReturnType(
+    longest_height,
+    longest_width
+  );
+
   const {
     Ladder,
     Rack,
@@ -341,14 +357,21 @@ async function determinePricingAndReturnType({
       min_rate
     ));
   } else if (total_weight <= 25 && longest_length < 100 && max_volume <= 25) {
-    price = calculateBasePrice(distance, rate["Courier"], min_rate["Courier"]);
-    returnType = "Courier";
+    const type = correctSmallReturnType("Courier");
+    price = calculateBasePrice(distance, rate[type], min_rate[type]);
+    returnType = type;
+  } else if (total_weight <= 25 && longest_length < 100 && max_volume <= 25) {
+    const type = correctSmallReturnType("Courier");
+    price = calculateBasePrice(distance, rate[type], min_rate[type]);
+    returnType = type;
   } else if (longest_length <= 400 && max_volume <= 500) {
-    price = calculateBasePrice(distance, rate["HT"], min_rate["HT"]);
-    returnType = "HT";
+    const type = correctSmallReturnType("HT");
+    price = calculateBasePrice(distance, rate[type], min_rate[type]);
+    returnType = type;
   } else if (max_volume <= 1000) {
-    price = calculateBasePrice(distance, rate["1T"], min_rate["1T"]);
-    returnType = "1T";
+    const type = correctSmallReturnType("1T");
+    price = calculateBasePrice(distance, rate[type], min_rate[type]);
+    returnType = type;
   } else {
     const { cost, costType } = await TruckPricing(distance, items);
     price = cost;

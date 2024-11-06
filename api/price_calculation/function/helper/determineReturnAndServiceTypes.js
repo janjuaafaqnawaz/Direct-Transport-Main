@@ -29,16 +29,6 @@ export default function determineReturnAndServiceTypes(
   let job = returnType === "Courier" ? "C" : returnType;
   console.log("Determined job type:", job);
 
-  if (["Courier", "C", "HT", "1T"].includes(job) && longest_height > 2) {
-    console.log("Longest height exceeds 2, changing job to '2T'");
-    job = "2T";
-  }
-
-  if (["Courier", "C"].includes(job) && longest_width > 1) {
-    console.log("Longest width exceeds 1, changing job to '1T'");
-    job = "1T";
-  }
-
   let code = job;
   console.log("Base code after job determination:", code);
 
