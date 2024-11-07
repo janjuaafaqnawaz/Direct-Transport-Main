@@ -1,30 +1,12 @@
 export default function determineReturnAndServiceTypes(
   serviceType,
   returnType,
-  type,
-  longest_height,
-  longest_width
+  type
 ) {
-  // console.log("Initial parameters:", {
-  //   serviceType,
-  //   returnType,
-  //   type,
-  //   longest_height,
-  //   longest_width,
-  // });
-
   if (returnType === "LD") {
     console.log("Return type is 'LD'. Returning:", returnType);
     return returnType;
   }
-
-  const serviceCodes = ["G", "X", "D", "AF", "W"];
-
-  // if (serviceCodes.some((code) => returnType.includes(code))) {
-  //   console.error("Something went wrong while calculating service type");
-  //   console.log("Returning due to error:", returnType);
-  //   return returnType;
-  // }
 
   let job = returnType === "Courier" ? "C" : returnType;
 

@@ -66,16 +66,9 @@ async function Truck(invoice, priceSettings, normalizedReturnType) {
   const gstVal = Number(priceSettings?.same_day?.gst?.GST) || 0;
   const serviceCharges = Number(invoice?.serviceCharges) || 0;
   const totalPrice = Number(invoice?.totalPrice) || 0;
+  const hourlyRates = priceSettings?.same_day?.minWaitTime || 0;
 
-  // Define hourly rates based on truck type
-  const hourlyRates = {
-    "4T": 60,
-    "6T": 65,
-    "8T": 70,
-    "10T": 75,
-    "12T": 80,
-  };
-  const ratePerHour = hourlyRates[normalizedReturnType] || 0;
+  const ratePerHour = Number(hourlyRates[normalizedReturnType]) || 0;
 
   // Waiting time in hours from invoice
   const wTPHours = Number(invoice?.WaitingTimeAtPickupDefault) || 0;
@@ -94,10 +87,10 @@ async function Truck(invoice, priceSettings, normalizedReturnType) {
     totalPrice + serviceCharges + WaitingTimeAtPickup + WaitingTimeAtDrop;
   const gst = (chargesSum * gstVal) / 100;
   const totalPriceWithGST = chargesSum + gst;
-  const returnType = determineReturnAndServiceTypes(
-    invoice?.service,
-    invoice?.returnType
-  );
+  // const returnType = determineReturnAndServiceTypes(
+  //   invoice?.service,
+  //   invoice?.returnType
+  // );
 
   const updatedInvoice = {
     ...invoice,
@@ -106,7 +99,7 @@ async function Truck(invoice, priceSettings, normalizedReturnType) {
     gst: Number(gst.toFixed(2)),
     WaitingTimeAtPickup,
     WaitingTimeAtDrop,
-    returnType,
+    // returnType,
   };
 
   return updatedInvoice;
