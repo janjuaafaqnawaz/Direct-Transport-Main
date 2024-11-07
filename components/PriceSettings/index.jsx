@@ -14,6 +14,7 @@ import Loading from "@/components/Loading";
 import LAYOUTS from "./layouts";
 import { IconGripVertical } from "@tabler/icons-react";
 import { Button, ButtonGroup, Divider } from "@nextui-org/react";
+import TruckWaitTimeRate from "./TruckWaitTimeRate";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const sortObjectKeysNumerically = (obj) => {
@@ -79,8 +80,15 @@ export default function PriceSettings({
     return <Loading />;
   }
 
-  const { gst, minWaitTime, minServices, services, truckServices, additional } =
-    priceSettings;
+  const {
+    gst,
+    minWaitTime,
+    minServices,
+    services,
+    truckServices,
+    additional,
+    truckWaitTimeRate,
+  } = priceSettings;
 
   const sections = [
     truckServices && {
@@ -142,6 +150,18 @@ export default function PriceSettings({
         <WaitTimeRate
           handleChange={(key, value) => handleChange("minWaitTime", key, value)}
           settings={minWaitTime}
+        />
+      ),
+    },
+    truckWaitTimeRate && {
+      key: "truckWaitTimeRate",
+      title: "Wait Time Rate  Truck",
+      component: (
+        <TruckWaitTimeRate
+          handleChange={(key, value) =>
+            handleChange("truckWaitTimeRate", key, value)
+          }
+          settings={truckWaitTimeRate}
         />
       ),
     },

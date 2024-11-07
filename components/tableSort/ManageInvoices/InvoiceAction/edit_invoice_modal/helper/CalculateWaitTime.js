@@ -66,7 +66,7 @@ async function Truck(invoice, priceSettings, normalizedReturnType) {
   const gstVal = Number(priceSettings?.same_day?.gst?.GST) || 0;
   const serviceCharges = Number(invoice?.serviceCharges) || 0;
   const totalPrice = Number(invoice?.totalPrice) || 0;
-  const hourlyRates = priceSettings?.same_day?.minWaitTime || 0;
+  const hourlyRates = priceSettings?.same_day?.truckWaitTimeRate || 0;
 
   const ratePerHour = Number(hourlyRates[normalizedReturnType]) || 0;
 
