@@ -44,10 +44,10 @@ async function Taxi(invoice, priceSettings) {
     totalPrice + serviceCharges + WaitingTimeAtPickup + WaitingTimeAtDrop;
   const gst = (chargesSum * gstVal) / 100;
   const totalPriceWithGST = chargesSum + gst;
-  const returnType = determineReturnAndServiceTypes(
-    invoice?.service,
-    invoice?.returnType
-  );
+  // const returnType = determineReturnAndServiceTypes(
+  //   invoice?.service,
+  //   invoice?.returnType
+  // );
 
   const updatedInvoice = {
     ...invoice,
@@ -56,7 +56,7 @@ async function Taxi(invoice, priceSettings) {
     gst: Number(gst.toFixed(2)),
     WaitingTimeAtPickup,
     WaitingTimeAtDrop,
-    returnType,
+    // returnType,
   };
 
   return updatedInvoice;
