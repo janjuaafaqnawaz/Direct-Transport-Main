@@ -8,9 +8,6 @@ import styles from "./pdf.styles";
 export default function MyDocument({ datesRange, invoices, user, pdfId }) {
   const { totalPriceWithGST } = getTotalInvoicePrice(invoices);
 
-  const restrictLength = (str, maxLength) =>
-    str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
-
   const parseDate = (dateStr) => {
     const [day, month, year] = dateStr.split("/").map(Number);
     return new Date(year, month - 1, day);
@@ -30,41 +27,84 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
     bookings.forEach((booking) => {
       total += booking.totalPriceWithGST;
     });
-    return total.toFixed(2);
+    const final = (
+      ((total || 0) / 100) *
+      (user?.paymentPercentage || 1)
+    ).toFixed(2);
+    // console.log({ bookings, total, final });
+    return final;
   };
 
   return (
     <Document>
       <Page size="A3" style={styles.page}>
         {/* Header Section */}
-        <Image style={styles.image} alt="logo" src="/pdf_header2.jpg" />
-
-        <View style={[styles.header, { marginTop: 10, marginBottom: 10 }]}>
-          <Text style={styles.companyInfo}>
-            Direct Transport Solutions Pty Ltd
-          </Text>
-          <Text style={styles.companyInfo}>ABN 87 658 348 808</Text>
-          <Text style={styles.invoiceType}>RECIPIENT GENERATED INVOICE</Text>
-        </View>
-
         <View
-          style={[styles.headerDetails, { marginTop: 30, marginBottom: 50 }]}
+          style={[
+            styles.header,
+            {
+              marginHorizontal: 10,
+              display: "flex",
+              justifyContent: "space-between",
+              flexDirection: "row",
+              alignItems: "center",
+              alignContent: "center",
+            },
+          ]}
         >
-          <View style={styles.driverInfo}>
-            <Text style={styles.para}>Driver: {user?.firstName || ""}</Text>
-            <Text style={styles.para}>
-              Address:{" "}
-              {user.companyAddress === ""
-                ? "You don't have address"
-                : user.companyAddress}
-            </Text>
+          <View>
+            <Image style={styles.image} alt="logo" src="/pdf_header2.jpg" />
           </View>
 
-          <View style={styles.invoiceInfo}>
-            <Text style={styles.para}>Invoice Number: {pdfId}</Text>
-            <Text style={styles.para}>
-              Invoice Date: {format(new Date(), "dd/MM/yyyy")}
+          <View
+            style={[
+              styles.headerDetails,
+              { justifyContent: "center", flexDirection: "column", gap: 3 },
+            ]}
+          >
+            <Text style={styles.companyInfo}>
+              Direct Transport Solutions Pty Ltd
             </Text>
+            <Text style={styles.companyInfo}>ABN 87 658 348 808</Text>
+            <Text style={styles.companyInfo}>RECIPIENT GENERATED INVOICE</Text>
+          </View>
+
+          <View style={{ marginRight: 30 }}>
+            <View style={[styles.headerDetails, { marginVertical: 2.5 }]}>
+              <Text style={[styles.para, { fontWeight: "700" }]}>
+                Invoice Number
+              </Text>
+              <Text style={styles.para}> {pdfId}</Text>
+            </View>
+            <View style={[styles.headerDetails, { marginVertical: 0 }]}>
+              <Text style={[styles.para, { fontWeight: "700" }]}>
+                Invoice Date:
+              </Text>
+              <Text style={styles.para}>
+                {format(new Date(), "dd/MM/yyyy")}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={[styles.headerDetails, { marginHorizontal: 15 }]}>
+          <View style={styles.driverInfo}>
+            <View style={{ display: "flex", flexDirection: "row" }}>
+              <Text style={[styles.para, { fontWeight: "700", width: 48 }]}>
+                Driver:
+              </Text>
+              <Text style={styles.para}>{user?.firstName || ""}</Text>
+            </View>
+            <View style={{ display: "flex", flexDirection: "row" }}>
+              <Text style={[styles.para, { fontWeight: "700", width: 48 }]}>
+                Address:
+              </Text>
+              <Text style={styles.para}>
+                {user.companyAddress === ""
+                  ? "You don't have address"
+                  : user.companyAddress}
+              </Text>
+            </View>
           </View>
         </View>
 
