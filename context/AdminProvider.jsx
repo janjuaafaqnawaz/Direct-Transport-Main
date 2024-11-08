@@ -27,7 +27,7 @@ const AdminProvider = ({ children }) => {
   const [priceSettings, setPriceSettings] = useState(null); // <-- State for price settings
 
   const [totalBookings, setTotalBookings] = useState(0); // Store total bookings count
-  const BOOKINGS_LIMIT = 1500;
+  const BOOKINGS_LIMIT = 100;
 
   // Function to fetch total document counts in Firestore collection
   const fetchDocumentCounts = async () => {
