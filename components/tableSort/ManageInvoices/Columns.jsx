@@ -98,50 +98,44 @@ export function Columns({ isArchived, hideAction }) {
         </Chip>
       ),
     },
-    hideAction
-      ? null
-      : {
-          field: "driverName",
-          headerName: "Driver Name",
-          width: 90,
-          valueGetter: (value, row) => toCapitalize(row?.driverName) || "N/A",
-        },
-    hideAction
-      ? null
-      : {
-          field: "payment",
-          headerName: "Payment",
-          valueGetter: (value, row) => row?.payment || "Manual",
-          width: 70,
-        },
-    hideAction
-      ? null
-      : {
-          field: "actions",
-          headerName: "Actions",
-          width: 500,
-          renderCell: (params) => (
-            <>
-              <Tooltip label="Pick Status">
-                <StatusDropdown booking={params.row} />
-              </Tooltip>
-              <Tooltip label="Assign Driver">
-                <Assigned booking={params.row || ""} />
-              </Tooltip>{" "}
-              <Tooltip label="Assign Driver">
-                <Notes booking={params.row || ""} />
-              </Tooltip>
-              <Tooltip label="Edit Invoice">
-                <EditInvoice id={params.row.docId || ""} />
-              </Tooltip>
-              <InvoicePOD id={params.row.docId || ""} />
-              <DeleteInvoice
-                isArchived={isArchived}
-                id={params.row.docId}
-                booking={params.row}
-              />
-            </>
-          ),
-        },
-  ];
+    !hideAction && {
+      field: "driverName",
+      headerName: "Driver Name",
+      width: 90,
+      valueGetter: (value, row) => toCapitalize(row?.driverName) || "N/A",
+    },
+    !hideAction && {
+      field: "payment",
+      headerName: "Payment",
+      valueGetter: (value, row) => row?.payment || "Manual",
+      width: 70,
+    },
+    !hideAction && {
+      field: "actions",
+      headerName: "Actions",
+      width: 500,
+      renderCell: (params) => (
+        <>
+          <Tooltip label="Pick Status">
+            <StatusDropdown booking={params.row} />
+          </Tooltip>
+          <Tooltip label="Assign Driver">
+            <Assigned booking={params.row || ""} />
+          </Tooltip>
+          <Tooltip label="Notes">
+            <Notes booking={params.row || ""} />
+          </Tooltip>
+          <Tooltip label="Edit Invoice">
+            <EditInvoice id={params.row.docId || ""} />
+          </Tooltip>
+          <InvoicePOD id={params.row.docId || ""} />
+          <DeleteInvoice
+            isArchived={isArchived}
+            id={params.row.docId}
+            booking={params.row}
+          />
+        </>
+      ),
+    },
+  ].filter(Boolean);
 }

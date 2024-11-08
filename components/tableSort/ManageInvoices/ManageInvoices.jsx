@@ -24,7 +24,7 @@ export default function ManageInvoices({ isArchived, hideAction, invoice }) {
   const endBooking = Math.min(page * pageSize, totalBookings);
 
   return (
-    <div className="w-[100vw] overflow-hidden flex flex-col items-center">
+    <div className="w-[96vw] overflow-hidden flex flex-col items-center">
       <div className="text-center mb-4">
         <p>Total Bookings: {totalBookings}</p>
         <p>
@@ -32,10 +32,12 @@ export default function ManageInvoices({ isArchived, hideAction, invoice }) {
         </p>
       </div>
 
-      <div className="max-w-[100vw]">
+      <div className="max-w-[96vw]  overflow-hidden">
         <DataGrid
           rows={paginatedRows}
-          columns={columns}
+          columns={columns.filter(
+            (column) => column !== null && column !== undefined
+          )}
           pageSize={pageSize}
           rowHeight={70}
           pagination={false}
