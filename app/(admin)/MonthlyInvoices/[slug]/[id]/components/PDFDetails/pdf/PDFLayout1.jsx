@@ -52,6 +52,9 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
             <Text style={styles.companyDetails}>
               bookings@directtransport.com.au
             </Text>
+            <Text style={styles.companyDetails}>
+              www.directtransport.com.au
+            </Text>
             <Text style={styles.companyDetails}>1353 The Horsley Dr</Text>
             <Text style={styles.companyDetails}>Wetherill park NSW 2164</Text>
             <Text style={styles.companyDetails}>Tel: 02 9188 0894</Text>

@@ -95,6 +95,7 @@ export default function History({ email }) {
         <TableColumn>Email</TableColumn>
         <TableColumn>Issue</TableColumn>
         <TableColumn>Dates</TableColumn>
+        <TableColumn>ID</TableColumn>
         <TableColumn>Download</TableColumn>
         <TableColumn>Delete</TableColumn>
         <TableColumn>Send to Client</TableColumn>
@@ -110,6 +111,7 @@ export default function History({ email }) {
               <TableCell>
                 {pdf.datesRange.start + "-" + pdf.datesRange.end}
               </TableCell>
+              <TableCell>{pdf?.pdfId}</TableCell>
               <TableCell>
                 <a
                   target="_blank"

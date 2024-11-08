@@ -7,16 +7,40 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   header: {
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  companyInfo: {
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  invoiceType: {
+    fontSize: 10,
+    marginTop: 4,
+  },
+  headerDetails: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#bfbfbf",
-    paddingBottom: 10,
-    marginBottom: 10,
+    marginVertical: 10,
   },
-  headerText: {
-    fontSize: 12,
+  driverInfo: {
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    paddingLeft: 10,
+  },
+  invoiceInfo: {
+    flexDirection: "column",
+    alignItems: "flex-end",
+    paddingRight: 10,
+  },
+  para: {
+    fontSize: 10,
+  },
+  image: {
+    width: 200,
+    height: 100,
   },
   table: {
     display: "table",
@@ -30,7 +54,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   tableColHeader: {
-    width: "12%",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#bfbfbf",
@@ -38,71 +61,39 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   tableCol: {
-    width: "12%",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#bfbfbf",
     padding: 5,
-    wordWrap: "break-word", // For older browsers
-    overflowWrap: "break-word", // Modern browsers
-    wordBreak: "break-all", // Break long words
     overflow: "hidden",
     whiteSpace: "normal",
   },
-
   tableCellHeader: {
     fontSize: 10,
     fontWeight: "bold",
-    wordWrap: "break-word", // For older browsers
-    overflowWrap: "break-word", // Modern browsers
-    wordBreak: "break-all", // Break long words
     overflow: "hidden",
     whiteSpace: "normal",
   },
-
   tableCell: {
     fontSize: 8,
-    wordWrap: "break-word", // For older browsers
-    overflowWrap: "break-word", // Modern browsers
-    wordBreak: "break-all", // Break long words
     overflow: "hidden",
     whiteSpace: "normal",
   },
-  image: {
-    width: 200,
-    height: 100,
+  grandTotalSection: {
+    padding: 10,
+    backgroundColor: "#f8f9fa",
+    borderRadius: 8,
+    marginTop: 10,
   },
-
-  heading: {
-    fontSize: 15,
-    fontWeight: "extrabold",
-    margin: "10px 0",
-  },
-
-  para: {
+  grandTotalLabel: {
     fontSize: 10,
-    fontWeight: "hairline",
-  },
-  boldText: {
-    fontSize: 12,
-    fontWeight: "extrabold",
-  },
-  row: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    color: "#555",
     marginBottom: 4,
-    width: "300px",
   },
-  rowItem1: {
+  grandTotalAmount: {
     fontSize: 12,
-    fontWeight: "extrabold",
-    width: "50%",
-  },
-  rowItem2: {
-    fontSize: 12,
-    width: "50%",
+    fontWeight: "500",
+    color: "#d9534f",
   },
 });
 
