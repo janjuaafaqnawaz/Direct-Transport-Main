@@ -43,7 +43,6 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
           style={[
             styles.header,
             {
-              marginHorizontal: 10,
               display: "flex",
               justifyContent: "space-between",
               flexDirection: "row",
@@ -109,7 +108,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
         </View>
 
         {/* Table Section */}
-        <View style={styles.table}>
+        <View style={[styles.table, { marginHorizontal: 25 }]}>
           <View style={styles.tableRow}>
             <View style={[styles.tableColHeader, { width: "33%" }]}>
               <Text style={styles.tableCellHeader}>DATE</Text>
@@ -153,6 +152,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
             backgroundColor: "#f8f9fa",
             borderRadius: 8,
             marginTop: 10,
+            marginHorizontal: 23,
           }}
         >
           <View>

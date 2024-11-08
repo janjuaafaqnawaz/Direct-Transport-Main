@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
   table: {
     display: "table",
     width: "auto",
-    borderStyle: "solid",
-    borderWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
     borderColor: "#bfbfbf",
     margin: "10px 0",
   },
@@ -54,16 +54,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   tableColHeader: {
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#bfbfbf",
-    backgroundColor: "#f3f3f3",
     padding: 5,
   },
   tableCol: {
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#bfbfbf",
     padding: 5,
     overflow: "hidden",
     whiteSpace: "normal",
@@ -81,7 +74,6 @@ const styles = StyleSheet.create({
   },
   grandTotalSection: {
     padding: 10,
-    backgroundColor: "#f8f9fa",
     borderRadius: 8,
     marginTop: 10,
   },
