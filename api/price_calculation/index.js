@@ -20,10 +20,10 @@ export default async function ProcessPrice(formData) {
 
     const API = await fetchDocById("dev", "data");
 
-    const min_rate = priceSettings?.minServices;
+    const min_rate = priceSettings?.same_day?.minServices;
     const rate = priceSettings?.same_day?.services;
-    const gst = priceSettings?.gst?.GST;
-    const long_distance = priceSettings?.long_distance;
+    const gst = priceSettings?.same_day?.gst?.GST;
+    const long_distance = priceSettings?.same_day?.long_distance;
 
     const originStr = `${formData?.address?.Origin?.coordinates.lat},${formData?.address?.Origin?.coordinates.lng}`;
     const destinationStr = `${formData?.address?.Destination?.coordinates.lat},${formData?.address?.Destination?.coordinates.lng}`;

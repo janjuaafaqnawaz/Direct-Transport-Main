@@ -35,7 +35,41 @@ async function signUpWithEmail(email, password, userData) {
       return false;
     }
 
-    await saveUserDataToUserDoc(email, userData);
+    await saveUserDataToUserDoc(email, {
+      ...userData,
+      CustomPrice: {
+        services: {
+          Courier: "0.90",
+          "2T": "90",
+          "1T": "1.80",
+          HT: "1.20",
+        },
+        additional: {
+          additional: 0,
+        },
+        gst: {
+          GST: 10,
+        },
+        minWaitTime: {
+          minWaitTimeRate: 0.75,
+        },
+        minServices: {
+          HT: "20",
+          Courier: "10",
+          "2T": "90",
+          "1T": "30",
+        },
+        truckServices: {
+          "12T": "160",
+          "4T": "121",
+          "8T": "140",
+          "10T": "150",
+          "2T": "91",
+          "1T": "20",
+          "6T": "130",
+        },
+      },
+    });
 
     notify("Sign up successful!");
     window.location.reload();

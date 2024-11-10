@@ -3,9 +3,11 @@ import {
   fetchUserDataByEmail,
 } from "../../../firebase/functions/auth";
 import { fetchDocById } from "../../../firebase/functions/fetch";
+
 export default async function userPriceSettings(selectedEmail) {
   console.log("selectedEmail", selectedEmail);
   let user = {};
+  let universal_price;
 
   try {
     user = await fetchUserData();
@@ -16,13 +18,10 @@ export default async function userPriceSettings(selectedEmail) {
       console.log("Fetched user by email:", user);
     }
 
-    const universal_price = await fetchDocById("price_settings", "data");
+    universal_price = await fetchDocById("price_settings", "data");
     const long_distance = universal_price?.long_distance;
-    const private_price =
-      {
-        ...(user?.CustomPrice || {}),
-        long_distance,
-      } || universal_price;
+    const userCustomPrice = user?.CustomPrice;
+    const private_price = { same_day: { ...userCustomPrice, long_distance } };
     const usingCustomPrice = user?.usePrice || false;
 
     const userPriceSettings = usingCustomPrice
@@ -45,6 +44,6 @@ export default async function userPriceSettings(selectedEmail) {
     return userPriceSettings;
   } catch (error) {
     console.error("Error fetching user price settings:", error);
-    throw error;
+    return universal_price || {};
   }
 }
