@@ -68,6 +68,11 @@ function Form({
   const handleCheckOut = () => {
     if (locationsError) return toast.error("Please enter valid location ");
     if (error) return toast.error("Please enter valid date & time");
+    if (
+      !formData.address.Origin.coordinates ||
+      !formData.address.Destination.coordinates
+    )
+      return toast.error("Please enter address details");
 
     const requiredFields = [
       "Contact",

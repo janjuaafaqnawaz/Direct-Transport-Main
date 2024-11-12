@@ -8,6 +8,7 @@ import ItemDimensions from "@/components/ItemDimensions";
 import CheckoutSummary from "@/components/CheckoutSummary";
 import Form from "@/components/review_booking/form";
 import ServicesFields from "@/components/fields/ServicesFields";
+import toast from "react-hot-toast";
 
 export default function Page({ params }) {
   const [formData, setFormData] = useState(initialFormData);
@@ -57,6 +58,12 @@ export default function Page({ params }) {
       />
     );
   } else if (show === "summary") {
+    if (
+      !formData.address.Origin.coordinates ||
+      !formData.address.Destination.coordinates
+    )
+      return toast.error("Please enter address details"), setShow("");
+
     const requiredFields = ["Service", "Items", "Address"];
     const emptyFields = requiredFields.filter(
       (field) =>

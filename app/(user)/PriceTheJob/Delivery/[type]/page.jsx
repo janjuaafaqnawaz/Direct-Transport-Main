@@ -44,6 +44,12 @@ export default function Page({ params }) {
   };
 
   const handleCheckout = async () => {
+    if (
+      !formData.address.Origin.coordinates ||
+      !formData.address.Destination.coordinates
+    )
+      return toast.error("Please enter address details");
+
     if (params.type !== "same_day") {
       const { isOriginInside, isDestinationInside } = await isPointInGeofence(
         formData.address
