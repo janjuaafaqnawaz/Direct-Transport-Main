@@ -60,6 +60,7 @@ export default function DateTime({
   const fivePm = new Time(17);
   const fiveAm = new Time(5);
   const sevenAm = new Time(7);
+  const sixPm = new Time(18);
   const threePm = new Time(15);
   const midnight = new Time(24);
   const zeroTime = new Time(0, 0);
@@ -85,7 +86,7 @@ export default function DateTime({
     const isAfterHoursInvalid =
       timeValue.compare(fivePm) < 0 && timeValue.compare(sevenAm) > 0;
     const isDirectInvalid =
-      timeValue.compare(sevenAm) < 0 || timeValue.compare(fivePm) >= 0;
+      timeValue.compare(sevenAm) < 0 || timeValue.compare(sixPm) >= 0;
 
     let timeInvalid = false;
     let error = "";
