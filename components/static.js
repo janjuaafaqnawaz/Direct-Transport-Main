@@ -126,7 +126,7 @@ const serviceOptions = [
   },
   {
     value: "After Hours",
-    disc: "Deliveries between 5pm -5am",
+    disc: "Deliveries between 5pm - 7am",
     disc2: "",
   },
   {

@@ -59,6 +59,7 @@ export default function DateTime({
   const fourPm = new Time(16);
   const fivePm = new Time(17);
   const fiveAm = new Time(5);
+  const sevenAm = new Time(7);
   const threePm = new Time(15);
   const midnight = new Time(24);
   const zeroTime = new Time(0, 0);
@@ -80,7 +81,7 @@ export default function DateTime({
     const isCurrentOrFutureDate = dateValue?.compare(currentDate) >= 0;
     const isWeekendValid = weekend(dateValue, "en-au");
     const isAfterHoursInvalid =
-      timeValue.compare(fivePm) < 0 && timeValue.compare(fiveAm) > 0;
+      timeValue.compare(fivePm) < 0 && timeValue.compare(sevenAm) > 0;
 
     let timeInvalid = false;
     let error = "";
@@ -105,10 +106,10 @@ export default function DateTime({
         setMinTime(zeroTime);
       } else if (service === "After Hours") {
         setMaxTime(fivePm);
-        setMinTime(fiveAm);
+        setMinTime(sevenAm);
         if (isAfterHoursInvalid) {
           timeInvalid = true;
-          error = `Please select a time within the 5 PM to 5 AM window`;
+          error = `Please select a time within the 5 PM to 7 AM window`;
         }
       } else if (service === "Weekend Deliveries") {
         setMaxTime(fivePm);
