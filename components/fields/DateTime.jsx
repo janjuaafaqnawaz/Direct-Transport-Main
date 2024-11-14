@@ -80,8 +80,12 @@ export default function DateTime({
     const currentDate = today(getLocalTimeZone());
     const isCurrentOrFutureDate = dateValue?.compare(currentDate) >= 0;
     const isWeekendValid = weekend(dateValue, "en-au");
+
+    // Adjusting the Direct service validation to ensure 7 AM to 5 PM range
     const isAfterHoursInvalid =
       timeValue.compare(fivePm) < 0 && timeValue.compare(sevenAm) > 0;
+    const isDirectInvalid =
+      timeValue.compare(sevenAm) < 0 || timeValue.compare(fivePm) >= 0;
 
     let timeInvalid = false;
     let error = "";
@@ -102,8 +106,12 @@ export default function DateTime({
           error = `Please select "Direct" Service`;
         }
       } else if (service === "Direct") {
-        setMaxTime(midnight);
-        setMinTime(zeroTime);
+        setMaxTime(fivePm);
+        setMinTime(sevenAm);
+        if (isDirectInvalid) {
+          timeInvalid = true;
+          error = `Please select a time within the 7 AM to 5 PM window`;
+        }
       } else if (service === "After Hours") {
         setMaxTime(fivePm);
         setMinTime(sevenAm);

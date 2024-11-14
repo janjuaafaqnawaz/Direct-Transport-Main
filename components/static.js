@@ -122,7 +122,7 @@ const serviceOptions = [
   {
     value: "Direct",
     disc: "Pickup and deliver ASAP.",
-    disc2: "Booking available all day",
+    disc2: "Deliveries between 7am - 5pm",
   },
   {
     value: "After Hours",
