@@ -105,12 +105,6 @@ export function Columns({ isArchived, hideAction }) {
       valueGetter: (value, row) => toCapitalize(row?.driverName) || "N/A",
     },
     !hideAction && {
-      field: "payment",
-      headerName: "Payment",
-      valueGetter: (value, row) => row?.payment || "Manual",
-      width: 70,
-    },
-    !hideAction && {
       field: "actions",
       headerName: "Actions",
       width: 500,

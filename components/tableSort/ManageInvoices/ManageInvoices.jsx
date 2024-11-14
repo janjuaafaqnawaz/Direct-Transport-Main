@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { RowsWithIds, Columns } from "./Columns";
-import { Pagination } from "@nextui-org/react";
+import { Box } from "@mui/material";
 
 export default function ManageInvoices({ isArchived, hideAction, invoice }) {
   const rowsWithIds = useMemo(() => RowsWithIds({ invoice }), [invoice]);
@@ -12,54 +12,46 @@ export default function ManageInvoices({ isArchived, hideAction, invoice }) {
     [isArchived, hideAction]
   );
 
-  const [page, setPage] = useState(1);
-  const pageSize = 50;
-
-  const paginatedRows = rowsWithIds.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
-  const totalBookings = rowsWithIds.length;
-  const startBooking = (page - 1) * pageSize + 1;
-  const endBooking = Math.min(page * pageSize, totalBookings);
-
   return (
-    <div className="w-[96vw] overflow-hidden flex flex-col items-center">
-      <div className="text-center mb-4">
-        <p>Total Bookings: {totalBookings}</p>
-        <p>
-          Showing bookings {startBooking} - {endBooking}
-        </p>
-      </div>
-
-      <div className="max-w-[96vw]  overflow-hidden">
+    <Box sx={{ width: '96vw', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Box sx={{ maxWidth: '96vw', overflow: 'hidden' }}>
         <DataGrid
-          rows={paginatedRows}
+          rows={rowsWithIds}
           columns={columns.filter(
             (column) => column !== null && column !== undefined
           )}
-          pageSize={pageSize}
+          pageSize={50}
           rowHeight={70}
           pagination={false}
           disableRowSelectionOnClick
-          hideFooter // Hides the default footer completely
           components={{
             VirtualScroller: true,
           }}
+          sx={{
+            "& .MuiDataGrid-footerContainer": {
+              backgroundColor: "#f5f5f5",
+              color: "#333",
+              padding: "16px",
+              fontSize: "1rem",
+              fontWeight: "bold",
+              borderTop: "1px solid #ddd",
+              display: "flex",
+              justifyContent: "center",
+            },
+            "& .MuiDataGrid-pagination .MuiButtonBase-root": {
+              backgroundColor: "#007bff",     // Button background color
+              color: "#fff",                  // Button text color
+              fontWeight: "bold",             // Bold text
+              borderRadius: "4px",            // Rounded corners
+              padding: "6px 12px",            // Padding for larger button size
+              margin: "0 8px",                // Space between buttons
+              "&:hover": {
+                backgroundColor: "#0056b3",   // Darker blue on hover
+              },
+            },
+          }}
         />
-      </div>
-
-      <Pagination
-        initialPage={1}
-        showControls
-        page={page}
-        onChange={setPage}
-        total={Math.ceil(totalBookings / pageSize)}
-        withControls
-        position="center"
-        className="mt-4"
-        variant="faded"
-      />
-    </div>
+      </Box>
+    </Box>
   );
 }
