@@ -4,7 +4,7 @@ import {
 } from "../../../firebase/functions/auth";
 import { fetchDocById } from "../../../firebase/functions/fetch";
 
-export default async function userPriceSettings(selectedEmail) {
+export default async function userPriceSettings(selectedEmail, global) {
   console.log("selectedEmail", selectedEmail);
   let user = {};
   let universal_price;
@@ -41,7 +41,7 @@ export default async function userPriceSettings(selectedEmail) {
       using: userPriceSettings,
     });
 
-    return userPriceSettings;
+    return global === true ? universal_price : userPriceSettings;
   } catch (error) {
     console.error("Error fetching user price settings:", error);
     return universal_price || {};

@@ -3,36 +3,36 @@ import ServiceCharges from "@/api/price_calculation/function/helper/service_char
 import GstCharges from "@/api/price_calculation/function/helper/gst_charges";
 import BasePrice from "@/api/price_calculation/function/truck_pricing/helper/base_price";
 import MinuteRate from "@/api/price_calculation/function/truck_pricing/helper/minute_rate";
-import userPriceSettings from "@/api/price_calculation/function/helper/userPriceSettings";
 import determineReturnAndServiceTypes from "@/api/price_calculation/function/helper/determineReturnAndServiceTypes";
 
-export default async function CalcPrice({ rate, min_rate, gst, formData }) {
-  const priceSettings = await userPriceSettings();
-  // console.log({ priceSettings });
+export default async function CalcPrice({ priceSettings, formData }) {
+  const {
+    truckServices,
+    minServices: min_rate,
+    services: rate,
+    gst: { GST: gst },
+  } = priceSettings.same_day;
+  const {
+    service,
+    distance,
+    max_volume,
+    returnType: initialReturnType,
+  } = formData;
 
-  const resTruckRate = priceSettings?.truckServices ?? {};
   const truckRate = Object.fromEntries(
-    Object.entries(resTruckRate).map(([key, value]) => [key, Number(value)])
+    Object.entries(truckServices).map(([key, value]) => [key, Number(value)])
   );
 
-  const { service, distance, max_volume } = formData;
-
-  let returnType = formData.returnType;
-  let price = 0;
-  let gst_charges = 0;
-  let serviceCharges = 0;
-  const requestQuote = false;
-
-  if (returnType === "10") {
-    returnType = "10T";
-  } else if (returnType === "12") {
-    returnType = "12T";
-  }
+  let returnType =
+    initialReturnType === "10"
+      ? "10T"
+      : initialReturnType === "12"
+      ? "12T"
+      : initialReturnType;
 
   try {
     const minute_rate = MinuteRate(distance);
-
-    price = calculatePrice(
+    let price = calculatePrice(
       returnType,
       distance,
       rate,
@@ -42,15 +42,23 @@ export default async function CalcPrice({ rate, min_rate, gst, formData }) {
       max_volume
     );
 
-    const { charges, serviceCharge } = await ServiceCharges(
+    const { charges, priceDifference, serviceCharge } = await ServiceCharges(
       price,
-      requestQuote,
+      false,
       service
     );
-
     price = charges;
-    serviceCharges = serviceCharge;
-    gst_charges = await GstCharges(price, gst);
+    const serviceCharges = serviceCharge;
+
+    const gst_charges = await GstCharges(price, gst);
+
+    console.log("Calculated:", {
+      price,
+      charges,
+      priceDifference,
+      serviceCharge,
+      gst_charges,
+    });
 
     const booking = {
       ...formData,
@@ -62,22 +70,9 @@ export default async function CalcPrice({ rate, min_rate, gst, formData }) {
 
     returnType = determineReturnAndServiceTypes(service, returnType);
 
-    console.log({
-      rate,
-      min_rate,
-      gst,
-      formData,
-      price,
-      gst_charges,
-      serviceCharges,
-      booking,
-      returnType,
-    });
-
     return { ...booking, returnType };
   } catch (err) {
     console.error(`CalcPrice Error: ${err.message}`);
-    throw new Error(`Error in price calculation: ${err.message}`);
   }
 }
 
@@ -90,39 +85,61 @@ function calculatePrice(
   minute_rate,
   max_volume
 ) {
-  console.log({
+  console.log("Calculating price with parameters:", {
     returnType,
     distance,
     rate,
     min_rate,
     truckRate,
     minute_rate,
+    max_volume,
   });
 
   switch (returnType) {
     case "LD":
-      return distance * (max_volume && max_volume <= 1000 ? 2.1 : 2.5);
+      const ldPrice = distance * (max_volume && max_volume <= 1000 ? 2.1 : 2.5);
+      // console.log("LD Price calculation:", { ldPrice, distance, max_volume });
+      return ldPrice;
+
     case "Courier":
-      return calculateBasePrice(distance, rate["HT"], min_rate["HT"]);
+      const courierPrice = calculateBasePrice(
+        distance,
+        rate["HT"],
+        min_rate["HT"]
+      );
+      // console.log("Courier Price calculation:", { courierPrice });
+      return courierPrice;
+
     case "HT":
     case "1T":
     case "2T":
-      return calculateBasePrice(
+      const smallTruckPrice = calculateBasePrice(
         distance,
         rate[returnType],
         min_rate[returnType]
       );
+      // console.log(`${returnType} Price calculation:`, { smallTruckPrice });
+      return smallTruckPrice;
+
     case "4T":
     case "6T":
     case "8T":
     case "10T":
     case "12T":
-      return BasePrice(truckRate[returnType], minute_rate);
+      const largeTruckPrice = BasePrice(truckRate[returnType], minute_rate);
+      // console.log(`${returnType} Truck Price calculation:`, {
+      //   largeTruckPrice,
+      // });
+      return largeTruckPrice;
+
     default:
-      throw new Error(`Unsupported returnType: ${returnType}`);
+      const errorMsg = `Unsupported returnType: ${returnType}`;
+      console.error(errorMsg);
+      throw new Error(errorMsg);
   }
 }
 
 function toFixedSafe(value, decimals) {
-  return !isNaN(value) ? value.toFixed(decimals) : "0.00";
+  const fixedValue = !isNaN(value) ? value.toFixed(decimals) : "0.00";
+  return fixedValue;
 }
