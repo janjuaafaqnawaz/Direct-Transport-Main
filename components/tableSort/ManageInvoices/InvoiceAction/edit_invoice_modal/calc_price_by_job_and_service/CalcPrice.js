@@ -4,7 +4,7 @@ import GstCharges from "@/api/price_calculation/function/helper/gst_charges";
 import BasePrice from "@/api/price_calculation/function/truck_pricing/helper/base_price";
 import MinuteRate from "@/api/price_calculation/function/truck_pricing/helper/minute_rate";
 import determineReturnAndServiceTypes from "@/api/price_calculation/function/helper/determineReturnAndServiceTypes";
-
+import correctReturnType from "@/api/price_calculation/function/helper/correctReturnType";
 export default async function CalcPrice({ priceSettings, formData }) {
   const {
     truckServices,
@@ -17,18 +17,24 @@ export default async function CalcPrice({ priceSettings, formData }) {
     distance,
     max_volume,
     returnType: initialReturnType,
+    returnTypeBackup,
   } = formData;
 
   const truckRate = Object.fromEntries(
     Object.entries(truckServices).map(([key, value]) => [key, Number(value)])
   );
 
+  const correctedReturnType = correctReturnType(
+    returnTypeBackup,
+    initialReturnType
+  );
+
   let returnType =
-    initialReturnType === "10"
+    correctedReturnType === "10"
       ? "10T"
-      : initialReturnType === "12"
+      : correctedReturnType === "12"
       ? "12T"
-      : initialReturnType;
+      : correctedReturnType;
 
   try {
     const minute_rate = MinuteRate(distance);

@@ -61,7 +61,6 @@ async function Taxi(invoice, priceSettings) {
 
   return updatedInvoice;
 }
-
 async function Truck(invoice, priceSettings, normalizedReturnType) {
   const gstVal = Number(priceSettings?.same_day?.gst?.GST) || 0;
   const serviceCharges = Number(invoice?.serviceCharges) || 0;
@@ -70,9 +69,13 @@ async function Truck(invoice, priceSettings, normalizedReturnType) {
 
   const ratePerHour = Number(hourlyRates[normalizedReturnType]) || 0;
 
-  // Waiting time in hours from invoice
-  const wTPHours = Number(invoice?.WaitingTimeAtPickupDefault) || 0;
-  const wTDHours = Number(invoice?.WaitingTimeAtDropDefault) || 0;
+  // Waiting time in minutes from invoice
+  const wTPMinutes = Number(invoice?.WaitingTimeAtPickupDefault) || 0;
+  const wTDMinutes = Number(invoice?.WaitingTimeAtDropDefault) || 0;
+
+  // Convert minutes to hours
+  const wTPHours = wTPMinutes / 60;
+  const wTDHours = wTDMinutes / 60;
 
   // 15 minutes converted to hours
   const fifteenMin = 15 / 60;
@@ -87,10 +90,6 @@ async function Truck(invoice, priceSettings, normalizedReturnType) {
     totalPrice + serviceCharges + WaitingTimeAtPickup + WaitingTimeAtDrop;
   const gst = (chargesSum * gstVal) / 100;
   const totalPriceWithGST = chargesSum + gst;
-  // const returnType = determineReturnAndServiceTypes(
-  //   invoice?.service,
-  //   invoice?.returnType
-  // );
 
   const updatedInvoice = {
     ...invoice,
@@ -99,7 +98,6 @@ async function Truck(invoice, priceSettings, normalizedReturnType) {
     gst: Number(gst.toFixed(2)),
     WaitingTimeAtPickup,
     WaitingTimeAtDrop,
-    // returnType,
   };
 
   return updatedInvoice;
