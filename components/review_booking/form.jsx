@@ -39,8 +39,6 @@ function Form({
     useState(true);
   const [locationsError, setLocationsError] = useState(false);
 
-  console.log(formData);
-
   useEffect(() => {
     async function fetchData() {
       try {
@@ -132,7 +130,6 @@ function Form({
         ...formData.address,
         [name]: updatedAddress,
       };
-      console.log(updatedAddresses);
 
       if (
         updatedAddresses.Origin?.coordinates &&

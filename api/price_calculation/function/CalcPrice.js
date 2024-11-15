@@ -14,6 +14,8 @@ import { fetchTollsData } from "@/api/fetchTolls";
 import TruckPricing from "./truck_pricing";
 import LongDistancePricing from "./long_distance_pricing";
 import toast from "react-hot-toast";
+import correctReturnType from "./helper/correctReturnType";
+import toFixedSafe from "./helper/toFixedSafe";
 
 export default async function CalcPrice({
   distanceData,
@@ -35,6 +37,7 @@ export default async function CalcPrice({
   let serviceCharges = 0;
   let returnType = "N/A";
   let requestQuote = false;
+  let returnTypeBackup = "";
 
   const distance = await distanceValueKm(distanceData);
   const {
@@ -52,41 +55,41 @@ export default async function CalcPrice({
   );
 
   if (booking_type === "same_day") {
-    ({ price, returnType } = await determinePricingAndReturnType({
-      distance,
-      max_volume,
-      longest_length,
-      longest_height,
-      longest_width,
-      total_weight,
-      rate,
-      min_rate,
-      items,
-      long_distance,
-      isOriginInside,
-      isDestinationInside,
-      itemCounts,
-    }));
-    // console.log("Same day pricing applying");
+    ({ price, returnType, returnTypeBackup } =
+      await determinePricingAndReturnType({
+        distance,
+        max_volume,
+        longest_length,
+        longest_height,
+        longest_width,
+        total_weight,
+        rate,
+        min_rate,
+        items,
+        long_distance,
+        isOriginInside,
+        isDestinationInside,
+        itemCounts,
+      }));
   } else {
-    ({ price, returnType } = await determineNFDayPricingAndReturnType({
-      distance,
-      max_volume,
-      longest_length,
-      longest_height,
-      longest_width,
-      total_weight,
-      rate,
-      min_rate,
-      items,
-      long_distance,
-      isOriginInside,
-      isDestinationInside,
-      itemCounts,
-      priceSettings,
-      booking_type,
-    }));
-    // console.log("Near future pricing applying");
+    ({ price, returnType, returnTypeBackup } =
+      await determineNFDayPricingAndReturnType({
+        distance,
+        max_volume,
+        longest_length,
+        longest_height,
+        longest_width,
+        total_weight,
+        rate,
+        min_rate,
+        items,
+        long_distance,
+        isOriginInside,
+        isDestinationInside,
+        itemCounts,
+        priceSettings,
+        booking_type,
+      }));
   }
 
   const { charges, serviceCharge } = await ServiceCharges(
@@ -95,6 +98,7 @@ export default async function CalcPrice({
     service
   );
 
+  const correctedReturnType = correctReturnType(returnType, returnTypeBackup);
   const origin = { address: formData.address.Origin.label };
   const destination = { address: formData.address.Destination.label };
   const requestBody = {
@@ -102,16 +106,14 @@ export default async function CalcPrice({
     to: destination,
     serviceProvider: "here",
     vehicle: {
-      type: ["6T", "8T", "10T", "12T", "LD"].includes(returnType)
+      type: ["6T", "8T", "10T", "12T"].includes(correctedReturnType)
         ? "2AxlesTruck"
         : "2AxlesTaxi",
       axles: 2,
     },
   };
-  console.log("requestBody", requestBody);
   if (service !== "Standard") {
     const requestBodyStr = JSON.stringify(requestBody);
-    // console.log({ requestBodyStr, requestBody });
     tolls = await fetchTollsData(requestBodyStr);
   }
 
@@ -140,6 +142,8 @@ export default async function CalcPrice({
       tolls,
       requestQuote,
       returnType,
+      returnTypeBackup,
+      correctedReturnType,
       booking_type,
       additional,
       priceSettings,
@@ -166,18 +170,12 @@ export default async function CalcPrice({
       ...formData,
     },
 
-    location: {
+    path_details: {
       originStr,
       destinationStr,
+      requestBody,
     },
   });
-
-  function toFixedSafe(value, decimals) {
-    if (typeof value === "number" && !isNaN(value)) {
-      return value.toFixed(decimals);
-    }
-    return 0;
-  }
 
   const priceWithAdditional = toFixedSafe(
     Number(price) + Number(additional) || 0,
@@ -193,6 +191,7 @@ export default async function CalcPrice({
     totalTolls: tolls?.totalTolls || 0,
     totalTollsCost: tolls?.totalTollsCost || 0,
     returnType,
+    returnTypeBackup,
     requestQuote,
     palletSpaces,
     distanceData: distanceData,
@@ -228,7 +227,11 @@ async function determineNFDayPricingAndReturnType({
   }
 
   // Destructure the response from determinePricingAndReturnType
-  const { price: basePrice, returnType } = await determinePricingAndReturnType({
+  const {
+    price: basePrice,
+    returnType,
+    returnTypeBackup,
+  } = await determinePricingAndReturnType({
     distance,
     max_volume,
     longest_length,
@@ -256,7 +259,7 @@ async function determineNFDayPricingAndReturnType({
   // Ensure that distance is a valid number before multiplication
   const finalPrice = distance * Number(futureRate);
 
-  return { price: finalPrice || basePrice, returnType };
+  return { price: finalPrice || basePrice, returnType, returnTypeBackup };
 }
 
 async function determinePricingAndReturnType({
@@ -295,6 +298,7 @@ async function determinePricingAndReturnType({
   } = itemCounts;
   let price = 0;
   let returnType = "N/A";
+  let returnTypeBackup = "";
 
   if ((!isOriginInside || !isDestinationInside) && isLdDisabled !== true) {
     ({ price, returnType } = await LongDistancePricing(
@@ -318,6 +322,7 @@ async function determinePricingAndReturnType({
       Skid,
       correctSmallReturnType
     ));
+    returnTypeBackup = returnType;
     returnType = "LD";
   } else if (
     Ladder.exist ||
@@ -383,5 +388,5 @@ async function determinePricingAndReturnType({
     returnType = costType;
   }
 
-  return { price, returnType };
+  return { price, returnType, returnTypeBackup };
 }

@@ -27,7 +27,7 @@ export default async function LongDistancePricing(
   console.log("Using Long Distance");
 
   let price = 0;
-  let returnType = "LD";
+  let returnType = "NAN";
 
   if (
     Ladder.exist ||
@@ -49,7 +49,7 @@ export default async function LongDistancePricing(
       items,
       correctSmallReturnType
     ));
-    price = basedOnPrice(returnType, long_distance, distance, price);
+    price = basedOnPrice(returnType, long_distance, distance);
     returnType = returnType;
   } else if (max_volume > 1000 || longest_length > 270) {
     const { cost, costType } = await TruckPricing(distance, items);
@@ -100,9 +100,7 @@ export default async function LongDistancePricing(
   return { price, returnType };
 }
 
-const basedOnPrice = (costType, long_distance, distance, price) => {
-  if (costType === "LD") return price;
-
+const basedOnPrice = (costType, long_distance, distance) => {
   return Math.max(
     distance * Number(long_distance.services[costType]),
     Number(long_distance.minServices[costType])

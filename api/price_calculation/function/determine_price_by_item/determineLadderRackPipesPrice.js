@@ -23,11 +23,6 @@ export default async function determineLadderRackPipesPrice(
     min_rate,
   });
 
-  // if (distance >= 87 && total_weight >= 500) {
-  //   price = distance * 3.5;
-  //   returnType = "LD";
-  //   // console.log("satisfying", price, returnType);
-  // }
   if (total_weight < 100) {
     if (longest_length <= 400) {
       const type = correctSmallReturnType("HT");
