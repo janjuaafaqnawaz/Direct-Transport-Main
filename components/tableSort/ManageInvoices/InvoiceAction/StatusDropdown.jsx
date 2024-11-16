@@ -5,6 +5,10 @@ import { Button, Combobox, useCombobox } from "@mantine/core";
 import { useState } from "react";
 import { format } from "date-fns";
 import { updateDoc } from "@/api/firebase/functions/upload";
+import {
+  locationSharing,
+  stopLocationSharing,
+} from "@/api/firebase/functions/realtime";
 
 export default function StatusDropdown({ booking }) {
   const [invoice, setInvoice] = useState(booking);
@@ -31,6 +35,15 @@ export default function StatusDropdown({ booking }) {
       currentStatus: currentStatus,
       isNew: false,
     };
+
+    let sharing = false;
+    if (
+      currentStatus === "delivered" ||
+      currentStatus === "returned" ||
+      currentStatus === "cancelled"
+    ) {
+      await stopLocationSharing(invoice.driverEmail, invoice.docId);
+    }
 
     setInvoice(updatedData);
 

@@ -1,19 +1,23 @@
 "use client";
 import { getFormattedDateStr, getFormattedTime } from "@/api/DateAndTime";
-import { getDrivers } from "@/api/firebase/functions/fetch";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import { Button, Combobox, useCombobox } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NotifyUser from "@/api/NotifyUser";
 import useAdminContext from "@/context/AdminProvider";
+import {
+  removePrevLocation,
+  locationSharing,
+} from "@/api/firebase/functions/realtime";
 
 export default function App({ booking }) {
-  const [isLoading, setIsLoading] = useState(false); // Avoid initial loading state here if not required
+  const [isLoading, setIsLoading] = useState(false);
   const { allDrivers, loading } = useAdminContext();
 
   const handleAssignedEmail = async (email, firstName) => {
     setIsLoading(true);
     try {
+      await removePrevLocation(booking?.driverEmail, booking?.docId);
       const updatedBooking = {
         ...booking,
         driverEmail: email,
@@ -22,6 +26,7 @@ export default function App({ booking }) {
         driverAssignedTime: getFormattedTime(),
       };
       await updateDoc("place_bookings", booking.docId, updatedBooking);
+      await locationSharing(email, booking.docId);
 
       await NotifyUser(
         email,
@@ -41,8 +46,8 @@ export default function App({ booking }) {
 
   const options = allDrivers.map((driver) => (
     <Combobox.Option
-      value={driver.email} // Use a unique value for identification
-      key={driver.email} // Use email as key if unique
+      value={driver.email}
+      key={driver.email}
       onClick={() => handleAssignedEmail(driver.email, driver.firstName)}
     >
       {driver.firstName}
