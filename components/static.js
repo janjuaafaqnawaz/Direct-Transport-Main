@@ -180,6 +180,8 @@ const statuses = [
   { val: "delivered", status: "Delivered" },
   { val: "returned", status: "Returned" },
   { val: "cancelled", status: "Cancelled" },
+  { val: "Arrived At Drop", status: "Arrived at drop" },
+  { val: "Arrived At Pickup", status: "Arrived at pickup" },
 ];
 
 const goodsDescriptionOption = [
