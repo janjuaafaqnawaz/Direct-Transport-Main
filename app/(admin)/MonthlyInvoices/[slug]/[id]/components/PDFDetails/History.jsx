@@ -63,8 +63,7 @@ export default function History({ email }) {
 
     try {
       const templateParams = {
-        toEmail: "bookings@directtransport.com.au",
-        // cleanEmail
+        toEmail: toEmail,
         url: url,
         download: url,
       };
@@ -77,7 +76,7 @@ export default function History({ email }) {
       );
 
       console.log("Email sent successfully");
-      toast.success("Email sent successfully.");
+      toast.success(`Email sent to: ${toEmail}`);
       return true;
     } catch (error) {
       console.error("Error while processing data:", error);
@@ -128,7 +127,7 @@ export default function History({ email }) {
               <TableCell className="cursor-pointer">
                 <p
                   onClick={() => {
-                    sendEmailToClients(pdf?.userEmail, pdf.url);
+                    sendEmailToClients(pdf?.userEmail, pdf.url, pdf);
                   }}
                 >
                   📧 Send
