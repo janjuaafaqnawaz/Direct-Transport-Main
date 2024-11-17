@@ -27,6 +27,7 @@ async function locationSharing(email, id) {
     await set(locationRef, {
       sharing: true,
       createdAt: timestamp,
+      id,
     });
 
     notify("Good");
