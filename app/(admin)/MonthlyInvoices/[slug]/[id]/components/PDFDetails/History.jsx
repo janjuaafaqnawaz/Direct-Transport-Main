@@ -127,7 +127,7 @@ export default function History({ email }) {
               <TableCell className="cursor-pointer">
                 <p
                   onClick={() => {
-                    sendEmailToClients(pdf?.userEmail, pdf.url, pdf);
+                    sendEmailToClients(pdf?.email, pdf.url, pdf);
                   }}
                 >
                   📧 Send
