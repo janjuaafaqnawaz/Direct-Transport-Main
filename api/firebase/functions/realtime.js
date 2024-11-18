@@ -2,13 +2,12 @@
 
 import { app } from "../config";
 import { getDatabase, ref, remove, set, update } from "firebase/database";
-import { endAt, Timestamp } from "firebase/firestore";
 import toast from "react-hot-toast";
 
 const notify = (msg) => toast(msg);
 
 const database = getDatabase(app);
-const timestamp = Timestamp.now();
+const timestamp = Date.now();
 
 async function locationSharing(email, id) {
   if (!email) {
