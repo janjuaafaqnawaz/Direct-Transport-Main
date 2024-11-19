@@ -39,7 +39,7 @@ export default function Footer() {
   return (
     <div className={classes.footer}>
       <Container className={classes.inner}>
-        <Image src={"https://courierssydney.com.au/wp-content/uploads/2023/11/Direct-Transport-Solutions-2.png"} alt="logo" width={300} height={100} />
+        <Image src={"https://directtransport.com.au/wp-content/uploads/2023/11/Direct-Transport-Solutions-2.png"} alt="logo" width={300} height={100} />
         {/* <Group className={classes.links}>{items}</Group> */}
         <Copyright sx={{ mt: 8, mb: 4 }} />
 
