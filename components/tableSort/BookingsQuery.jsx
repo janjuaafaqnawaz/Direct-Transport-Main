@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { format } from "date-fns";
 import { PackageSearch } from "lucide-react";
+import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 import { Button } from "@/components/ui/button";
 import { CardTitle } from "@/components/ui/card";
@@ -97,15 +97,7 @@ function BookingTable({ bookings }) {
         {bookings?.map((booking) => (
           <TableRow key={booking?.docId}>
             <TableCell>{booking?.docId}</TableCell>
-            <TableCell>
-              {format(
-                new Date(
-                  booking?.createdAt?.seconds * 1000 +
-                    booking?.createdAt.nanoseconds / 1000000
-                ),
-                "dd/MM/yyyy hh:mm a"
-              )}
-            </TableCell>
+            <TableCell>{formatToSydneyTime(booking?.createdAt)}</TableCell>
             <TableCell>{booking?.address?.Origin?.label}</TableCell>
             <TableCell>{booking?.address?.Destination?.label}</TableCell>
             <TableCell>{booking?.service}</TableCell>

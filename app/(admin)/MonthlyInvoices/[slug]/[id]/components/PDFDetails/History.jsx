@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import emailjs from "emailjs-com";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 export default function History({ email }) {
   const [pdfs, setPdfs] = useState([]);
@@ -105,9 +106,7 @@ export default function History({ email }) {
           return (
             <TableRow key={pdf.id}>
               <TableCell>{pdf?.firstName || pdf?.userName}</TableCell>
-              <TableCell>
-                {format(pdf.createdAt.toDate(), "dd/MM/yyyy HH:mm:ss")}
-              </TableCell>
+              <TableCell>{formatToSydneyTime(pdf.createdAt)}</TableCell>
               <TableCell>
                 {pdf.datesRange.start + "-" + pdf.datesRange.end}
               </TableCell>
