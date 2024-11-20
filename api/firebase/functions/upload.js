@@ -18,12 +18,11 @@ import { app } from "../config";
 import SendEmailToClients from "@/api/emails/SendEmailToClients";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import toast from "react-hot-toast";
+import getCurrentTime from "../../getCurrentTime";
 
 const notify = (msg) => toast(msg);
 
 const db = getFirestore(app);
-
-const createdAt = Timestamp.now();
 
 async function postDoc(data, collectionName) {
   const user = JSON.parse(localStorage.getItem("userDoc"));
@@ -33,6 +32,7 @@ async function postDoc(data, collectionName) {
   }
 
   try {
+    const createdAt = await getCurrentTime();
     const collectionRef = collection(db, collectionName);
     const docRef = await addDoc(collectionRef, data);
     const updatedData = {
@@ -56,6 +56,7 @@ async function postInvoice(data, collectionName, selectedEmail) {
   const { name, email, admin } = selectedEmail || {};
 
   try {
+    const createdAt = await getCurrentTime();
     const user = JSON.parse(localStorage.getItem("userDoc"));
 
     const docId = `DTS${Math.floor(Math.random() * 99999) + 10000}`;
