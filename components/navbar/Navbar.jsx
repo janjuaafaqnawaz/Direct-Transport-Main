@@ -73,7 +73,7 @@ const Navbar = () => {
       <Link href={userPagesToRender ? "https://directtransport.com.au" : "/"}>
         <Image
           src={
-            "https://courierssydney.com.au/wp-content/uploads/2023/11/Direct-Transport-Solutions-2.png"
+            "https://directtransport.com.au/wp-content/uploads/2023/11/Direct-Transport-Solutions-2.png"
           }
           alt="logo"
           width={150}

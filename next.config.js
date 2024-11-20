@@ -9,6 +9,7 @@ const nextConfig = {
       "localhost",
       "firebasestorage.googleapis.com",
       "courierssydney.com.au",
+      "directtransport.com.au",
     ],
   },
   /* config options here */
