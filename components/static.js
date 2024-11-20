@@ -171,7 +171,7 @@ const businessPages = [
 
 const authPages = [
   { link: "/Signin", label: "Sign In" },
-  { link: "https://courierssydney.com.au/account-opening/", label: "Sign Up" },
+  { link:"https://directtransport.com.au/account-opening/", label: "Sign Up" },
 ];
 
 const statuses = [
