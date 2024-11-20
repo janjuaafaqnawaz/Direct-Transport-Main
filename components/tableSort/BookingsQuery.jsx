@@ -18,6 +18,7 @@ import {
 import { PhotoView } from "react-photo-view";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, ScrollArea } from "@mantine/core";
+import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 export function ImgsDialog({ imgs }) {
   const [opened, { open, close }] = useDisclosure(false); // Manage modal state
@@ -97,15 +98,7 @@ function BookingTable({ bookings }) {
         {bookings?.map((booking) => (
           <TableRow key={booking?.docId}>
             <TableCell>{booking?.docId}</TableCell>
-            <TableCell>
-              {format(
-                new Date(
-                  booking?.createdAt?.seconds * 1000 +
-                    booking?.createdAt.nanoseconds / 1000000
-                ),
-                "dd/MM/yyyy hh:mm a"
-              )}
-            </TableCell>
+            <TableCell>{formatToSydneyTime(booking?.createdAt)}</TableCell>
             <TableCell>{booking?.address?.Origin?.label}</TableCell>
             <TableCell>{booking?.address?.Destination?.label}</TableCell>
             <TableCell>{booking?.service}</TableCell>

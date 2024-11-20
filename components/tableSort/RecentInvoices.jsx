@@ -12,9 +12,9 @@ import {
   Paper,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { PdfButton } from "@/components/Index";
-import { format } from "date-fns";
+import { PdfButton } from "@/components/Index"; 
 import { Pagination } from "@nextui-org/react";
+import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 export default function RecentInvoices({ place_booking, place_job }) {
   const router = useRouter();
@@ -37,17 +37,7 @@ export default function RecentInvoices({ place_booking, place_job }) {
     <TableRow key={row.docId}>
       <TableCell>{row.returnType}</TableCell>
       <TableCell>{row.docId}</TableCell>
-      <TableCell>
-        {row?.createdAt
-          ? format(
-              new Date(
-                row?.createdAt?.seconds * 1000 +
-                  row.createdAt.nanoseconds / 1000000
-              ),
-              "dd/MM/yyyy hh:mm a"
-            )
-          : "err"}
-      </TableCell>
+      <TableCell>{formatToSydneyTime(row?.createdAt)}</TableCell>
       <TableCell>
         $
         {(

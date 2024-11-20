@@ -1,7 +1,6 @@
 "use client";
 
 import { Tooltip } from "@mantine/core";
-import { format } from "date-fns";
 import StatusDropdown from "./InvoiceAction/StatusDropdown";
 import DeleteInvoice from "./InvoiceAction/DeleteInvoice";
 import EditInvoice from "./InvoiceAction/edit_invoice_modal/Modal";
@@ -10,6 +9,7 @@ import Assigned from "./InvoiceAction/Assigned";
 import InvoicePOD from "./InvoiceAction/pod_invoice_modal/Modal";
 import { Chip } from "@nextui-org/react";
 import Notes from "./InvoiceAction/notes/Notes";
+import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 const toCapitalize = (str) => {
   if (!str) return "";
@@ -55,16 +55,7 @@ export function Columns({ isArchived, hideAction }) {
       field: "createdAt",
       headerName: "Booking Created",
       width: 170,
-      valueGetter: (value, row) =>
-        row?.createdAt
-          ? format(
-              new Date(
-                row.createdAt.seconds * 1000 +
-                  row.createdAt.nanoseconds / 1000000
-              ),
-              "dd/MM/yyyy hh:mm a"
-            )
-          : "err",
+      valueGetter: (value, row) => formatToSydneyTime(row?.createdAt),
     },
     { field: "userName", headerName: "Customer", width: 100 },
     {
