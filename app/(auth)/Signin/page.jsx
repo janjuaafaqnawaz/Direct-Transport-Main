@@ -4,17 +4,13 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
-// import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import CircularProgress from "@mui/material/CircularProgress";
 import { signInWithEmail } from "@/api/firebase/functions/auth";
-import { CAP } from "@/components/Index";
 import { Box, LoadingOverlay } from "@mantine/core";
 
 function Copyright(props) {
@@ -37,30 +33,29 @@ function Copyright(props) {
 
 export default function SignIn() {
   const [loading, setLoading] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [emailError, setEmailError] = React.useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setErrorMessage("");
+    setEmailError(false);
+
     const data = new FormData(event.currentTarget);
     const { email, password } = Object.fromEntries(data);
 
     try {
-      await signInWithEmail(email, password);
+      const result = await signInWithEmail(email, password);
+
+      if (result === true) return;
+
+      setEmailError(true);
+      setErrorMessage("The email or password you entered is incorrect");
     } finally {
       setLoading(false);
     }
   };
-
-  const [role, setRole] = React.useState(null);
-  React.useEffect(() => {
-    const role =
-      (JSON.parse(localStorage.getItem("userDoc")) || {}).role || null;
-    setRole(role);
-  }, []);
-
-  if (role === "null" && role !== "archived") {
-    return <CAP status={"alreadyLoggedIn"} />;
-  }
 
   return (
     <div>
@@ -97,11 +92,12 @@ export default function SignIn() {
                 required
                 fullWidth
                 id="email"
-                label="Username"
+                label="Username or Email"
                 name="email"
                 autoComplete="email"
                 autoFocus
                 disabled={loading}
+                error={emailError}
               />
               <TextField
                 margin="normal"
@@ -113,23 +109,26 @@ export default function SignIn() {
                 id="password"
                 autoComplete="current-password"
                 disabled={loading}
+                error={emailError}
               />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    value="remember"
-                    color="primary"
-                    disabled={loading}
-                  />
-                }
-                label="Remember me"
-              />
+              {errorMessage && (
+                <Typography
+                  variant="body2"
+                  color="error"
+                  sx={{
+                    mt: 2,
+                    mb: 2,
+                    textAlign: "center",
+                  }}
+                >
+                  {errorMessage}
+                </Typography>
+              )}
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
-                disabled={loading}
               >
                 {loading ? <CircularProgress size={24} /> : "Sign In"}
               </Button>
@@ -141,7 +140,7 @@ export default function SignIn() {
                 </Grid>
                 <Grid item>
                   <Link
-                    href="https://courierssydney.com.au/account-opening/"
+       href="https://directtransport.com.au/account-opening/"
                     variant="body2"
                   >
                     {"Don't have an account? Sign Up"}
