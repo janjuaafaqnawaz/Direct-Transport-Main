@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { format } from "date-fns";
 import { PackageSearch } from "lucide-react";
-import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 import { Button } from "@/components/ui/button";
 import { CardTitle } from "@/components/ui/card";

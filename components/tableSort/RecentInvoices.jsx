@@ -12,13 +12,8 @@ import {
   Paper,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-<<<<<<< HEAD
-import { PdfButton } from "@/components/Index";
- import { Pagination } from "@nextui-org/react";
-=======
 import { PdfButton } from "@/components/Index"; 
 import { Pagination } from "@nextui-org/react";
->>>>>>> beta
 import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 export default function RecentInvoices({ place_booking, place_job }) {
@@ -42,11 +37,7 @@ export default function RecentInvoices({ place_booking, place_job }) {
     <TableRow key={row.docId}>
       <TableCell>{row.returnType}</TableCell>
       <TableCell>{row.docId}</TableCell>
-<<<<<<< HEAD
-      <TableCell>{formatToSydneyTime(row.createdAt)}</TableCell>
-=======
       <TableCell>{formatToSydneyTime(row?.createdAt)}</TableCell>
->>>>>>> beta
       <TableCell>
         $
         {(

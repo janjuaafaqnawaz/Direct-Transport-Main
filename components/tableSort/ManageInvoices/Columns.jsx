@@ -55,11 +55,7 @@ export function Columns({ isArchived, hideAction }) {
       field: "createdAt",
       headerName: "Booking Created",
       width: 170,
-<<<<<<< HEAD
-      valueGetter: (value, row) => formatToSydneyTime(row.createdAt),
-=======
       valueGetter: (value, row) => formatToSydneyTime(row?.createdAt),
->>>>>>> beta
     },
     { field: "userName", headerName: "Customer", width: 100 },
     {

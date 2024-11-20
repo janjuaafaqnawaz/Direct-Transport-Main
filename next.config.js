@@ -8,10 +8,7 @@ const nextConfig = {
       "img.freepik.com",
       "localhost",
       "firebasestorage.googleapis.com",
-<<<<<<< HEAD
-=======
       "courierssydney.com.au",
->>>>>>> beta
       "directtransport.com.au",
     ],
   },
