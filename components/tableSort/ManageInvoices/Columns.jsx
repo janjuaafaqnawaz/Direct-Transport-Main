@@ -115,7 +115,7 @@ export function Columns({ isArchived, hideAction }) {
             <EditInvoice id={params.row.docId || ""} />
           </Tooltip>
           <InvoicePOD id={params.row.docId || ""} />
-          <TrackDriver booking={params.row || ""} />
+          {/* <TrackDriver booking={params.row || ""} /> */}
           <DeleteInvoice
             isArchived={isArchived}
             id={params.row.docId}
