@@ -32,7 +32,7 @@ export default function PdfButton({
 }) {
   const [uploading, setUploading] = useState(false);
   const bookingCount = bookings.length;
-  const [selectedLayout, setSelectedLayout] = useState("Layout1");
+  const [selectedLayout, setSelectedLayout] = useState("Layout2");
 
   console.log({ bookings, user });
 

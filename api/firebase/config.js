@@ -1,5 +1,6 @@
 "use client";
 import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyANVScPB8u2z0NinfQn4ZkkmvQqLkpkJ5E",
@@ -11,4 +12,7 @@ const firebaseConfig = {
   measurementId: "G-K2MVCFJHQ1",
 };
 
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const realtimeDb = getDatabase(app);
+
+export { app, realtimeDb };

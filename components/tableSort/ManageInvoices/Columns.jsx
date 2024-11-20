@@ -4,6 +4,7 @@ import { Tooltip } from "@mantine/core";
 import StatusDropdown from "./InvoiceAction/StatusDropdown";
 import DeleteInvoice from "./InvoiceAction/DeleteInvoice";
 import EditInvoice from "./InvoiceAction/edit_invoice_modal/Modal";
+import TrackDriver from "./InvoiceAction/TrackDriver/TrackDriverModal";
 import Assigned from "./InvoiceAction/Assigned";
 import InvoicePOD from "./InvoiceAction/pod_invoice_modal/Modal";
 import { Chip } from "@nextui-org/react";
@@ -54,7 +55,11 @@ export function Columns({ isArchived, hideAction }) {
       field: "createdAt",
       headerName: "Booking Created",
       width: 170,
+<<<<<<< HEAD
       valueGetter: (value, row) => formatToSydneyTime(row.createdAt),
+=======
+      valueGetter: (value, row) => formatToSydneyTime(row?.createdAt),
+>>>>>>> beta
     },
     { field: "userName", headerName: "Customer", width: 100 },
     {
@@ -114,6 +119,7 @@ export function Columns({ isArchived, hideAction }) {
             <EditInvoice id={params.row.docId || ""} />
           </Tooltip>
           <InvoicePOD id={params.row.docId || ""} />
+          {/* <TrackDriver booking={params.row || ""} /> */}
           <DeleteInvoice
             isArchived={isArchived}
             id={params.row.docId}

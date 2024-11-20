@@ -14,6 +14,7 @@ import {
 import { app } from "../config";
 import { fetchAllEmail, fetchAllFirstNames, fetchDocById } from "./fetch";
 import { deleteDocument } from "./upload";
+import toast from "react-hot-toast";
 
 const auth = getAuth(app);
 const db = getFirestore();
@@ -98,7 +99,7 @@ async function signInWithEmail(usernameOrEmail, password) {
     const querySnapshotWithEmail = await getDocs(qWithEmail);
 
     if (querySnapshotWithUsername.empty && querySnapshotWithEmail.empty) {
-      notify("User not found or invalid credentials");
+      toast.error("The email or password you entered does not match to any accounts.");
       return false;
     }
 

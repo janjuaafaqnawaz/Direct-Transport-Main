@@ -40,7 +40,9 @@ export default function StatusDropdown({ booking }) {
     if (
       currentStatus === "delivered" ||
       currentStatus === "returned" ||
-      currentStatus === "cancelled"
+      currentStatus === "cancelled" ||
+      currentStatus === "Arrived At Drop" ||
+      currentStatus === "Arrived At Pickup"
     ) {
       await stopLocationSharing(invoice.driverEmail, invoice.docId);
     }

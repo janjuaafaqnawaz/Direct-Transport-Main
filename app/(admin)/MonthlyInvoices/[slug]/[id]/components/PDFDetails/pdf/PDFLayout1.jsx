@@ -5,6 +5,10 @@ import styles from "./userPDFStyles";
 import getTotalInvoicePrice from "./getTotalInvoicePrice";
 import { format } from "date-fns";
 
+const currentDate = new Date();
+const futureDate = new Date();
+futureDate.setDate(currentDate.getDate() + 14);
+
 export default function MyDocument({ datesRange, invoices, user, pdfId }) {
   const { start, end } = datesRange;
   const { totalPrice, totalGst, totalTolls, totalUnloading } =
@@ -83,7 +87,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
                 width: "50%",
               }}
             >
-              <View style={styles.invoiceRow}>
+              <View style={[styles.invoiceRow, { marginRight: 40 }]}>
                 <Text style={styles.label}>Invoice number</Text>
                 <Text style={styles.value}>{pdfId}</Text>
               </View>
@@ -91,6 +95,12 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
                 <Text style={styles.label}>Issue date</Text>
                 <Text style={styles.value}>
                   {format(new Date(), "dd/MM/yyyy")}
+                </Text>
+              </View>
+              <View style={styles.invoiceRow}>
+                <Text style={styles.label}>Due date</Text>
+                <Text style={styles.value}>
+                  {format(futureDate, "dd/MM/yyyy")}
                 </Text>
               </View>
               <View style={styles.invoiceRow}>

@@ -18,6 +18,7 @@ import {
 import { PhotoView } from "react-photo-view";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, ScrollArea } from "@mantine/core";
+import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 export function ImgsDialog({ imgs }) {
   const [opened, { open, close }] = useDisclosure(false); // Manage modal state
