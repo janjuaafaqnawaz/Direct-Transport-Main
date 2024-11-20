@@ -98,9 +98,12 @@ async function signInWithEmail(usernameOrEmail, password) {
     const querySnapshotWithUsername = await getDocs(qWithUsername);
     const querySnapshotWithEmail = await getDocs(qWithEmail);
 
+    let error_message = "";
+
     if (querySnapshotWithUsername.empty && querySnapshotWithEmail.empty) {
-      toast.error("The email or password you entered does not match to any accounts.");
-      return false;
+      error_message =
+        "The email or password you entered does not match to any accounts.";
+      return error_message;
     }
 
     let userData;
@@ -113,7 +116,6 @@ async function signInWithEmail(usernameOrEmail, password) {
     await saveUserDataToUserDoc(userData.email, userData);
     localStorage.setItem("user", JSON.stringify(userData));
     await fetchUserData();
-    // window.location.reload();
     window.location.href = "/ClientServices";
     notify("Sign in successful!");
     return true;
