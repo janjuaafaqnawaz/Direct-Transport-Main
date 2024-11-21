@@ -1,6 +1,6 @@
 "use client";
 import { fetchDocById } from "./firebase/functions/fetch";
-import CountItems from "./pricc_calculations/components/count_items";
+import CountItems from "./price_calculation/function/helper/count_items";
 
 // Helper function to calculate weight and cubic capacity
 async function calculateWeightAndCubicCapacity(items) {
