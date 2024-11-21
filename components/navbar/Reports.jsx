@@ -57,13 +57,13 @@ export default function Reports() {
         return;
       }
 
-      const abc = filteredBookings.map((booking) => [
-        booking.totalPriceWithGST,
-        booking.totalTollsCost,
-        booking.id,
-        booking.returnType,
-      ]);
-      console.log(abc);
+      // const abc = filteredBookings.map((booking) => [
+      //   booking.totalPriceWithGST,
+      //   booking.totalTollsCost,
+      //   booking.id,
+      //   booking.returnType,
+      // ]);
+      // console.log(abc);
 
       setBookings(filteredBookings);
 
