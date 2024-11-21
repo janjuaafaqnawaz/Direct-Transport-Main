@@ -5,13 +5,6 @@ import useAdminContext from "@/context/AdminProvider";
 import { parse, startOfDay } from "date-fns";
 import toast from "react-hot-toast";
 
-function formatDateToDDMMYYYY(date) {
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-}
-
 const parseDate = (dateString) => {
   try {
     const parsedDate = parse(dateString, "dd/MM/yyyy", new Date());
@@ -59,17 +52,26 @@ export default function Reports() {
         );
       });
 
-      console.log(filteredBookings);
-
       if (!filteredBookings.length) {
         setLoading(false);
         return;
       }
 
+      const abc = filteredBookings.map((booking) => [
+        booking.totalPriceWithGST,
+        booking.totalTollsCost,
+        booking.id,
+        booking.returnType,
+      ]);
+      console.log(abc);
+
       setBookings(filteredBookings);
 
       const total = filteredBookings.reduce(
-        (sum, booking) => sum + Number(booking?.totalPriceWithGST),
+        (sum, booking) =>
+          sum +
+          (Number(booking?.totalPriceWithGST) +
+            Number(booking?.totalTollsCost || 0)),
         0
       );
       setTotalPrice(total.toFixed(2));
