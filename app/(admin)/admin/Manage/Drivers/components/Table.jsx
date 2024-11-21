@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/select";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import { Switch } from "@/components/ui/switch";
+import TrackDriver from "./TrackDriver/TrackDriverModal";
+
 const roleOptions = [
   { value: "driver", label: "Driver" },
   { value: "archived", label: "Archived" },
@@ -40,10 +42,10 @@ export default function DriverTable({ filter }) {
     filter === ""
       ? allDrivers
       : allDrivers.filter(
-        (driver) =>
-          driver.firstName.toLowerCase().includes(filterVal) ||
-          driver.email.toLowerCase().includes(filterVal)
-      );
+          (driver) =>
+            driver.firstName.toLowerCase().includes(filterVal) ||
+            driver.email.toLowerCase().includes(filterVal)
+        );
 
   const handleDeleteUser = async (email) => {
     await deleteUserAcc(email);
@@ -186,6 +188,7 @@ export default function DriverTable({ filter }) {
                     <Button variant="outline" size="sm">
                       <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
                     </Button>
+                    <TrackDriver email={driver?.email} />
                   </TableCell>
                   <TableCell>
                     <Switch
