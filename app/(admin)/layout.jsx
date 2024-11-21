@@ -7,7 +7,6 @@ import { ScrollArea } from "@mantine/core";
 import { ScrollShadow } from "@nextui-org/react";
 import { AdminProvider } from "@/context/AdminProvider";
 import Script from "next/script";
-import { useFirebase } from "@/context/FirebaseContext";
 
 export default function RootLayout({ children }) {
   const nav = useRouter();
@@ -35,7 +34,7 @@ export default function RootLayout({ children }) {
     auth();
   }, [nav]);
 
-  const { priceSettings } = useFirebase();
+  const API = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
 
   return (
     <AdminProvider>
@@ -43,9 +42,9 @@ export default function RootLayout({ children }) {
         <ScrollArea>
           <Stats />
           {children}
-          {priceSettings ? (
+          {API ? (
             <Script
-              src={`https://maps.googleapis.com/maps/api/js?key=${priceSettings?.GOOGLE_MAPS_API}=places`}
+              src={`https://maps.googleapis.com/maps/api/js?key=${API}=places`}
             />
           ) : null}
         </ScrollArea>

@@ -1,7 +1,6 @@
 import { calculateDistance } from "./distanceCalculator";
 import CalcPrice from "./function/CalcPrice";
 import userPriceSettings from "./function/helper/userPriceSettings";
-import { fetchDocById } from "../firebase/functions/fetch";
 import toast from "react-hot-toast";
 
 export default async function ProcessPrice(formData) {
@@ -18,7 +17,7 @@ export default async function ProcessPrice(formData) {
 
     const priceSettings = await userPriceSettings(formData?.selectedEmail);
 
-    const API = await fetchDocById("dev", "data");
+    const API = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
 
     const min_rate = priceSettings?.same_day?.minServices;
     const rate = priceSettings?.same_day?.services;
@@ -28,11 +27,7 @@ export default async function ProcessPrice(formData) {
     const originStr = `${formData?.address?.Origin?.coordinates.lat},${formData?.address?.Origin?.coordinates.lng}`;
     const destinationStr = `${formData?.address?.Destination?.coordinates.lat},${formData?.address?.Destination?.coordinates.lng}`;
 
-    const distance = await calculateDistance(
-      originStr,
-      destinationStr,
-      API?.GOOGLE_MAPS_API
-    );
+    const distance = await calculateDistance(originStr, destinationStr, API);
     const distanceData = distance?.rows[0]?.elements[0]?.distance;
 
     const booking = await CalcPrice({
