@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { updateDoc } from "@/api/firebase/functions/upload";
+import { Switch } from "@/components/ui/switch";
 const roleOptions = [
   { value: "driver", label: "Driver" },
   { value: "archived", label: "Archived" },
@@ -39,10 +40,10 @@ export default function DriverTable({ filter }) {
     filter === ""
       ? allDrivers
       : allDrivers.filter(
-          (driver) =>
-            driver.firstName.toLowerCase().includes(filterVal) ||
-            driver.email.toLowerCase().includes(filterVal)
-        );
+        (driver) =>
+          driver.firstName.toLowerCase().includes(filterVal) ||
+          driver.email.toLowerCase().includes(filterVal)
+      );
 
   const handleDeleteUser = async (email) => {
     await deleteUserAcc(email);
@@ -59,6 +60,9 @@ export default function DriverTable({ filter }) {
     await updateDoc("users", changedUser.email, changedUser);
   };
 
+  const handleSaveChange = async (data) =>
+    await updateDoc("users", data.email, data);
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -70,6 +74,7 @@ export default function DriverTable({ filter }) {
             <TableHead>Role</TableHead>
             <TableHead>Email</TableHead>
             <TableHead className="text-right">Action</TableHead>
+            <TableHead>Track Location</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -107,70 +112,91 @@ export default function DriverTable({ filter }) {
               </TableCell>
             </TableRow>
           ) : (
-            filteredDrivers.map((driver, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Badge variant="outline">{index + 1}</Badge>
-                </TableCell>
-                <TableCell className="font-medium">
-                  <DriverDetailsDialog driverDetails={driver} />
+            filteredDrivers.map((driver, index) => {
+              const toggleTracking = () => {
+                console.log("Toggle tracking for driver:", driver.email);
 
-                  {/* {driver?.firstName} */}
-                </TableCell>
-                <TableCell>{driver?.phone || "N/A"}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary" className="bg-gray-700">
-                    {driver?.role}
-                  </Badge>
-                </TableCell>
-                <TableCell>{driver?.email}</TableCell>
-                <TableCell>
-                  <Select
-                    value={driver?.role}
-                    onValueChange={(value) => handleStatusChange(value, index)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {roleOptions.map((option) => (
-                        <SelectItem
-                          className="bg-white"
-                          key={option.value}
-                          value={option.value}
-                        >
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDeleteUser(driver?.email)}
-                    className="mr-2"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" /> Delete
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      router.push(`/admin/Manage/Drivers/${driver?.email}`)
-                    }
-                    className="mr-2"
-                  >
-                    <History className="mr-2 h-4 w-4" /> History
-                  </Button>
-                  <Create edit={true} driver={driver} />
-                  <Button variant="outline" size="sm">
-                    <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))
+                handleSaveChange({
+                  ...driver,
+                  tracking:
+                    driver?.tracking === undefined ? true : !driver?.tracking,
+                });
+              };
+
+              return (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Badge variant="outline">{index + 1}</Badge>
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    <DriverDetailsDialog driverDetails={driver} />
+
+                    {/* {driver?.firstName} */}
+                  </TableCell>
+                  <TableCell>{driver?.phone || "N/A"}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="bg-gray-700">
+                      {driver?.role}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{driver?.email}</TableCell>
+                  <TableCell>
+                    <Select
+                      value={driver?.role}
+                      onValueChange={(value) =>
+                        handleStatusChange(value, index)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {roleOptions.map((option) => (
+                          <SelectItem
+                            className="bg-white"
+                            key={option.value}
+                            value={option.value}
+                          >
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeleteUser(driver?.email)}
+                      className="mr-2"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        router.push(`/admin/Manage/Drivers/${driver?.email}`)
+                      }
+                      className="mr-2"
+                    >
+                      <History className="mr-2 h-4 w-4" /> History
+                    </Button>
+                    <Create edit={true} driver={driver} />
+                    <Button variant="outline" size="sm">
+                      <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Switch
+                      className="bg-slate-300"
+                      checked={driver?.tracking}
+                      onCheckedChange={toggleTracking}
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })
           )}
         </TableBody>
       </Table>
