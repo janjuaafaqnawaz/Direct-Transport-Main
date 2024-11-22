@@ -77,6 +77,9 @@ export default function Users({ users }) {
     deleteUserAcc(email, pass);
   };
 
+  const handleSaveChange = async (data) =>
+    await updateDoc("users", data.email, data);
+
   return (
     <div className="  mx-[3%] py-10  ">
       <div className="flex justify-between items-center mb-6">
@@ -122,11 +125,11 @@ export default function Users({ users }) {
               <TableHead>Full Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Price Switch</TableHead>
+              <TableHead>Track Location</TableHead>
               <TableHead>Pricing</TableHead>
+              <TableHead>Role</TableHead>
               <TableHead>Reset</TableHead>
               <TableHead>Remove</TableHead>
-              {/* <TableHead>User</TableHead> */}
-              <TableHead>Role</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -135,6 +138,15 @@ export default function Users({ users }) {
               const { firstName, email, role, password } = row;
               const handleToggle = async (val) =>
                 await updateDoc("users", row.email, { ...row, usePrice: val });
+
+              const toggleTracking = () => {
+                console.log("Toggle tracking for user:", row.email);
+
+                handleSaveChange({
+                  ...row,
+                  tracking: row?.tracking === undefined ? true : !row?.tracking,
+                });
+              };
 
               return (
                 <TableRow key={index}>
@@ -148,53 +160,18 @@ export default function Users({ users }) {
                       onCheckedChange={handleToggle}
                     />
                   </TableCell>
+
+                  <TableCell>
+                    <Switch
+                      className="bg-slate-300"
+                      checked={row?.tracking}
+                      onCheckedChange={toggleTracking}
+                    />
+                  </TableCell>
+
                   <TableCell>
                     <CustomPrice user={row} />
                   </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePassReset(email, password)}
-                    >
-                      <Send className="mr-2 h-4 w-4" /> Send
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteUser(email, password)}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" /> Delete
-                    </Button>
-                  </TableCell>
-                  {/* <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <Button className="capitalize">{row.rule  }</Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="bg-white">
-                        <DropdownMenuLabel>All Rules</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => handleRuleChange(row, "active")}
-                        >
-                          Active
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleRuleChange(row, "archived")}
-                        >
-                          Archived
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDeleteUser(email, password)}
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell> */}
                   <TableCell>
                     <Select
                       value={role}
@@ -218,6 +195,26 @@ export default function Users({ users }) {
                       </SelectContent>
                     </Select>
                   </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePassReset(email, password)}
+                    >
+                      <Send className="mr-2 h-4 w-4" /> Send
+                    </Button>
+                  </TableCell>
+
+                  <TableCell>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteUser(email, password)}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    </Button>
+                  </TableCell>
+
                   <TableCell>
                     <Button
                       variant="outline"

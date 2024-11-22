@@ -75,8 +75,9 @@ export default function DriverTable({ filter }) {
             <TableHead>Phone</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Email</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Track Location</TableHead>
+            <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -164,6 +165,13 @@ export default function DriverTable({ filter }) {
                         ))}
                       </SelectContent>
                     </Select>
+                  </TableCell> 
+                  <TableCell>
+                    <Switch
+                      className="bg-slate-300"
+                      checked={driver?.tracking}
+                      onCheckedChange={toggleTracking}
+                    />
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
@@ -189,13 +197,6 @@ export default function DriverTable({ filter }) {
                       <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
                     </Button>
                     <TrackDriver email={driver?.email} />
-                  </TableCell>
-                  <TableCell>
-                    <Switch
-                      className="bg-slate-300"
-                      checked={driver?.tracking}
-                      onCheckedChange={toggleTracking}
-                    />
                   </TableCell>
                 </TableRow>
               );
