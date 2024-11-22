@@ -1,21 +1,29 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
+
 import React, { useState, useMemo } from "react";
-import { Button } from "@mantine/core";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Paper,
-} from "@mui/material";
-import { useRouter } from "next/navigation";
+} from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { PdfButton } from "@/components/Index";
-import { Pagination } from "@nextui-org/react";
 import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 import TrackDriver from "./ManageInvoices/InvoiceAction/TrackDriver/TrackDriverModal";
+import { Badge } from "@/components/ui/badge";
+import { Eye, Download } from "lucide-react";
+import { Pagination } from "@nextui-org/react";
 
 export default function RecentInvoices({ place_booking, place_job }) {
   const router = useRouter();
@@ -37,7 +45,7 @@ export default function RecentInvoices({ place_booking, place_job }) {
 
   const renderTableRow = (row, cat) => (
     <TableRow key={row.docId}>
-      <TableCell>{row.returnType}</TableCell>
+      <TableCell className="font-medium">{row.returnType}</TableCell>
       <TableCell>{row.docId}</TableCell>
       <TableCell>{formatToSydneyTime(row?.createdAt)}</TableCell>
       <TableCell>
@@ -46,18 +54,23 @@ export default function RecentInvoices({ place_booking, place_job }) {
           Number(row?.totalPriceWithGST || 0) + Number(row?.totalTollsCost || 0)
         ).toFixed(2)}
       </TableCell>
-      <TableCell className="capitalize">
-        {row?.currentStatus || "pending"}
+      <TableCell>
+        <Badge variant={"outline"}>
+          <p className="uppercase text-gray-800">{row?.currentStatus || "Pending"}</p>
+        </Badge>
       </TableCell>
       <TableCell>
-        <Button
-          variant="light"
-          color="#1384e1"
-          onClick={() => handleNavigate(row.docId)}
-        >
-          View
-        </Button>
-        {userDoc?.tracking && <TrackDriver booking={row} />}
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleNavigate(row.docId)}
+          >
+            <Eye className="mr-2 h-4 w-4" />
+            View
+          </Button>
+          {userDoc?.tracking && <TrackDriver customBtn={true} booking={row} />}
+        </div>
       </TableCell>
       <TableCell>
         <PdfButton invoice={row} />
@@ -68,41 +81,42 @@ export default function RecentInvoices({ place_booking, place_job }) {
   const total = Math.ceil(combinedData.length / rowsPerPage);
 
   return (
-    <>
-      <TableContainer
-        component={Paper}
-        style={{ width: "80%", margin: "2rem auto" }}
-      >
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
+    <Card className="w-full max-w-6xl mx-auto mt-8">
+      <CardHeader>
+        <CardTitle>Recent Invoices</CardTitle>
+        <CardDescription>View and manage your recent invoices</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell>Job Type</TableCell>
-              <TableCell>ID</TableCell>
-              <TableCell>Date & Time</TableCell>
-              <TableCell>Invoice</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>View</TableCell>
-              <TableCell>Download Invoice</TableCell>
+              <TableHead>Job Type</TableHead>
+              <TableHead>ID</TableHead>
+              <TableHead>Date & Time</TableHead>
+              <TableHead>Invoice</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>View</TableHead>
+              <TableHead>Download Invoice</TableHead>
             </TableRow>
-          </TableHead>
+          </TableHeader>
           <TableBody>
             {paginatedData.map((row) =>
               renderTableRow(row, row.jobType || "Unknown")
             )}
           </TableBody>
         </Table>
-      </TableContainer>
-      <div className="flex w-full justify-center mt-4">
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="secondary"
-          page={page}
-          total={total}
-          onChange={setPage}
-        />
-      </div>
-    </>
+        <div className="flex w-full justify-center mt-4">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="secondary"
+            page={page}
+            total={total}
+            onChange={setPage}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }

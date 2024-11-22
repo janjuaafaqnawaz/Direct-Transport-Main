@@ -4,6 +4,9 @@ import { useEffect, useState, useRef } from "react";
 import { onValue, ref } from "firebase/database";
 import { realtimeDb } from "@/api/firebase/config";
 import dynamic from "next/dynamic";
+import { Card, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const LeafletMap = dynamic(() => import("./LeafletMap"), { ssr: false });
 
@@ -37,17 +40,24 @@ export default function TrackDriverContent({ booking }) {
 
   if (!liveLocSharingBookings) {
     return (
-      <h3>
-        We apologize, but this booking does not include real-time tracking or
-        last drop-off location details.
-      </h3>
+      <Alert variant="warning">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Tracking Unavailable</AlertTitle>
+        <AlertDescription>
+          We apologize, but this booking does not include real-time tracking or
+          last drop-off location details.
+        </AlertDescription>
+      </Alert>
     );
   }
 
   return (
-    <LeafletMap
-      liveLocSharingBookings={liveLocSharingBookings}
-      booking={booking}
-    />
+    <>
+      <h1>Driver's Live Location</h1>
+      <LeafletMap
+        liveLocSharingBookings={liveLocSharingBookings}
+        booking={booking}
+      />
+    </>
   );
 }
