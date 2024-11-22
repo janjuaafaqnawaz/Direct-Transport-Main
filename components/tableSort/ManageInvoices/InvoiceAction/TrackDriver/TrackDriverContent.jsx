@@ -53,7 +53,7 @@ export default function TrackDriverContent({ booking }) {
 
   return (
     <>
-      <h1>Driver's Live Location</h1>
+      <h1>Driver Live Location</h1>
       <LeafletMap
         liveLocSharingBookings={liveLocSharingBookings}
         booking={booking}
