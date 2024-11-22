@@ -76,7 +76,7 @@ export default function DriverTable({ filter }) {
             <TableHead>Role</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Track Location</TableHead>
+            {/* <TableHead>Track Location</TableHead> */}
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -196,7 +196,7 @@ export default function DriverTable({ filter }) {
                     <Button variant="outline" size="sm">
                       <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
                     </Button>
-                    <TrackDriver email={driver?.email} />
+                    {/* <TrackDriver email={driver?.email} /> */}
                   </TableCell>
                 </TableRow>
               );

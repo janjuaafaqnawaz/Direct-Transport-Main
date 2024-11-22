@@ -125,7 +125,7 @@ export default function Users({ users }) {
               <TableHead>Full Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Price Switch</TableHead>
-              <TableHead>Track Location</TableHead>
+              {/* <TableHead>Track Location</TableHead> */}
               <TableHead>Pricing</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Reset</TableHead>
@@ -161,13 +161,13 @@ export default function Users({ users }) {
                     />
                   </TableCell>
 
-                  <TableCell>
+                  {/* <TableCell>
                     <Switch
                       className="bg-slate-300"
                       checked={row?.tracking}
                       onCheckedChange={toggleTracking}
                     />
-                  </TableCell>
+                  </TableCell> */}
 
                   <TableCell>
                     <CustomPrice user={row} />
