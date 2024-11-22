@@ -115,8 +115,7 @@ export default function Create({ edit, driver }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Edit className="mr-2 h-4 w-4" />
+        <Button variant="outline" className="my-0">
           {edit ? "Edit Driver" : "Add Driver"}
         </Button>
       </DialogTrigger>

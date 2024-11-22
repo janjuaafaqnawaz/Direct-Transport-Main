@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button"; 
+import { Button } from "@/components/ui/button";
 import DriverTable from "./components/Table";
 import Create from "./components/Create";
 import { Divider } from "@nextui-org/react";
 import Link from "next/link";
+import TrackDriverModal from "./components/AllDriversMap/TrackDriverModal"
 
 export default function Page() {
   const [filter, setFilter] = useState("");
@@ -31,6 +32,7 @@ export default function Page() {
           />
         </div>
         <div>
+          <TrackDriverModal />
           <Link className="mr-4" href={"/admin/Manage/Archived"}>
             <Button variant={"outline"}>Archived</Button>
           </Link>
