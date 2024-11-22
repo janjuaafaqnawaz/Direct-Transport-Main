@@ -16,7 +16,7 @@ export default function TrackDriver({ booking }) {
         size="xl"
         title="Driver's Live Location"
       >
-        <TrackDriverContent booking={booking} />
+        {open && <TrackDriverContent booking={booking} />}
       </Modal>
 
       <Tooltip label="Track Driver">

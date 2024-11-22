@@ -12,9 +12,10 @@ import {
   Paper,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { PdfButton } from "@/components/Index"; 
+import { PdfButton } from "@/components/Index";
 import { Pagination } from "@nextui-org/react";
 import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
+import TrackDriver from "./ManageInvoices/InvoiceAction/TrackDriver/TrackDriverModal";
 
 export default function RecentInvoices({ place_booking, place_job }) {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function RecentInvoices({ place_booking, place_job }) {
   const rowsPerPage = 10;
 
   const combinedData = [...(place_booking || []), ...(place_job || [])];
+  const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
 
   const paginatedData = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -55,6 +57,7 @@ export default function RecentInvoices({ place_booking, place_job }) {
         >
           View
         </Button>
+        {userDoc?.tracking && <TrackDriver booking={row} />}
       </TableCell>
       <TableCell>
         <PdfButton invoice={row} />

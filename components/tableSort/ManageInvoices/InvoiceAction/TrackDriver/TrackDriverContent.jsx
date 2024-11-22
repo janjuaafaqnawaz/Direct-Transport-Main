@@ -3,9 +3,9 @@
 import { useEffect, useState, useRef } from "react";
 import { onValue, ref } from "firebase/database";
 import { realtimeDb } from "@/api/firebase/config";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const LeafletMap = dynamic(() => import('./LeafletMap'), { ssr: false });
+const LeafletMap = dynamic(() => import("./LeafletMap"), { ssr: false });
 
 export default function TrackDriverContent({ booking }) {
   const [liveLocSharingBookings, setLiveLocSharingBookings] = useState(null);
@@ -22,6 +22,8 @@ export default function TrackDriverContent({ booking }) {
 
       const unsubscribe = onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
+        console.log(data);
+
         setLiveLocSharingBookings(data);
       });
 
@@ -33,10 +35,19 @@ export default function TrackDriverContent({ booking }) {
     }
   }, [booking]);
 
+  if (!liveLocSharingBookings) {
+    return (
+      <h3>
+        We apologize, but this booking does not include real-time tracking or
+        last drop-off location details.
+      </h3>
+    );
+  }
+
   return (
-    <LeafletMap 
-      liveLocSharingBookings={liveLocSharingBookings} 
-      booking={booking} 
+    <LeafletMap
+      liveLocSharingBookings={liveLocSharingBookings}
+      booking={booking}
     />
   );
 }
