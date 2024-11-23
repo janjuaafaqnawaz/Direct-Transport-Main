@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import styles from "./pdf.styles";
 
 export default function MyDocument({ datesRange, invoices, user, pdfId }) {
+  const { start, end } = datesRange;
   const { totalPriceWithGST, totalGst } = getTotalInvoicePrice(invoices);
 
   const useGst = user?.includeGst;
@@ -103,6 +104,14 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
                 {format(new Date(), "dd/MM/yyyy")}
               </Text>
             </View>
+            <View style={[styles.headerDetails, { marginVertical: 0 }]}>
+              <Text style={[styles.para, { fontWeight: "700" }]}>
+                Invoice Period:{" "}
+              </Text>
+              <Text style={styles.para}>
+                {start} - {end}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -123,6 +132,12 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
                   ? "You don't have address"
                   : user.companyAddress}
               </Text>
+            </View>
+            <View style={{ display: "flex", flexDirection: "row" }}>
+              <Text style={[styles.para, { fontWeight: "700", width: 48 }]}>
+                ABN:
+              </Text>
+              <Text style={styles.para}> 87 658 348 808</Text>
             </View>
           </View>
         </View>
