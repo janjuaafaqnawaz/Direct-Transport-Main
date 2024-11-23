@@ -26,13 +26,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Search, UserPlus, Send, Trash2, Edit } from "lucide-react";
+import { Search, UserPlus, Send, Trash2, Edit, Archive } from "lucide-react";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import { deleteUserAcc } from "@/api/firebase/functions/auth";
 import sendResetPasswordEmail from "@/api/sendResetPasswordEmail";
 import AddUser from "./AddUser";
 import CustomPrice from "./Pricing";
 import Link from "next/link";
+import toast from "react-hot-toast";
 const roleOptions = [
   { value: "admin", label: "Admin" },
   { value: "business", label: "Business" },
@@ -73,8 +74,9 @@ export default function Users({ users }) {
     sendResetPasswordEmail(email, password);
   };
 
-  const handleDeleteUser = (email, pass) => {
-    deleteUserAcc(email, pass);
+  const handleArchiveUser = async (row) => {
+    await updateDoc("users", row.email, { ...row, role: "archived" });
+    toast.success("User archived successfully");
   };
 
   const handleSaveChange = async (data) =>
@@ -209,9 +211,10 @@ export default function Users({ users }) {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDeleteUser(email, password)}
+                      onClick={() => handleArchiveUser(row)}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" /> Delete
+                      <Archive className="mr-2 h-4 w-4" />
+                      Archive
                     </Button>
                   </TableCell>
 

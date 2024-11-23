@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DriverDetailsDialog from "./Overview";
-import { Trash2, History, RefreshCw } from "lucide-react";
+import { Trash2, History, RefreshCw, Archive } from "lucide-react";
 import { deleteUserAcc } from "@/api/firebase/functions/auth";
 import useAdminContext from "@/context/AdminProvider";
 import Create from "./Create";
@@ -27,6 +27,7 @@ import {
 import { updateDoc } from "@/api/firebase/functions/upload";
 import { Switch } from "@/components/ui/switch";
 import TrackDriver from "./TrackDriver/TrackDriverModal";
+import toast from "react-hot-toast";
 
 const roleOptions = [
   { value: "driver", label: "Driver" },
@@ -47,8 +48,13 @@ export default function DriverTable({ filter }) {
             driver.email.toLowerCase().includes(filterVal)
         );
 
-  const handleDeleteUser = async (email) => {
-    await deleteUserAcc(email);
+  const handleArchiveUser = async (driver) => {
+    await updateDoc("users", driver.email, {
+      ...driver,
+      role: "archived",
+      driverOnly: true,
+    });
+    toast.success("User archived successfully");
   };
 
   const handleStatusChange = async (value, index) => {
@@ -165,7 +171,7 @@ export default function DriverTable({ filter }) {
                         ))}
                       </SelectContent>
                     </Select>
-                  </TableCell> 
+                  </TableCell>
                   <TableCell>
                     <Switch
                       className="bg-slate-300"
@@ -175,12 +181,13 @@ export default function DriverTable({ filter }) {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
-                      variant="destructive"
+                      variant="outline"
                       size="sm"
-                      onClick={() => handleDeleteUser(driver?.email)}
+                      onClick={() => handleArchiveUser(driver)}
                       className="mr-2"
                     >
-                      <Trash2 className="mr-2 h-4 w-4" /> Delete
+                      <Archive className="mr-2 h-4 w-4" />
+                      Archive
                     </Button>
                     <Button
                       variant="outline"

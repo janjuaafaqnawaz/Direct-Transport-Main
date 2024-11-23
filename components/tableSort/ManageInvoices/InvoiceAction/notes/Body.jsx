@@ -100,13 +100,12 @@ export default function Body({ booking }) {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`reason-${index}`}>Emergency contact</Label>
+                <Label htmlFor={`reason-${index}`}>Text</Label>
                 <div className="relative">
                   <Notebook className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id={`reason-${index}`}
                     className="pl-10"
-                    placeholder=" Accounts name BSB and Account Number"
                     value={entry?.reason || ""}
                     onChange={(e) => handleReasonChange(index, e.target.value)}
                   />
