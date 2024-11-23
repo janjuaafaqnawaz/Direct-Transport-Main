@@ -9,7 +9,7 @@ const libraries = ["places"];
 export default function GooglePlacesInput({ onLocationSelect }) {
   const [autocomplete, setAutocomplete] = useState(null);
   
-  const API = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
+  const API = "AIzaSyACXmi5Hwi2SRE_VqmYqSI7gdLOa9neomg";
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: API,
     libraries: libraries,

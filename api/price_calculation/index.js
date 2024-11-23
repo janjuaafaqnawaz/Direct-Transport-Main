@@ -17,7 +17,7 @@ export default async function ProcessPrice(formData) {
 
     const priceSettings = await userPriceSettings(formData?.selectedEmail);
 
-    const API = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
+    const API = "AIzaSyACXmi5Hwi2SRE_VqmYqSI7gdLOa9neomg";
 
     const min_rate = priceSettings?.same_day?.minServices;
     const rate = priceSettings?.same_day?.services;

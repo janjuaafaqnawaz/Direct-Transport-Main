@@ -1,7 +1,7 @@
 "use server";
 
 export default async function getSuburb(address) {
-  const API = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
+  const API = "AIzaSyACXmi5Hwi2SRE_VqmYqSI7gdLOa9neomg";
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
     address
   )}&key=${API}`;

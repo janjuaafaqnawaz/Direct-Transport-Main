@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
     auth();
   }, [nav]);
 
-  const API = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
+  const API = "AIzaSyACXmi5Hwi2SRE_VqmYqSI7gdLOa9neomg";
 
   return (
     <AdminProvider>
