@@ -6,7 +6,22 @@ import { format } from "date-fns";
 import styles from "./pdf.styles";
 
 export default function MyDocument({ datesRange, invoices, user, pdfId }) {
-  const { totalPriceWithGST } = getTotalInvoicePrice(invoices);
+  const { totalPriceWithGST, totalGst } = getTotalInvoicePrice(invoices);
+
+  const useGst = user?.includeGst;
+  const totalFinalPayment = useGst
+    ? Number(totalPriceWithGST)
+    : Number(totalPriceWithGST) - Number(totalGst);
+
+  // let bookings = invoices.map((booking) => {
+  //   return {
+  //     id: booking.id,
+  //     totalPriceWithGST: Number(booking.totalPriceWithGST),
+  //     gst: Number(booking.gst),
+  //   };
+  // });
+
+  // console.log({ useGst, totalFinalPayment, totalPriceWithGST, totalGst });
 
   const parseDate = (dateStr) => {
     const [day, month, year] = dateStr.split("/").map(Number);
@@ -23,15 +38,20 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
   }, {});
 
   const calcDayPayment = (bookings) => {
-    let total = 0;
+    let totalWithGst = 0;
+    let totalWithoutGst = 0;
+
     bookings.forEach((booking) => {
-      total += booking.totalPriceWithGST;
+      totalWithGst += booking.totalPriceWithGST;
+      totalWithoutGst += booking.totalPriceWithGST - booking.gst;
     });
+
     const final = (
-      ((total || 0) / 100) *
+      ((useGst ? totalWithGst : totalWithoutGst || 0) / 100) *
       (user?.paymentPercentage || 1)
     ).toFixed(2);
-    // console.log({ bookings, total, final });
+    // console.log({ totalWithGst, totalWithoutGst, final });
+
     return final;
   };
 
@@ -163,7 +183,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
             <Text style={{ fontSize: 12, fontWeight: "500", color: "#d9534f" }}>
               $
               {(
-                ((totalPriceWithGST || 0) / 100) *
+                ((totalFinalPayment || 0) / 100) *
                 (user?.paymentPercentage || 1)
               ).toFixed(2)}
             </Text>

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "react-hot-toast";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { Checkbox } from "@/components/ui/checkbox";
 
 async function uploadImageToFirestore(image) {
   const storage = getStorage();
@@ -48,6 +49,10 @@ export default function Create({ edit, driver }) {
     driverNumber: "",
     bankDetails: "",
   });
+  const [includeGst, setIncludeGst] = useState(false);
+
+  console.log(includeGst);
+
   const [isLoading, setIsLoading] = useState(false);
   const [vehiclePicture, setVehiclePicture] = useState(null);
   const [driverLicense, setDriverLicense] = useState(null);
@@ -87,6 +92,7 @@ export default function Create({ edit, driver }) {
         role: "driver",
         vehiclePicture: vehiclePictureURL,
         driverLicense: driverLicenseURL,
+        includeGst,
       };
 
       if (edit) {
@@ -290,6 +296,24 @@ export default function Create({ edit, driver }) {
               value={form.accountNumber}
               onChange={handleChange}
             />
+          </div>
+
+          <div className="items-top flex space-x-2 mt-4">
+            <Checkbox
+              checked={includeGst}
+              onCheckedChange={() => setIncludeGst(!includeGst)}
+            />{" "}
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="terms1"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Includes GST in the payment.
+              </label>
+              {/* <p className="text-sm text-muted-foreground">
+          You agree to our Terms of Service and Privacy Policy.
+        </p> */}
+            </div>
           </div>
         </div>
         <div className="flex justify-end gap-4">
