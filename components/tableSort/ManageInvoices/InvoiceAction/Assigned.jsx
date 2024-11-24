@@ -29,6 +29,7 @@ import {
 } from "@/api/firebase/functions/realtime";
 import { Search, Truck, UserCheck } from "lucide-react";
 import { ActionIcon, ScrollArea, Tooltip } from "@mantine/core";
+import { Chip } from "@nextui-org/react";
 
 export default function DriverAssignmentModal({ booking }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,6 +51,13 @@ export default function DriverAssignmentModal({ booking }) {
         driverName: driver.firstName,
         driverAssignedDate: getFormattedDateStr(),
         driverAssignedTime: getFormattedTime(),
+
+        progressInformation: {
+          ...booking.progressInformation,
+          Allocated: "Allocated",
+        },
+        currentStatus: "Allocated",
+        isNew: false,
       };
 
       await updateDoc("place_bookings", booking.docId, updatedBooking);
@@ -79,7 +87,7 @@ export default function DriverAssignmentModal({ booking }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Tooltip label="Notes">
+        <Tooltip label="Assign New Driver">
           <ActionIcon mx={2} color="yellow" size="xl">
             <Truck />
           </ActionIcon>
@@ -89,20 +97,9 @@ export default function DriverAssignmentModal({ booking }) {
         <DialogHeader>
           <DialogTitle>Assign a Driver</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="h-[80vh]">
+        <ScrollArea className="">
           {" "}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="current-driver" className="w-32">
-                Current Driver:
-              </Label>
-              <Input
-                id="current-driver"
-                value={booking?.driverName || "None"}
-                readOnly
-                className="max-w-[200px]"
-              />
-            </div>
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -117,52 +114,23 @@ export default function DriverAssignmentModal({ booking }) {
             ) : filteredDrivers.length === 0 ? (
               <p>No drivers available.</p>
             ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Vehicle Details</TableHead>
-                      <TableHead>Assign</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredDrivers.map((driver) => (
-                      <TableRow key={driver?.id}>
-                        <TableCell>{driver?.firstName}</TableCell>
-                        <TableCell>{driver?.email}</TableCell>
-                        <TableCell>{driver?.phone || "N/A"}</TableCell>
-                        <TableCell>{driver?.role}</TableCell>
-                        <TableCell>{driver?.vehicleDetails || "N/A"}</TableCell>
-                        <TableCell>
-                          <Button
-                            onClick={() => handleAssignDriver(driver)}
-                            disabled={isLoading}
-                            variant={
-                              driver?.firstName === booking?.driverName
-                                ? "default"
-                                : "outline"
-                            }
-                            size="sm"
-                          >
-                            {isLoading ? (
-                              <span className="loading loading-spinner loading-xs">
-                                Assigned
-                              </span>
-                            ) : driver?.firstName === booking?.driverName ? (
-                              "Assigned"
-                            ) : (
-                              "Assign"
-                            )}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <div className="rounded-md  ">
+                {filteredDrivers.map((driver) => (
+                  <Chip
+                    className="cursor-pointer m-2"
+                    variant={
+                      driver?.firstName === booking?.driverName
+                        ? "solid"
+                        : "flat"
+                    }
+                    color="primary"
+                    size="lg"
+                    key={driver?.id}
+                    onClick={() => handleAssignDriver(driver)}
+                  >
+                    {driver?.firstName}
+                  </Chip>
+                ))}
               </div>
             )}
           </div>

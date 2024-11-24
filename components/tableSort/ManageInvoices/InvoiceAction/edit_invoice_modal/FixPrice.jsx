@@ -126,7 +126,7 @@ export default function FixPrice({ booking, toggleShowPrice, setBooking }) {
           }
         />
         <NumberInput
-          min={1}
+          min={0}
           precision={2}
           label="Service Charges"
           mb={6}

@@ -172,7 +172,7 @@ function Form({
 
   const handleDateChange = (name, val) =>
     setFormData({ ...formData, [name]: val });
-  
+
   const handleBack = () => setShowCheckout(false);
 
   if (showCheckout) {
@@ -324,7 +324,7 @@ function Form({
 
           <CustomInput
             name="pickupReference1"
-            label="Reference"
+            label="Reference/Pickup Instruction"
             value={formData.pickupReference1}
             handleChange={handleChange}
           />
@@ -333,7 +333,6 @@ function Form({
             label="Phone number"
             value={formData.pickupPhone}
             handleChange={handleChange}
-            type="number"
           />
         </div>
         <div className="box">
@@ -388,7 +387,6 @@ function Form({
             label="Phone number"
             value={formData.deliveryPhone}
             handleChange={handleChange}
-            type="number"
           />
         </div>
       </div>

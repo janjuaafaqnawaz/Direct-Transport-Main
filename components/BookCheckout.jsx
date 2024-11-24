@@ -212,7 +212,7 @@ export default function BookCheckout({
       <Button
         fullWidth
         variant="filled"
-        color="blue"
+        color="red"
         mt={2}
         marginTop="lg"
         style={{ borderRadius: "8px" }}
