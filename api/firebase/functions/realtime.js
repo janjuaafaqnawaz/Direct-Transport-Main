@@ -29,7 +29,6 @@ async function locationSharing(email, id) {
       id,
     });
 
-    notify("Good");
     console.log("Location updated for:", sanitizedEmail);
   } catch (error) {
     console.error("Failed to update location in Firebase:", error);
@@ -54,7 +53,6 @@ async function stopLocationSharing(email, id) {
       endAt: timestamp,
     });
 
-    notify("Good");
     console.log("Location updated for:", sanitizedEmail);
   } catch (error) {
     console.error("Failed to update location in Firebase:", error);
@@ -75,7 +73,6 @@ async function removePrevLocation(email, id) {
     );
     await remove(locationRef);
 
-    notify("Good");
     console.log("Location operation executed for:", sanitizedEmail);
   } catch (error) {
     console.error("Failed to update location in Firebase:", error);
