@@ -6,16 +6,11 @@ import { startOfDay, isFuture, parse } from "date-fns";
 import { isToday } from "date-fns";
 import useAdminContext from "@/context/AdminProvider";
 import { Button } from "@mantine/core";
+import TodayBookings from "./components/TodayBookings";
 
 export default function App() {
-  const {
-    allBookings,
-    fetchNextBookingsPage,
-    totalBookings,
-    totalUsers,
-    totalDrivers,
-    archivedBookings,
-  } = useAdminContext();
+  const { allBookings, fetchNextBookingsPage, archivedBookings } =
+    useAdminContext();
 
   const parseDate = (dateString) => {
     try {
@@ -72,15 +67,7 @@ export default function App() {
         aria-label="Options"
       >
         <Tab title={`Today ${newBookingsCount(todaysBookings)}`}>
-          <Card>
-            <CardBody>
-              <ManageInvoices
-                isVisibleReadyDate={true}
-                invoice={todaysBookings}
-                title={"Booking"}
-              />
-            </CardBody>
-          </Card>
+          <TodayBookings invoice={todaysBookings} />
         </Tab>
         <Tab
           title={`Future Bookings ${newBookingsCount(
