@@ -86,6 +86,8 @@ export default function ReviewBooking({
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleBack = () => setShowCheckout(false);
+
   return (
     <>
       {showCheckout ? (
@@ -96,6 +98,7 @@ export default function ReviewBooking({
           payment={payment}
           fetchTolls={fetchTolls}
           selectedEmail={selectedEmail}
+          goBack={handleBack}
         />
       ) : (
         <Container
