@@ -11,8 +11,13 @@ futureDate.setDate(currentDate.getDate() + 14);
 
 export default function PDFLayout2({ datesRange, invoices, user, pdfId }) {
   const { start, end } = datesRange;
-  const { totalPrice, totalGst, totalTolls, totalUnloading } =
-    getTotalInvoicePrice(invoices);
+  const {
+    totalPrice,
+    totalPriceWithGST,
+    totalGst,
+    totalTolls,
+    totalUnloading,
+  } = getTotalInvoicePrice(invoices);
 
   console.log({ totalPrice, totalGst, totalTolls, totalUnloading });
 
@@ -268,12 +273,7 @@ export default function PDFLayout2({ datesRange, invoices, user, pdfId }) {
               }}
             >
               Total Price incl GST: $
-              {(
-                Number(totalPrice) +
-                Number(totalGst) +
-                Number(totalTolls) +
-                Number(totalUnloading)
-              ).toFixed(2)}
+              {(Number(totalPriceWithGST) + Number(totalTolls)).toFixed(2)}
             </Text>
           </View>
         </View>
