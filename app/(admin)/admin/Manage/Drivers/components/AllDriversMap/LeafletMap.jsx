@@ -38,13 +38,12 @@ export default function LeafletMap({ liveLocSharingBookings }) {
         const customIcon = L.icon({
           iconUrl: "/icons/car.png",
           iconSize: [40, 40],
-          iconAnchor: [20, 40],
-          popupAnchor: [0, -32],
+          iconAnchor: [20, 80],
         });
 
         const marker = L.marker([latitude, longitude], { icon: customIcon })
           .addTo(map.current)
-          .bindTooltip(driverInfo?.firstName || "Unknown Driver", {
+          .bindTooltip(driverInfo?.firstName || "Driver", {
             permanent: true,
             direction: "top",
           });

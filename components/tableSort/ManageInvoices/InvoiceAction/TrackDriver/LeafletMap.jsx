@@ -35,8 +35,7 @@ export default function LeafletMap({ liveLocSharingBookings, booking }) {
     const customIcon = L.icon({
       iconUrl: "/icons/car.png",
       iconSize: [40, 40],
-      iconAnchor: [8, 90],
-      popupAnchor: [0, -32],
+      iconAnchor: [20, 80],
     });
 
     marker.current = L.marker(
@@ -47,13 +46,14 @@ export default function LeafletMap({ liveLocSharingBookings, booking }) {
       { icon: customIcon }
     )
       .addTo(map.current)
-      .bindTooltip("loading...");
+      .bindTooltip("Driver", { permanent: true, direction: "top" });
   };
 
   const updateMap = (data) => {
     if (map.current && marker.current && data?.latitude && data?.longitude) {
       const newLatLng = [data.latitude, data.longitude];
       marker.current.setLatLng(newLatLng);
+      map.current.setView(newLatLng); // Center map on new location
       map.current.setView(newLatLng);
 
       marker.current
