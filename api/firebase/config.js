@@ -15,4 +15,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const realtimeDb = getDatabase(app);
 
-export { app, realtimeDb };
+// Firebase Configuration for Location-Tracking App
+const firebaseConfigOFL = {
+  apiKey: "AIzaSyD77nzoV_f6OnA2ebI6Ln-vj6V-0kNZWa8",
+  authDomain: "location-tracking-9122b.firebaseapp.com",
+  projectId: "location-tracking-9122b",
+  storageBucket: "location-tracking-9122b.firebasestorage.app",
+  messagingSenderId: "476599892713",
+  appId: "1:476599892713:web:5a647dc2a720e89c9e8e78",
+};
+
+const appOFL = initializeApp(firebaseConfigOFL, "locationTrackingApp");
+
+const realtimeDbOFL = getDatabase(appOFL);
+
+export { app, realtimeDb, realtimeDbOFL };

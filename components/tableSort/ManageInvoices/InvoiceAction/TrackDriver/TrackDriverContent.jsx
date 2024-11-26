@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { onValue, ref } from "firebase/database";
-import { realtimeDb } from "@/api/firebase/config";
+import { realtimeDbOFL } from "@/api/firebase/config";
 import dynamic from "next/dynamic";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -19,7 +19,7 @@ export default function TrackDriverContent({ booking }) {
       if (!sanitizedEmail) return;
 
       const dbRef = ref(
-        realtimeDb,
+        realtimeDbOFL,
         `driversLocations/${sanitizedEmail}/${booking.docId}`
       );
 

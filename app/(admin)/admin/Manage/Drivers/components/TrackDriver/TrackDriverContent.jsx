@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { onValue, ref } from "firebase/database";
-import { realtimeDb } from "@/api/firebase/config";
+import { realtimeDbOFL } from "@/api/firebase/config";
 import dynamic from "next/dynamic";
 
 const LeafletMap = dynamic(() => import("./LeafletMap"), { ssr: false });
@@ -16,7 +16,7 @@ export default function TrackDriverContent({ email }) {
       if (!email) alert("error");
 
       const dbRef = ref(
-        realtimeDb,
+        realtimeDbOFL,
         `driversLocations/${sanitizedEmail}/current`
       );
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { onValue, ref } from "firebase/database";
-import { realtimeDb } from "@/api/firebase/config";
+import { realtimeDbOFL } from "@/api/firebase/config";
 import dynamic from "next/dynamic";
 import { Loader } from "lucide-react";
 import useAdminContext from "@/context/AdminProvider";
@@ -17,7 +17,7 @@ export default function TrackDriverContent() {
   useEffect(() => {
     if (!allDrivers) return;
 
-    const dbRef = ref(realtimeDb, `driversLocations`);
+    const dbRef = ref(realtimeDbOFL, `driversLocations`);
 
     const unsubscribe = onValue(dbRef, (snapshot) => {
       const data = snapshot.val();

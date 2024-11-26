@@ -1,12 +1,8 @@
 "use client";
 
-import { app } from "../config";
-import { getDatabase, ref, remove, set, update } from "firebase/database";
-import toast from "react-hot-toast";
+import { realtimeDbOFL } from "../config";
+import { ref, remove, set, update } from "firebase/database";
 
-const notify = (msg) => toast(msg);
-
-const database = getDatabase(app);
 const timestamp = Date.now();
 
 async function locationSharing(email, id) {
@@ -19,7 +15,7 @@ async function locationSharing(email, id) {
     const sanitizedEmail = email.replace(/[.#$[\]]/g, "_");
 
     const locationRef = ref(
-      database,
+      realtimeDbOFL,
       `driversLocations/${sanitizedEmail}/${id}`
     );
 
@@ -44,7 +40,7 @@ async function stopLocationSharing(email, id) {
     const sanitizedEmail = email.replace(/[.#$[\]]/g, "_");
 
     const locationRef = ref(
-      database,
+      realtimeDbOFL,
       `driversLocations/${sanitizedEmail}/${id}`
     );
 
@@ -68,7 +64,7 @@ async function removePrevLocation(email, id) {
     const sanitizedEmail = email.replace(/[.#$[\]]/g, "_");
 
     const locationRef = ref(
-      database,
+      realtimeDbOFL,
       `driversLocations/${sanitizedEmail}/${id}`
     );
     await remove(locationRef);
