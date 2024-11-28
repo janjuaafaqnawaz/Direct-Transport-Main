@@ -51,6 +51,10 @@ export default function TrackDriverContent({ booking }) {
     );
   }
 
+  const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
+  const developer = userDoc.email === "test@devtest.com";
+  if (!developer && email === "ignore@testing.com") return;
+
   return (
     <>
       <h1>Driver Live Location</h1>

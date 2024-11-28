@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { onValue, ref } from "firebase/database";
 import { realtimeDbOFL } from "@/api/firebase/config";
@@ -12,7 +10,6 @@ const LeafletMap = dynamic(() => import("./LeafletMap"), { ssr: false });
 export default function TrackDriverContent() {
   const [liveLocSharingBookings, setLiveLocSharingBookings] = useState(null);
   const { allDrivers } = useAdminContext();
-  console.log(liveLocSharingBookings);
 
   useEffect(() => {
     if (!allDrivers) return;
@@ -35,11 +32,16 @@ export default function TrackDriverContent() {
                 ...driver.current,
                 email: key,
                 driver: driverDetails || null,
+                sanitizedEmail,
               };
             }
             return undefined;
           })
-          .filter((driver) => driver !== undefined);
+          .filter(
+            (driver) =>
+              driver !== undefined &&
+              driver.sanitizedEmail !== "ignore@testing.com"
+          );
 
         setLiveLocSharingBookings(drivers);
       } else {
