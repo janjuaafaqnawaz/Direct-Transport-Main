@@ -57,7 +57,9 @@ export default function RecentInvoices({ place_booking, place_job }) {
       </TableCell>
       <TableCell>
         <Badge variant={"outline"}>
-          <p className="uppercase text-gray-800">{row?.currentStatus || "Pending"}</p>
+          <p className="uppercase text-gray-800">
+            {row?.currentStatus || "Pending"}
+          </p>
         </Badge>
       </TableCell>
       <TableCell>
@@ -70,7 +72,7 @@ export default function RecentInvoices({ place_booking, place_job }) {
             <Eye className="mr-2 h-4 w-4" />
             View
           </Button>
-          {/* {userDoc?.tracking && <TrackDriver customBtn={true} booking={row} />} */}
+          {userDoc?.tracking && <TrackDriver customBtn={true} booking={row} />}
         </div>
       </TableCell>
       <TableCell>

@@ -32,7 +32,7 @@ export default function Page() {
           />
         </div>
         <div>
-          {/* <TrackDriverModal /> */}
+          <TrackDriverModal />
           <Link className="mr-4" href={"/admin/Manage/Archived"}>
             <Button variant={"outline"}>Archived</Button>
           </Link>

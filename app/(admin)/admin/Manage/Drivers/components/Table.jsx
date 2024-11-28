@@ -203,7 +203,7 @@ export default function DriverTable({ filter }) {
                     <Button variant="outline" size="sm">
                       <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
                     </Button>
-                    {/* <TrackDriver email={driver?.email} /> */}
+                    <TrackDriver email={driver?.email} />
                   </TableCell>
                 </TableRow>
               );
