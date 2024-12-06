@@ -67,13 +67,7 @@ export default function DriverDetailsDialog({ driverDetails }) {
           </div>
           <div>
             <h3 className="font-semibold">Vehicle Information</h3>
-            <Image
-              height={300}
-              width={300}
-              src={driverDetails.vehiclePicture}
-              alt="Vehicle"
-              className="mt-2 max-w-full h-auto"
-            />
+            <p>{driverDetails?.vehicleDetails}</p>
           </div>
           <div>
             <h3 className="font-semibold">License Information</h3>

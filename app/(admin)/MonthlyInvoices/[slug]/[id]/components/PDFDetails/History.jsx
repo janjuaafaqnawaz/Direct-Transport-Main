@@ -24,12 +24,18 @@ export default function History({ email }) {
     const get = async () => {
       try {
         const pdfs = await fetchMyPdfsOfDoc(email);
-        pdfs.sort(
-          (a, b) =>
-            b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()
-        );
+        pdfs
+          .filter(
+            (pdf) => pdf.createdAt && typeof pdf.createdAt.toDate === "function"
+          )
+          .sort(
+            (a, b) =>
+              b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()
+          );
         setPdfs(pdfs);
       } catch (err) {
+        console.log(err);
+
         setError("Failed to fetch PDFs.");
       } finally {
         setLoading(false);

@@ -14,16 +14,6 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
     ? Number(totalPriceWithGST)
     : Number(totalPriceWithGST) - Number(totalGst);
 
-  // let bookings = invoices.map((booking) => {
-  //   return {
-  //     id: booking.id,
-  //     totalPriceWithGST: Number(booking.totalPriceWithGST),
-  //     gst: Number(booking.gst),
-  //   };
-  // });
-
-  // console.log({ useGst, totalFinalPayment, totalPriceWithGST, totalGst });
-
   const parseDate = (dateStr) => {
     const [day, month, year] = dateStr.split("/").map(Number);
     return new Date(year, month - 1, day);
@@ -51,10 +41,14 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
       ((useGst ? totalWithGst : totalWithoutGst || 0) / 100) *
       (user?.paymentPercentage || 1)
     ).toFixed(2);
-    // console.log({ totalWithGst, totalWithoutGst, final });
 
     return final;
   };
+
+  // Sort the dates in ascending order
+  const sortedDates = Object.keys(bookingsByDate).sort(
+    (a, b) => parseDate(b) - parseDate(a)
+  );
 
   return (
     <Document>
@@ -161,19 +155,21 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
             </View>
           </View>
 
-          {Object.entries(bookingsByDate).map(([date, bookings]) => (
+          {sortedDates.map((date) => (
             <View style={styles.tableRow} key={date}>
               <View style={[styles.tableCol, { width: "33%" }]}>
                 <Text style={styles.tableCell}>{date}</Text>
               </View>
               <View style={[styles.tableCol, { width: "33%" }]}>
-                <Text style={styles.tableCell}>{bookings.length}</Text>
+                <Text style={styles.tableCell}>
+                  {bookingsByDate[date].length}
+                </Text>
               </View>
               <View
                 style={[styles.tableCol, { width: "33%", textAlign: "right" }]}
               >
                 <Text style={[styles.tableCell, { textAlign: "right" }]}>
-                  ${calcDayPayment(bookings)}
+                  ${calcDayPayment(bookingsByDate[date])}
                 </Text>
               </View>
             </View>

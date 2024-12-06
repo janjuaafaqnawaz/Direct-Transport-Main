@@ -60,6 +60,7 @@ export default function Create({ edit, driver }) {
   useEffect(() => {
     if (driver) {
       setForm(driver);
+      setIncludeGst(driver?.includeGst);
     }
   }, [driver]);
 
@@ -310,9 +311,6 @@ export default function Create({ edit, driver }) {
               >
                 Includes GST in the payment.
               </label>
-              {/* <p className="text-sm text-muted-foreground">
-          You agree to our Terms of Service and Privacy Policy.
-        </p> */}
             </div>
           </div>
         </div>
