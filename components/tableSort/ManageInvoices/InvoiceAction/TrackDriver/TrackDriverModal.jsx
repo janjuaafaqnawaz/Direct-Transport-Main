@@ -1,27 +1,48 @@
 "use client";
 
-import { useDisclosure } from "@mantine/hooks";
-import { Modal, ActionIcon, Tooltip } from "@mantine/core";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@nextui-org/react";
 import { Map, MapIcon } from "lucide-react";
 import TrackDriverContent from "./TrackDriverContent";
-import { Button } from "@/components/ui/button";
 
 export default function TrackDriver({ booking, customBtn }) {
-  const [opened, { open, close }] = useDisclosure(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <>
-      <Modal opened={opened} onClose={close} size="xl">
-        {open && <TrackDriverContent booking={booking} />}
+      <Modal size="full" isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Driver Live Location
+              </ModalHeader>
+              <ModalBody>
+                <TrackDriverContent email={booking?.driverEmail} />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
       </Modal>
+
       {!customBtn ? (
-        <Tooltip label="Track Driver">
-          <ActionIcon className="mr-1" bg="red" onClick={open} size="xl">
-            <MapIcon />
-          </ActionIcon>
-        </Tooltip>
+        <Button onPress={onOpen} className="mr-1" variant="light" size="sm">
+          <MapIcon />
+        </Button>
       ) : (
-        <Button variant="outline" size="sm" onClick={open}>
+        <Button onPress={onOpen} variant="outline" size="sm">
           <Map className="mr-2 h-4 w-4" />
           Track
         </Button>

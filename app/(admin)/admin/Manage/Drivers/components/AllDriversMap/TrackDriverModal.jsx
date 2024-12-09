@@ -1,27 +1,43 @@
 "use client";
 
-import { useDisclosure } from "@mantine/hooks";
-import { Modal } from "@mantine/core";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@nextui-org/react";
 import TrackDriverContent from "./TrackDriverContent";
-import { Button } from "@/components/ui/button";
 
 export default function TrackDriver({ email }) {
-  const [opened, { open, close }] = useDisclosure(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <>
-      <Modal
-        opened={opened}
-        onClose={close}
-        size="xl"
-        title="Driver's Live Location"
-      >
-        {open && <TrackDriverContent email={email} />}
-      </Modal>
-
-      <Button onClick={open} className="mr-4" variant={"outline"}>
+      <Button onPress={onOpen} className="mr-4" variant="outline">
         Location
       </Button>
+      <Modal size="full" isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Driver Live Location
+              </ModalHeader>
+              <ModalBody>
+                <TrackDriverContent email={email} />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 }

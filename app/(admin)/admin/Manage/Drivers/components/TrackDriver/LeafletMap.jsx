@@ -60,5 +60,5 @@ export default function LeafletMap({ liveLocSharingBookings }) {
     return "No Data Found!";
   }
 
-  return <div ref={mapContainer} style={{ width: "100%", height: "400px" }} />;
+  return <div ref={mapContainer} style={{ width: "100%", height: "100%" }}/>;
 }

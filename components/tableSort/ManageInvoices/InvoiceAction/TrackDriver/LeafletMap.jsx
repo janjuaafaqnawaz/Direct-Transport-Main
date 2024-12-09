@@ -1,30 +1,28 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-export default function LeafletMap({ liveLocSharingBookings, booking }) {
+export default function LeafletMap({ liveLocSharingBookings }) {
+  const [initialized, setInitialized] = useState(false);
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
 
   useEffect(() => {
-    if (!map.current && mapContainer.current) {
+    if (!initialized && mapContainer.current && liveLocSharingBookings) {
       initializeMap();
+      setInitialized(true); // Set the map as initialized after setting up
     }
-  }, []);
-
-  useEffect(() => {
-    if (liveLocSharingBookings) {
-      updateMap(liveLocSharingBookings);
-    }
-  }, [liveLocSharingBookings]);
+  }, [initialized, liveLocSharingBookings]);
 
   const initializeMap = () => {
+    const { latitude, longitude } = liveLocSharingBookings || {
+      latitude: 0,
+      longitude: 0,
+    };
+
     map.current = L.map(mapContainer.current).setView(
-      [
-        liveLocSharingBookings?.latitude || 0,
-        liveLocSharingBookings?.longitude || 0,
-      ],
+      [latitude, longitude],
       13
     );
 
@@ -38,32 +36,29 @@ export default function LeafletMap({ liveLocSharingBookings, booking }) {
       iconAnchor: [20, 80],
     });
 
-    marker.current = L.marker(
-      [
-        liveLocSharingBookings?.latitude || 0,
-        liveLocSharingBookings?.longitude || 0,
-      ],
-      { icon: customIcon }
-    )
+    // Initialize the marker with a permanent tooltip
+    marker.current = L.marker([latitude, longitude], { icon: customIcon })
       .addTo(map.current)
-      .bindTooltip("Driver", { permanent: true, direction: "top" });
+      .bindTooltip("Driver", { permanent: true, direction: "top" }); // Tooltip always visible
   };
 
-  const updateMap = (data) => {
-    if (map.current && marker.current && data?.latitude && data?.longitude) {
-      const newLatLng = [data.latitude, data.longitude];
-      marker.current.setLatLng(newLatLng);
-      map.current.setView(newLatLng); // Center map on new location
-      map.current.setView(newLatLng);
+  useEffect(() => {
+    if (liveLocSharingBookings && marker.current && map.current) {
+      updateMap(liveLocSharingBookings);
+    }
+  }, [liveLocSharingBookings]);
 
-      marker.current
-        .bindTooltip(`${booking.driverName || "Unknown"}`, {
-          permanent: true,
-          direction: "top",
-        })
-        .openTooltip();
+  const updateMap = (data) => {
+    if (data?.latitude && data?.longitude) {
+      const newLatLng = [data.latitude, data.longitude];
+      marker.current.setLatLng(newLatLng); // Update marker position
+      map.current.setView(newLatLng); // Center map on new location
     }
   };
 
-  return <div ref={mapContainer} style={{ width: "100%", height: "400px" }} />;
+  if (!liveLocSharingBookings) {
+    return "No Data Found!";
+  }
+
+  return <div ref={mapContainer} style={{ width: "100%", height: "100%" }}/>;
 }
