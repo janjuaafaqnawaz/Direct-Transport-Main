@@ -32,13 +32,21 @@ export default function RecentInvoices({ place_booking, place_job }) {
   const rowsPerPage = 10;
 
   const combinedData = [...(place_booking || []), ...(place_job || [])];
+  const parseDate = (dateStr) => {
+    const [day, month, year] = dateStr.split("/").map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const sortedBookings = combinedData.sort(
+    (a, b) => parseDate(b.date) - parseDate(a.date)
+  );
   const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
 
   const paginatedData = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-    return combinedData.slice(start, end);
-  }, [page, combinedData]);
+    return sortedBookings.slice(start, end);
+  }, [page, sortedBookings]);
 
   const handleNavigate = (id) => {
     router.push(`/RecentInvoices/${id}`);
@@ -48,7 +56,7 @@ export default function RecentInvoices({ place_booking, place_job }) {
     <TableRow key={row.docId}>
       <TableCell className="font-medium">{row.returnType}</TableCell>
       <TableCell>{row.docId}</TableCell>
-      <TableCell>{formatToSydneyTime(row?.createdAt)}</TableCell>
+      <TableCell>{row?.date}</TableCell>
       <TableCell>
         $
         {(

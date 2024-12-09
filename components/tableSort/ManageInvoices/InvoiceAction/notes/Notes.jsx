@@ -3,6 +3,7 @@
 import { ActionIcon, ModalBody, ModalHeader, Tooltip } from "@mantine/core";
 import { NoteAddTwoTone } from "@mui/icons-material";
 import Body from "./Body";
+import Table from "./Table";
 
 import { useDisclosure } from "@mantine/hooks";
 import { Modal } from "@mantine/core";
@@ -15,6 +16,7 @@ export default function Notes({ booking }) {
       <Modal size={"xl"} opened={opened} onClose={close} title="Booking Notes">
         <ModalBody>
           <Body booking={booking} />
+          <Table entries={booking.statusEntries} />
         </ModalBody>
       </Modal>
       <Tooltip label="Notes">

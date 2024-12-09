@@ -1,30 +1,24 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import { updateDoc } from "@/api/firebase/functions/upload";
-import { CalendarIcon, Notebook, PlusCircle, Save, Trash2 } from "lucide-react";
+import { CalendarIcon, Notebook, PlusCircle, Save } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+
 export default function Body({ booking }) {
   const [statusEntries, setStatusEntries] = useState(
     booking?.statusEntries || []
   );
   const [isSaving, setIsSaving] = useState(false);
+  const [entry, setEntry] = useState({
+    date: format(new Date(), "yyyy-MM-dd"),
+    reason: "",
+  });
 
   useEffect(() => {
     if (booking?.statusEntries) {
@@ -32,32 +26,24 @@ export default function Body({ booking }) {
     }
   }, [booking]);
 
-  const handleReasonChange = (index, reason) => {
-    const newEntries = [...statusEntries];
-    newEntries[index].reason = reason;
-    setStatusEntries(newEntries);
-  };
-
-  const handleDateChange = (index, date) => {
-    const newEntries = [...statusEntries];
-    newEntries[index].date = date;
-    setStatusEntries(newEntries);
-  };
-
   const handleAddEntry = () => {
-    const entries = [...statusEntries, { date: new Date(), reason: "" }];
-    setStatusEntries(entries);
-  };
+    if (!entry.date || !entry.reason.trim()) {
+      toast.error("Both date and reason are required");
+      return;
+    }
 
-  const handleDeleteEntry = (index) => {
-    const newEntries = statusEntries.filter((_, i) => i !== index);
-    setStatusEntries(newEntries);
+    setStatusEntries((prev) => [...prev, entry]);
+    setEntry({
+      date: format(new Date(), "yyyy-MM-dd"),
+      reason: "",
+    });
+    toast.success("Entry added locally. Save to persist.");
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const formattedEntries = statusEntries.map((entry) => ({
+      const formattedEntries = [...statusEntries, entry].map((entry) => ({
         ...entry,
         date: entry.date ? format(new Date(entry.date), "yyyy-MM-dd") : "",
       }));
@@ -66,6 +52,7 @@ export default function Body({ booking }) {
         ...booking,
         statusEntries: formattedEntries,
       });
+
       toast.success("Notes updated successfully");
     } catch (error) {
       console.error("Failed to save notes:", error);
@@ -81,56 +68,60 @@ export default function Body({ booking }) {
         <p className="text-sm text-muted-foreground">
           Manage notes for the Booking
         </p>
-        {statusEntries?.map((entry, index) => (
-          <div key={index} className="p-2">
-            <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
-              <div className="space-y-2">
-                <Label htmlFor={`date-${index}`}>Date</Label>
-                <div className="relative">
-                  <CalendarIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    id={`date-${index}`}
-                    type="date"
-                    className="pl-10"
-                    value={format(new Date(entry.date), "yyyy-MM-dd")}
-                    onChange={(e) =>
-                      handleDateChange(index, new Date(e.target.value))
-                    }
-                  />
-                </div>
+        <div className="p-2">
+          <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
+            {/* Date Input */}
+            <div className="space-y-2">
+              <Label htmlFor="date">Date</Label>
+              <div className="relative">
+                <CalendarIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="date"
+                  type="date"
+                  className="pl-10"
+                  value={entry.date}
+                  onChange={(e) =>
+                    setEntry({
+                      ...entry,
+                      date: e.target.value,
+                    })
+                  }
+                />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor={`reason-${index}`}>Text</Label>
-                <div className="relative">
-                  <Notebook className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    id={`reason-${index}`}
-                    className="pl-10"
-                    value={entry?.reason || ""}
-                    onChange={(e) => handleReasonChange(index, e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="flex items-end">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleDeleteEntry(index)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Delete entry</span>
-                </Button>
+            </div>
+
+            {/* Reason Input */}
+            <div className="space-y-2">
+              <Label htmlFor="reason">Text</Label>
+              <div className="relative">
+                <Notebook className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="reason"
+                  className="pl-10"
+                  value={entry.reason}
+                  onChange={(e) =>
+                    setEntry({
+                      ...entry,
+                      reason: e.target.value,
+                    })
+                  }
+                />
               </div>
             </div>
           </div>
-        ))}
+        </div>
       </CardContent>
+
+      {/* Footer */}
       <CardFooter className="flex justify-between">
         <Button variant="outline" onClick={handleAddEntry}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Add New Note
         </Button>
-        <Button onClick={handleSave} disabled={isSaving}>
+        <Button
+          onClick={handleSave}
+          disabled={isSaving || !statusEntries.length}
+        >
           {isSaving ? (
             <>Saving...</>
           ) : (

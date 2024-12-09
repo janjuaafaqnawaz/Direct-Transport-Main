@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { format } from "date-fns";
 import { PackageSearch } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -77,6 +76,14 @@ function calculateTotalQuantity(data) {
 }
 
 function BookingTable({ bookings }) {
+  const parseDate = (dateStr) => {
+    const [day, month, year] = dateStr.split("/").map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const sortedBookings = bookings.sort(
+    (a, b) => parseDate(b.date) - parseDate(a.date)
+  );
   return (
     <Table>
       <TableHeader>
@@ -95,10 +102,10 @@ function BookingTable({ bookings }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {bookings?.map((booking) => (
+        {sortedBookings?.map((booking) => (
           <TableRow key={booking?.docId}>
             <TableCell>{booking?.docId}</TableCell>
-            <TableCell>{formatToSydneyTime(booking?.createdAt)}</TableCell>
+            <TableCell>{booking?.date}</TableCell>
             <TableCell>{booking?.address?.Origin?.label}</TableCell>
             <TableCell>{booking?.address?.Destination?.label}</TableCell>
             <TableCell>{booking?.service}</TableCell>
