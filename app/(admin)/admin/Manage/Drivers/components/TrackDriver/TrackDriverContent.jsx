@@ -34,7 +34,7 @@ export default function TrackDriverContent({ email }) {
 
   const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
   const developer = userDoc.email === "test@devtest.com";
-  if (!developer && email === "ignore@testing.com") return;
+  if (!developer && email === "test@dev.com") return;
 
   return <LeafletMap liveLocSharingBookings={liveLocSharingBookings} />;
 }

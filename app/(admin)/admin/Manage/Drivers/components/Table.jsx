@@ -28,6 +28,7 @@ import { updateDoc } from "@/api/firebase/functions/upload";
 import { Switch } from "@/components/ui/switch";
 import TrackDriver from "./TrackDriver/TrackDriverModal";
 import toast from "react-hot-toast";
+import deleteDriverLocation from "@/server/deleteDriverLocation"
 
 const roleOptions = [
   { value: "driver", label: "Driver" },
@@ -49,6 +50,8 @@ export default function DriverTable({ filter }) {
         );
 
   const handleArchiveUser = async (driver) => {
+    deleteDriverLocation(driver.email);
+
     await updateDoc("users", driver.email, {
       ...driver,
       role: "archived",

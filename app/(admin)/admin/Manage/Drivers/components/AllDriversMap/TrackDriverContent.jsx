@@ -40,7 +40,7 @@ export default function TrackDriverContent() {
           .filter(
             (driver) =>
               driver !== undefined &&
-              driver.sanitizedEmail !== "ignore@testing.com"
+              driver.sanitizedEmail !== "test@dev.com"
           );
 
         setLiveLocSharingBookings(drivers);
