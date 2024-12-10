@@ -1,11 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Button } from "@nextui-org/react";
 
 export default function LeafletMap({ liveLocSharingBookings }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markers = useRef([]);
+  const [autoZoom, setAutoZoom] = useState(true); // State for toggling auto-zoom
 
   useEffect(() => {
     if (!map.current && mapContainer.current) {
@@ -52,7 +54,7 @@ export default function LeafletMap({ liveLocSharingBookings }) {
       }
     });
 
-    if (drivers.length > 0) {
+    if (autoZoom && drivers.length > 0) {
       const bounds = L.latLngBounds(
         drivers.map((driver) => [driver.latitude, driver.longitude])
       );
@@ -60,5 +62,14 @@ export default function LeafletMap({ liveLocSharingBookings }) {
     }
   };
 
-  return <div ref={mapContainer} style={{ width: "100%", height: "100%" }}/>;
+  return (
+    <div style={{ width: "100%", height: "100%" }}>
+      <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
+        <Button onClick={() => setAutoZoom(!autoZoom)}>
+          {autoZoom ? "Disable Auto-Zoom" : "Enable Auto-Zoom"}
+        </Button>
+      </div>
+      <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
+    </div>
+  );
 }
