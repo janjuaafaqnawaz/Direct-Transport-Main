@@ -37,9 +37,9 @@ export default function RecentInvoices({ place_booking, place_job }) {
     return new Date(year, month - 1, day);
   };
 
-  const sortedBookings = combinedData.sort(
-    (a, b) => parseDate(b.date) - parseDate(a.date)
-  );
+  const sortedBookings = combinedData
+    .filter((booking) => booking.date)
+    .sort((a, b) => parseDate(b.date) - parseDate(a.date));
   const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
 
   const paginatedData = useMemo(() => {
