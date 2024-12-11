@@ -7,7 +7,7 @@ export default function LeafletMap({ liveLocSharingBookings }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markers = useRef([]);
-  const [autoZoom, setAutoZoom] = useState(true); // State for toggling auto-zoom
+  const [autoZoom, setAutoZoom] = useState(false); // State for toggling auto-zoom
 
   useEffect(() => {
     if (!map.current && mapContainer.current) {
