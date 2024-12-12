@@ -34,9 +34,9 @@ export default function DriverAssignmentModal({ booking }) {
     try {
       await removePrevLocation(booking?.driverEmail, booking?.docId);
 
-      if (!driver.expoPushToken) {
-        toast.error("Driver Device not registered for push notifications.");
-      }
+      // if (!driver.expoPushToken) {
+      //   toast.error("Driver Device not registered for push notifications.");
+      // }
 
       const updatedBooking = {
         ...booking,
