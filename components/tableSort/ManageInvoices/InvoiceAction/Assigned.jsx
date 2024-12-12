@@ -34,15 +34,11 @@ export default function DriverAssignmentModal({ booking }) {
     try {
       await removePrevLocation(booking?.driverEmail, booking?.docId);
 
-      // if (!driver.expoPushToken) {
-      //   toast.error("Driver Device not registered for push notifications.");
-      // }
-
       const updatedBooking = {
         ...booking,
         driverEmail: driver.email,
         driverName: driver.firstName,
-        expoPushToken: driver?.expoPushToken,
+        expoPushToken: driver?.expoPushToken || null,
         driverAssignedDate: getFormattedDateStr(),
         driverAssignedTime: getFormattedTime(),
 
@@ -54,7 +50,11 @@ export default function DriverAssignmentModal({ booking }) {
         isNew: false,
       };
 
-      sendNotification(driver?.expoPushToken);
+      if (driver.expoPushToken) {
+        await sendNotification(driver.expoPushToken);
+      } else {
+        console.log("Driver Device not registered for push notifications.");
+      }
 
       await updateDoc("place_bookings", booking.docId, updatedBooking);
       await locationSharing(driver.email, booking.docId);

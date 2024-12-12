@@ -2,13 +2,13 @@
 
 export default async function sendNotification(expoPushToken) {
   const NewAssignedBooking = {
-    to: expoPushToken,
-    sound: "notification.wav",
+    to: "ExponentPushToken[lstvNiLgkwVjRjdrRvOvAc]",
     title: "Direct Transport Solution",
     body: "New booking assigned to you.",
-    sound: "notification.wav",
     channelId: "new-assigned-booking",
   };
+
+  console.log({ NewAssignedBooking });
 
   try {
     const response = await fetch("https://exp.host/--/api/v2/push/send", {
