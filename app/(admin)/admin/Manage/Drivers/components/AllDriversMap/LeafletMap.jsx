@@ -59,9 +59,8 @@ export default function LeafletMap({ liveLocSharingBookings }) {
           .addTo(map.current)
           .bindTooltip(
             `<div>
-              <strong>${driverInfo?.firstName || "Driver"}</strong><br />
-              <button onclick="zoomToDriver(${latitude}, ${longitude})">Zoom Here</button>
-            </div>`,
+              <strong>${driverInfo?.firstName || "Driver"}</strong> 
+             </div>`,
             {
               permanent: true,
               direction: "top",
