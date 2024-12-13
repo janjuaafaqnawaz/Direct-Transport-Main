@@ -1,33 +1,37 @@
 "use server";
 
-export default async function sendNotification(expoPushToken) {
-  const NewAssignedBooking = {
-    to: "ExponentPushToken[lstvNiLgkwVjRjdrRvOvAc]",
-    title: "Direct Transport Solution",
-    body: "New booking assigned to you.",
-    channelId: "new-assigned-booking",
-  };
-
-  console.log({ NewAssignedBooking });
-
+export async function newAssignedBookingNotification(expoPushToken) {
   try {
-    const response = await fetch("https://exp.host/--/api/v2/push/send", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Accept-encoding": "gzip, deflate",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(NewAssignedBooking),
+    const myHeaders = new Headers({
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
     });
 
-    const data = await response.json();
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      cache: "no-store",
+    };
+
+    const url = `https://direct-transport-server.vercel.app/api/notifications/new_assigned_booking_notification/${expoPushToken}`;
+    console.log(`Sending notification request to: ${url}`);
+
+    const response = await fetch(url, requestOptions, {
+      next: { revalidate: 0 },
+    });
+    console.log(response);
+
     if (!response.ok) {
-      console.error("Error sending push notification:", data);
-    } else {
-      console.log("Push notification sent successfully:", data);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const result = await response.text();
+    console.log("Notification sent successfully:", result);
+    return result;
   } catch (error) {
-    console.error("Error occurred during push notification send:", error);
+    console.error("Error sending notification:", error);
+    throw error; // Re-throw the error so it can be handled by the caller if needed
   }
 }
