@@ -29,6 +29,18 @@ export default function LeafletMap({ liveLocSharingBookings }) {
     );
   };
 
+  const zoomToDriver = () => {
+    if (liveLocSharingBookings.length > 0) {
+      const bounds = L.latLngBounds(
+        liveLocSharingBookings.map((driver) => [
+          driver.latitude,
+          driver.longitude,
+        ])
+      );
+      map.current.fitBounds(bounds, { padding: [50, 50] });
+    }
+  };
+
   const updateMap = (drivers) => {
     markers.current.forEach((marker) => map.current.removeLayer(marker));
     markers.current = [];
@@ -45,12 +57,20 @@ export default function LeafletMap({ liveLocSharingBookings }) {
 
         const marker = L.marker([latitude, longitude], { icon: customIcon })
           .addTo(map.current)
-          .bindTooltip(driverInfo?.firstName || "Driver", {
-            permanent: true,
-            direction: "top",
-          });
+          .bindTooltip(
+            `<div>
+              <strong>${driverInfo?.firstName || "Driver"}</strong><br />
+              <button onclick="zoomToDriver(${latitude}, ${longitude})">Zoom Here</button>
+            </div>`,
+            {
+              permanent: true,
+              direction: "top",
+            }
+          );
 
         markers.current.push(marker);
+
+        marker.on("click", () => zoomToDriver(latitude, longitude));
       }
     });
 
@@ -67,7 +87,8 @@ export default function LeafletMap({ liveLocSharingBookings }) {
       <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
         <Button onClick={() => setAutoZoom(!autoZoom)}>
           {autoZoom ? "Disable Auto-Zoom" : "Enable Auto-Zoom"}
-        </Button>
+        </Button>{" "}
+        <Button onClick={zoomToDriver}>Zoom</Button>
       </div>
       <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
     </div>
