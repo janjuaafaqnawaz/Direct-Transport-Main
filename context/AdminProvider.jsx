@@ -131,7 +131,7 @@ const AdminProvider = ({ children }) => {
 
   useEffect(() => {
     // Initial fetch for bookings and users
-    const unsubscribeBookings = fetchBookingsWithPagination(true);
+    const unsubscribeBookings = fetchBookingsWithPagination(false);
     const unsubscribeUsers = fetchUsers(); // Corrected fetchUsers call
     const unsubscribePriceSettings = fetchPriceSettings(); // Fetch price settings in real-time
     fetchDocumentCounts(); // Fetch the total bookings count

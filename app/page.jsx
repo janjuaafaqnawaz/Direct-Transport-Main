@@ -6,7 +6,7 @@ import { Loader } from "@/components/Index";
 export default function Page() {
   const navigate = useRouter();
   useEffect(() => {
-    navigate.push("/ClientServices");
+    navigate.replace("/ClientServices");
   }, [navigate]);
  
   return <Loader />;

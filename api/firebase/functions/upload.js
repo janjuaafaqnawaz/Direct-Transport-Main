@@ -24,6 +24,44 @@ const notify = (msg) => toast(msg);
 
 const db = getFirestore(app);
 
+async function postCustomIdDoc(data, collectionName, customId) {
+  const user = JSON.parse(localStorage.getItem("userDoc"));
+  if (!user) {
+    notify("You're not logged in");
+    return null;
+  }
+
+  try {
+    const createdAt = await getCurrentTime();
+    const collectionRef = collection(db, collectionName);
+
+    // Use the custom ID to reference the document
+    const docRef = doc(collectionRef, customId);
+
+    // Add additional metadata to the document
+    const updatedData = {
+      ...data,
+      docId: customId,
+      id: customId,
+      userEmail: user.email,
+      userName: user.firstName,
+      createdAt: createdAt,
+      isNew: true,
+    };
+
+    // Set the document with the custom ID
+    await setDoc(docRef, updatedData);
+    notify("Posted Successfully");
+    return customId;
+  } catch (error) {
+    notify("Something Went Wrong");
+    console.error(error);
+    return null;
+  }
+}
+
+export default postDoc;
+
 async function postDoc(data, collectionName) {
   const user = JSON.parse(localStorage.getItem("userDoc"));
   if (!user) {
@@ -271,4 +309,5 @@ export {
   deleteDocument,
   uploadImageToFirestore,
   checkEmailAndSendMessage,
+  postCustomIdDoc,
 };
