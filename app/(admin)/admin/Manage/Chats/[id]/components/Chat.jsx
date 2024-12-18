@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   doc,
   getFirestore,
@@ -8,31 +8,27 @@ import {
   updateDoc,
   getDoc,
 } from "firebase/firestore";
-import { postCustomIdDoc } from "@/api/firebase/functions/fetch";
+import { postCustomIdDoc } from "@/api/firebase/functions/upload";
 import RenderChat from "./RenderChat";
 import { app } from "@/api/firebase/config";
+import { ChatNotification } from "@/server/ChatNotification";
 
-export default function Chat({ id }) {
+export default function Chat({ id, user }) {
   const [chat, setChat] = useState([]);
-  const [unsubscribe, setUnsubscribe] = useState(null);
   const db = getFirestore(app);
 
-  const fetchDocById = async (id, collection) => {
-    const docRef = doc(db, collection, id);
-    const docSnapshot = await getDoc(docRef);
-    return docSnapshot.exists() ? docSnapshot.data() : null;
-  };
-
   useEffect(() => {
+    let unsubscribe;
+
     const fetchChat = async () => {
       try {
         const chatDoc = await fetchDocById(id, "chats");
 
         if (!chatDoc) {
-          await handleNewChat();
+          await createNewChat();
         }
 
-        subscribeChat();
+        unsubscribe = subscribeToChat();
       } catch (error) {
         console.error("Error fetching chat:", error);
       }
@@ -47,37 +43,49 @@ export default function Chat({ id }) {
     };
   }, [id]);
 
-  const handleNewChat = async () => {
+  const fetchDocById = async (docId, collection) => {
     try {
-      const data = {
-        id: id,
+      const docRef = doc(db, collection, docId);
+      const docSnapshot = await getDoc(docRef);
+      return docSnapshot.exists() ? docSnapshot.data() : null;
+    } catch (error) {
+      console.error("Error fetching document by ID:", error);
+      return null;
+    }
+  };
+
+  const createNewChat = async () => {
+    try {
+      const newChatData = {
+        user,
+        id,
         driverEmail: id,
         messages: [],
       };
 
-      await postCustomIdDoc(data, "chats", id);
+      await postCustomIdDoc(newChatData, "chats", id);
     } catch (error) {
-      console.log("Error creating new chat:", error);
+      console.error("Error creating new chat:", error);
     }
   };
 
-  const subscribeChat = () => {
+  const subscribeToChat = () => {
     try {
       const chatDocRef = doc(db, "chats", id);
 
-      const unsubscribeFn = onSnapshot(chatDocRef, (docSnapshot) => {
+      return onSnapshot(chatDocRef, (docSnapshot) => {
         if (docSnapshot.exists()) {
           setChat(docSnapshot.data().messages);
         } else {
-          console.log("Chat document does not exist!");
+          console.warn("Chat document does not exist!");
         }
       });
-
-      setUnsubscribe(() => unsubscribeFn);
     } catch (error) {
       console.error("Error subscribing to chat:", error);
+      return null;
     }
   };
+
   const sendMessage = async (message) => {
     try {
       const chatDocRef = doc(db, "chats", id);
@@ -87,15 +95,14 @@ export default function Chat({ id }) {
         timestamp: new Date().toISOString(),
       };
 
-      const updatedMessages = chat ? [...chat, newMessage] : [newMessage];
+      ChatNotification(user.expoPushToken, message);
 
-      await updateDoc(chatDocRef, {
-        messages: updatedMessages,
-      });
+      const updatedMessages = [...chat, newMessage];
 
+      await updateDoc(chatDocRef, { messages: updatedMessages });
       setChat(updatedMessages);
     } catch (error) {
-      console.log("Error sending message:", error);
+      console.error("Error sending message:", error);
     }
   };
 

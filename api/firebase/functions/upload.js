@@ -60,8 +60,6 @@ async function postCustomIdDoc(data, collectionName, customId) {
   }
 }
 
-export default postDoc;
-
 async function postDoc(data, collectionName) {
   const user = JSON.parse(localStorage.getItem("userDoc"));
   if (!user) {
