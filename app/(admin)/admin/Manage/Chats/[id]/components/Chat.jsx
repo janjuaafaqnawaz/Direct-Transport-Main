@@ -99,7 +99,7 @@ export default function Chat({ id, user }) {
 
       const updatedMessages = [...chat, newMessage];
 
-      await updateDoc(chatDocRef, { messages: updatedMessages });
+      await updateDoc(chatDocRef, { user, messages: updatedMessages });
       setChat(updatedMessages);
     } catch (error) {
       console.error("Error sending message:", error);
