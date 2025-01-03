@@ -2,10 +2,17 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ImageIcon, Send, Sparkles } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowDownCircle,
+  ImageIcon,
+  Send,
+  Sparkles,
+} from "lucide-react";
 import { User } from "@nextui-org/react";
 import Image from "next/image";
 import { PhotoView } from "react-photo-view";
+import { Tooltip } from "@mantine/core";
 
 export default function RenderChat({
   sendMessage,
@@ -69,7 +76,6 @@ export default function RenderChat({
           name="Driver"
         />
       </div>
-
       <div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
         <div className="space-y-4 pr-4" ref={bottomRef}>
           {chat?.length > 0 &&
@@ -113,7 +119,6 @@ export default function RenderChat({
             ))}
         </div>
       </div>
-
       {/* Input and Send Button */}
       <div className="p-4 bg-opacity-20 backdrop-blur-lg bg-gray-900">
         <div className="flex items-center space-x-2">
@@ -139,12 +144,22 @@ export default function RenderChat({
           </button>
         </div>
       </div>
-
       {/* Sparkles decoration */}
       <Sparkles
-        className="absolute top-7 right-10 text-blue-700 animate-pulse"
+        onClick={scrollToBottom}
+        className="absolute top-7 right-20 text-blue-700 animate-pulse"
         size={24}
       />
+      <Tooltip
+        label="Scroll to bottom"
+        className="text-purple-600 animate-pulse cursor-pointer"
+      >
+        <ArrowDownCircle
+          onClick={scrollToBottom}
+          className="absolute top-7 right-10 text-blue-700 animate-pulse"
+          size={24}
+        />
+      </Tooltip>
     </div>
   );
 }

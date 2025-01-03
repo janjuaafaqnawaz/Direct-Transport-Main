@@ -18,7 +18,7 @@ import { app } from "../config";
 import SendEmailToClients from "@/api/emails/SendEmailToClients";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import toast from "react-hot-toast";
-import getCurrentTime from "../../getCurrentTime";
+import getCurrentTime from "@/api/getCurrentTime";
 
 const notify = (msg) => toast(msg);
 

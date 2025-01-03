@@ -1,6 +1,6 @@
 "use server";
 
-export default async function getCurrentTime(maxRetries = 5, delay = 1000) {
+export default async function getCurrentTime(maxRetries = 25, delay = 1000) {
   let attempts = 0;
 
   while (attempts < maxRetries) {
