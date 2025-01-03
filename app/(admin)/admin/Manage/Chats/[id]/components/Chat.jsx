@@ -8,7 +8,10 @@ import {
   updateDoc,
   getDoc,
 } from "firebase/firestore";
-import { postCustomIdDoc } from "@/api/firebase/functions/upload";
+import {
+  postCustomIdDoc,
+  uploadImageToFirestore,
+} from "@/api/firebase/functions/upload";
 import RenderChat from "./RenderChat";
 import { app } from "@/api/firebase/config";
 import { ChatNotification } from "@/server/ChatNotification";
@@ -106,5 +109,45 @@ export default function Chat({ id, user }) {
     }
   };
 
-  return <RenderChat sendMessage={sendMessage} chat={chat} id={id} />;
+  const sendPicture = async (message) => {
+    if (!message || !message.trim()) {
+      console.log("Message cannot be empty.");
+      return;
+    }
+
+    try {
+      const url = await uploadImageToFirestore(message);
+
+      if (!url) {
+        console.log("Error uploading image.");
+        return;
+      }
+
+      const chatDocRef = doc(db, "chats", id);
+      const newMessage = {
+        message: "#IMAGE",
+        url,
+        sender: "user",
+        timestamp: new Date().toISOString(),
+      };
+
+      ChatNotification(user.expoPushToken, message);
+
+      const updatedMessages = [...chat, newMessage];
+
+      await updateDoc(chatDocRef, { user, messages: updatedMessages });
+      setChat(updatedMessages);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
+  return (
+    <RenderChat
+      sendMessage={sendMessage}
+      sendPicture={sendPicture}
+      chat={chat}
+      id={id}
+    />
+  );
 }

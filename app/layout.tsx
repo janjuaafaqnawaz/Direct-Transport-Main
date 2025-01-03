@@ -16,7 +16,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <Navbar />
-          <section className="min-h-[70vh]">{children}</section>
+          <section className="min-h-[40vh]">{children}</section>
           <AutoRefresh />
           <Footer />
         </Providers>

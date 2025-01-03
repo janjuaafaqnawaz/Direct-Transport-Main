@@ -249,14 +249,7 @@ async function uploadImageToFirestore(image) {
 
     // Ensure the imageUrl is defined
     if (downloadURL) {
-      // Store the download URL in Firestore
-      const success = await postDoc({ imageUrl: downloadURL }, "images");
-
-      if (success) {
-        return downloadURL; // Return the download URL
-      } else {
-        return null;
-      }
+      return downloadURL; // Return the download URL
     } else {
       return null;
     }
