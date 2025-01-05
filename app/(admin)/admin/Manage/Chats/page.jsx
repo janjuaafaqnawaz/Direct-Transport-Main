@@ -13,7 +13,7 @@ export default function AllChats() {
 
   return (
     <div className="min-h-screen w-screen fixed top-0 bottom-0 left-0 right-0 pl-5 bg-white p-1 grid grid-cols-4">
-      <div className=" w-full mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className=" w-full mx-auto bg-white rounded-xl overflow-hidden">
         <div className="pr-3 w-full">
           <h1 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
             <Tooltip

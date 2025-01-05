@@ -1,37 +1,68 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   doc,
   getFirestore,
   onSnapshot,
   updateDoc,
   getDoc,
+  setDoc,
 } from "firebase/firestore";
-import {
-  postCustomIdDoc,
-  uploadImageToFirestore,
-} from "@/api/firebase/functions/upload";
+import { uploadImageToFirestore } from "@/api/firebase/functions/upload";
 import RenderChat from "./RenderChat";
 import { app } from "@/api/firebase/config";
 import { ChatNotification } from "@/server/ChatNotification";
 
 export default function Chat({ id, user }) {
   const [chat, setChat] = useState([]);
+  const [unseenCount, setUnseenCount] = useState(0);
   const db = getFirestore(app);
+
+  const markMessagesAsSeen = useCallback(
+    async (messages) => {
+      const updatedMessages = messages.map((message) =>
+        message.sender !== "admin" && !message.seen
+          ? { ...message, seen: true }
+          : message
+      );
+
+      const hasChanges = updatedMessages.some(
+        (message, index) => message.seen !== messages[index].seen
+      );
+
+      if (hasChanges) {
+        const chatDocRef = doc(db, "chats", id);
+        await updateDoc(chatDocRef, { messages: updatedMessages });
+      }
+
+      return updatedMessages;
+    },
+    [db, id]
+  );
 
   useEffect(() => {
     let unsubscribe;
 
     const fetchChat = async () => {
       try {
-        const chatDoc = await fetchDocById(id, "chats");
+        const chatDocRef = doc(db, "chats", id);
+        const chatDocSnapshot = await getDoc(chatDocRef);
 
-        if (!chatDoc) {
-          await createNewChat();
+        if (!chatDocSnapshot.exists()) {
+          await createNewChat(chatDocRef);
         }
 
-        unsubscribe = subscribeToChat();
+        unsubscribe = onSnapshot(chatDocRef, async (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            let messages = docSnapshot.data().messages || [];
+            const updatedMessages = await markMessagesAsSeen(messages);
+            setChat(updatedMessages);
+            setUnseenCount(calculateUnseenMessages(updatedMessages));
+          } else {
+            console.warn("Chat document does not exist!");
+          }
+        });
       } catch (error) {
         console.error("Error fetching chat:", error);
       }
@@ -44,102 +75,109 @@ export default function Chat({ id, user }) {
         unsubscribe();
       }
     };
-  }, [id]);
+  }, [id, db, markMessagesAsSeen]);
 
-  const fetchDocById = async (docId, collection) => {
-    try {
-      const docRef = doc(db, collection, docId);
-      const docSnapshot = await getDoc(docRef);
-      return docSnapshot.exists() ? docSnapshot.data() : null;
-    } catch (error) {
-      console.error("Error fetching document by ID:", error);
-      return null;
-    }
-  };
-
-  const createNewChat = async () => {
+  const createNewChat = async (chatDocRef) => {
     try {
       const newChatData = {
         user,
         id,
         driverEmail: id,
-        messages: [],
+        messages: [
+          {
+            message: "Chat started by admin.",
+            sender: "admin",
+            timestamp: new Date().toISOString(),
+            seen: false,
+          },
+        ],
       };
 
-      await postCustomIdDoc(newChatData, "chats", id);
+      await setDoc(chatDocRef, newChatData);
     } catch (error) {
       console.error("Error creating new chat:", error);
     }
   };
 
-  const subscribeToChat = () => {
-    try {
-      const chatDocRef = doc(db, "chats", id);
+  const sendMessage = useCallback(
+    async (message) => {
+      try {
+        const newMessage = {
+          message,
+          sender: "admin",
+          timestamp: new Date().toISOString(),
+          seen: false,
+        };
 
-      return onSnapshot(chatDocRef, (docSnapshot) => {
-        if (docSnapshot.exists()) {
-          setChat(docSnapshot.data().messages);
-        } else {
-          console.warn("Chat document does not exist!");
-        }
-      });
-    } catch (error) {
-      console.error("Error subscribing to chat:", error);
-      return null;
-    }
-  };
+        ChatNotification(user.expoPushToken, message);
+        await updateMessages(newMessage);
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+    },
+    [user.expoPushToken]
+  );
 
-  const sendMessage = async (message) => {
-    try {
-      const chatDocRef = doc(db, "chats", id);
-      const newMessage = {
-        message,
-        sender: "user",
-        timestamp: new Date().toISOString(),
-      };
-
-      ChatNotification(user.expoPushToken, message);
-
-      const updatedMessages = [...chat, newMessage];
-
-      await updateDoc(chatDocRef, { user, messages: updatedMessages });
-      setChat(updatedMessages);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
-
-  const sendPicture = async (message) => {
-    if (!message || !message.trim()) {
-      console.log("Message cannot be empty.");
-      return;
-    }
-
-    try {
-      const url = await uploadImageToFirestore(message);
-
-      if (!url) {
-        console.log("Error uploading image.");
+  const sendPicture = useCallback(
+    async (file) => {
+      if (!file) {
+        console.log("File cannot be empty.");
         return;
       }
 
-      const chatDocRef = doc(db, "chats", id);
-      const newMessage = {
-        message: "#IMAGE",
-        url,
-        sender: "user",
-        timestamp: new Date().toISOString(),
-      };
+      try {
+        const url = await uploadImageToFirestore(file);
 
-      ChatNotification(user.expoPushToken, message);
+        if (!url) {
+          console.log("Error uploading image.");
+          return;
+        }
 
-      const updatedMessages = [...chat, newMessage];
+        const newMessage = {
+          message: "#IMAGE",
+          url,
+          sender: "admin",
+          timestamp: new Date().toISOString(),
+          seen: false,
+        };
 
-      await updateDoc(chatDocRef, { user, messages: updatedMessages });
-      setChat(updatedMessages);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
+        ChatNotification(user.expoPushToken, "Image sent");
+        await updateMessages(newMessage);
+      } catch (error) {
+        console.error("Error sending picture:", error);
+      }
+    },
+    [user.expoPushToken]
+  );
+
+  const updateMessages = useCallback(
+    async (newMessage) => {
+      try {
+        const chatDocRef = doc(db, "chats", id);
+        const chatDocSnapshot = await getDoc(chatDocRef);
+
+        if (!chatDocSnapshot.exists()) {
+          console.log("Chat document does not exist.");
+          return;
+        }
+
+        const currentMessages = chatDocSnapshot.data().messages || [];
+        const messages = [...currentMessages, newMessage];
+
+        await updateDoc(chatDocRef, { messages });
+      } catch (error) {
+        console.error("Error updating messages:", error);
+      }
+    },
+    [id, db]
+  );
+
+  const calculateUnseenMessages = (messages) => {
+    return messages.reduce(
+      (total, message) =>
+        message.sender !== "admin" && !message.seen ? total + 1 : total,
+      0
+    );
   };
 
   return (
@@ -147,6 +185,7 @@ export default function Chat({ id, user }) {
       sendMessage={sendMessage}
       sendPicture={sendPicture}
       chat={chat}
+      unseenCount={unseenCount}
       id={id}
       user={user}
     />

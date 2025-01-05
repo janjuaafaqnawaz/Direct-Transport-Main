@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
-  ArrowDown,
   ArrowDownCircle,
+  BadgeAlert,
+  BadgeCheck,
   ImageIcon,
   Send,
   Sparkles,
@@ -84,13 +85,13 @@ export default function RenderChat({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
                 className={`flex ${
-                  msg.sender === "user" ? "justify-end" : "justify-start"
+                  msg.sender === "admin" ? "justify-end" : "justify-start"
                 }`}
               >
                 <div
                   ref={bottomRef}
                   className={`max-w-xs md:max-w-md ${
-                    msg.sender === "user"
+                    msg.sender === "admin"
                       ? "bg-[#349ae7] text-white"
                       : "bg-gray-800 text-gray-300"
                   } rounded-lg p-3 shadow-lg`}
@@ -109,8 +110,15 @@ export default function RenderChat({
                     <p className="text-sm">{msg.message}</p>
                   )}
 
-                  <p className="text-xs mt-1 opacity-70">
+                  <p className="text-xs mt-1 opacity-70 flex flex-row items-center justify-between">
                     {new Date(msg.timestamp).toLocaleTimeString()}
+                    <div className="ml-3">
+                      {msg?.seen === true ? (
+                        <BadgeCheck size={15} />
+                      ) : (
+                        <BadgeAlert size={15} />
+                      )}
+                    </div>
                   </p>
                 </div>
               </motion.div>
@@ -140,6 +148,12 @@ export default function RenderChat({
           >
             <Send size={20} />
           </button>
+          <button
+            onClick={scrollToBottom}
+            className="bg-white text-[#349ae7] rounded-full p-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <ArrowDownCircle size={20} />
+          </button>
         </div>
       </div>
       {/* Sparkles decoration */}
@@ -148,16 +162,6 @@ export default function RenderChat({
         className="absolute top-7 right-20 text-blue-700 animate-pulse"
         size={24}
       />
-      <Tooltip
-        label="Scroll to bottom"
-        className="text-purple-600 animate-pulse cursor-pointer"
-      >
-        <ArrowDownCircle
-          onClick={scrollToBottom}
-          className="absolute top-7 right-10 text-blue-700 animate-pulse"
-          size={24}
-        />
-      </Tooltip>
     </div>
   );
 }
