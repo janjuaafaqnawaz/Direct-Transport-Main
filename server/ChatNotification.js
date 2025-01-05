@@ -5,6 +5,7 @@ export async function ChatNotification(expoPushToken, message) {
     const payload = {
       to: expoPushToken,
       title: "DTS Chat Notification",
+      channelId: "new-assigned-booking",
       body: message,
     };
 
