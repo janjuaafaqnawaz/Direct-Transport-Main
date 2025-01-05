@@ -65,9 +65,7 @@ const AdminProvider = ({ children }) => {
           setLastBookingDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
         }
 
-        setAllBookings((prevBookings) =>
-          isInitial ? documents : [...prevBookings, ...documents]
-        );
+        setAllBookings(documents);
         setIsLoading(false);
       });
 

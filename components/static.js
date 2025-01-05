@@ -150,6 +150,7 @@ const adminPages = [
   { link: "/admin/Settings/Next-Day", label: "Next Day" },
   { link: "/admin/Manage/Users", label: "Users" },
   { link: "/admin/Manage/Drivers", label: "Drivers" },
+  { link: "/admin/Manage/Chats", label: "Chats" },
   { link: "/MonthlyInvoices", label: "Monthly Invoices" },
   { link: "/admin/Settings/Regional", label: "Regional" },
 ];

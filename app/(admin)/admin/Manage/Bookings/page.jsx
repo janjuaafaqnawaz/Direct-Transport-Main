@@ -57,6 +57,9 @@ export default function App() {
   const isNew = (newItems) =>
     newItems.length > 0 ? `(New ${newItems.length})` : "";
 
+  console.log("todaysBookings", todaysBookings.length);
+  
+  
   return (
     <div className="flex w-full overflow-hidden flex-col justify-center">
       <Tabs
