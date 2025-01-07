@@ -17,7 +17,7 @@ import { Tooltip } from "@mantine/core";
 
 export default function RenderChat({
   sendMessage,
-  sendPicture,
+  handleSendImage,
   chat: liveChat,
   id,
   user,
@@ -41,23 +41,6 @@ export default function RenderChat({
       sendMessage(message);
       setMessage("");
     }
-  };
-
-  const handleSendImage = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          sendPicture(event.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-    input.click();
   };
 
   const userImg =

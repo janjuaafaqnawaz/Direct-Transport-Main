@@ -149,6 +149,23 @@ export default function Chat({ id, user }) {
     },
     [user.expoPushToken]
   );
+  
+  const handleSendImage = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          sendPicture(event.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  };
 
   const updateMessages = useCallback(
     async (newMessage) => {
@@ -183,7 +200,7 @@ export default function Chat({ id, user }) {
   return (
     <RenderChat
       sendMessage={sendMessage}
-      sendPicture={sendPicture}
+      handleSendImage={handleSendImage}
       chat={chat}
       unseenCount={unseenCount}
       id={id}
