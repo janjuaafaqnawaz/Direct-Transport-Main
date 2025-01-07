@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAdminContext from "@/context/AdminProvider";
 import Chat from "./components/Chat";
 import { Users, ChevronRight, Home } from "lucide-react";
@@ -10,6 +10,13 @@ import Link from "next/link";
 export default function AllChats() {
   const { chats } = useAdminContext();
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (user && chats) {
+      const updatedUser = chats.find((chat) => chat.user.email === user.email);
+      if (!updatedUser) setUser(null);
+    }
+  }, [chats]);
 
   const unReadMessage = (email) => {
     console.log("unReadMessage called with email:", email);
@@ -34,7 +41,21 @@ export default function AllChats() {
     return unRead.length || 0;
   };
 
-  console.log(chats);
+  const orderedChats =
+    chats?.length > 0 &&
+    chats.sort((chatA, chatB) => {
+      const lastMessageA = chatA?.messages?.[chatA.messages.length - 1] || null;
+      const lastMessageB = chatB?.messages?.[chatB.messages.length - 1] || null;
+
+      const timestampA = lastMessageA
+        ? new Date(lastMessageA.timestamp).getTime()
+        : 0;
+      const timestampB = lastMessageB
+        ? new Date(lastMessageB.timestamp).getTime()
+        : 0;
+
+      return timestampB - timestampA;
+    });
 
   return (
     <div className="min-h-screen w-screen fixed top-0 bottom-0 left-0 right-0 pl-5 bg-white p-1 grid grid-cols-4">
@@ -52,9 +73,12 @@ export default function AllChats() {
             <Users className="mr-2" />
             All Chats
           </h1>
+          <p className="font-semibold text-gray-800 ml-3">
+            Sorted by most recent chat.
+          </p>
           <div className=" gap-3">
             {chats?.length > 0 &&
-              chats.map((chat) => {
+              orderedChats.map((chat) => {
                 const unSeenCount = unReadMessage(chat.user.email);
 
                 return (

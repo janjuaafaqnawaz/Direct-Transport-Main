@@ -28,7 +28,6 @@ export default function RenderChat({
   const [chat, setChat] = useState([]);
   const chatContainerRef = useRef(null);
   const bottomRef = useRef(null);
-  const audioRef = useRef(null);
 
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView();
@@ -38,9 +37,6 @@ export default function RenderChat({
   };
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.play();
-    }
     setChat(liveChat);
     scrollToBottom();
   }, [liveChat]);
@@ -141,7 +137,6 @@ export default function RenderChat({
 
   return (
     <div className="flex flex-col  max-h-screen bg-white" ref={bottomRef}>
-      <audio ref={audioRef} src="/sound/notification.wav" preload="auto" />
       <div className="bg-white pt-5 pl-4 h-20">
         <User
           avatarProps={{
