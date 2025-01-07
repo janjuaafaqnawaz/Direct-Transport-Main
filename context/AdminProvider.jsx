@@ -24,12 +24,12 @@ const AdminProvider = ({ children }) => {
   const [allArchivedAccounts, setArchivedAccounts] = useState([]);
   const [lastBookingDoc, setLastBookingDoc] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [priceSettings, setPriceSettings] = useState(null); // <-- State for price settings
+  const [priceSettings, setPriceSettings] = useState(null);
+  const [chats, setChats] = useState(null);
 
-  const [totalBookings, setTotalBookings] = useState(0); // Store total bookings count
-  const BOOKINGS_LIMIT = 1500;
+  const [totalBookings, setTotalBookings] = useState(0);
+  const BOOKINGS_LIMIT = 50;
 
-  // Function to fetch total document counts in Firestore collection
   const fetchDocumentCounts = async () => {
     try {
       const bookingsRef = collection(db, "place_bookings");
@@ -40,7 +40,6 @@ const AdminProvider = ({ children }) => {
     }
   };
 
-  // Function to fetch bookings with pagination and real-time updates
   const fetchBookingsWithPagination = (isInitial = false) => {
     setIsLoading(true);
     try {
@@ -69,14 +68,13 @@ const AdminProvider = ({ children }) => {
         setIsLoading(false);
       });
 
-      return unsubscribe; // Unsubscribe from the listener when done
+      return unsubscribe;
     } catch (error) {
       console.error("Error fetching bookings:", error);
       setIsLoading(false);
     }
   };
 
-  // Function to fetch users and drivers with real-time updates
   const fetchUsers = () => {
     setIsLoading(true);
     try {
@@ -89,26 +87,47 @@ const AdminProvider = ({ children }) => {
           documents.push({ id: doc.id, ...doc.data() });
         });
 
-        // Separate drivers from the user list
         setAllUsers(documents.filter((user) => user.role !== "archived"));
         setAllDrivers(documents.filter((user) => user.role === "driver"));
         setArchivedAccounts(
           documents.filter((user) => user.role === "archived")
         );
-        setIsLoading(false); // Reset loading state after fetching
+        setIsLoading(false);
       });
 
-      return unsubscribeUsers; // Return the unsubscribe function
+      return unsubscribeUsers;
     } catch (error) {
       console.error("Error fetching users:", error);
-      setIsLoading(false); // Reset loading state on error
+      setIsLoading(false);
+    }
+  };
+
+  const fetchChats = () => {
+    setIsLoading(true);
+    try {
+      const unsubscribeUsers = onSnapshot(
+        query(collection(db, "chats")),
+        (querySnapshot) => {
+          const documents = [];
+          querySnapshot.forEach((doc) => {
+            documents.push({ id: doc.id, ...doc.data() });
+          });
+          setChats(documents);
+        }
+      );
+
+      return unsubscribeUsers;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Function to fetch price settings with real-time updates
   const fetchPriceSettings = () => {
     try {
-      const priceSettingsRef = doc(db, "data", "price_settings"); // Reference to 'price_settings' doc
+      const priceSettingsRef = doc(db, "data", "price_settings");
 
       const unsubscribePriceSettings = onSnapshot(
         priceSettingsRef,
@@ -121,7 +140,7 @@ const AdminProvider = ({ children }) => {
         }
       );
 
-      return unsubscribePriceSettings; // Return the unsubscribe function
+      return unsubscribePriceSettings;
     } catch (error) {
       console.error("Error fetching price settings:", error);
     }
@@ -130,17 +149,19 @@ const AdminProvider = ({ children }) => {
   useEffect(() => {
     // Initial fetch for bookings and users
     const unsubscribeBookings = fetchBookingsWithPagination(false);
-    const unsubscribeUsers = fetchUsers(); // Corrected fetchUsers call
-    const unsubscribePriceSettings = fetchPriceSettings(); // Fetch price settings in real-time
-    fetchDocumentCounts(); // Fetch the total bookings count
+    const unsubscribeUsers = fetchUsers();
+    const unsubscribePriceSettings = fetchPriceSettings();
+    const unsubscribeChats = fetchChats();
+    fetchDocumentCounts();
 
     // Clean up listeners on component unmount
     return () => {
       if (unsubscribeBookings) unsubscribeBookings();
-      if (unsubscribeUsers) unsubscribeUsers(); // Unsubscribe from users snapshot listener
-      if (unsubscribePriceSettings) unsubscribePriceSettings(); // Unsubscribe from price settings listener
+      if (unsubscribeUsers) unsubscribeUsers();
+      if (unsubscribePriceSettings) unsubscribePriceSettings();
+      if (unsubscribeChats) unsubscribeChats();
     };
-  }, []); // Run once on component mount
+  }, []);
 
   const archivedBookings = allBookings.filter(
     (item) => item?.isArchived === true
@@ -161,6 +182,7 @@ const AdminProvider = ({ children }) => {
         totalBookings,
         archivedBookings,
         priceSettings,
+        chats,
       }}
     >
       {children}
