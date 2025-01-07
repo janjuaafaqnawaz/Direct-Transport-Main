@@ -10,10 +10,12 @@ import {
   Send,
   Sparkles,
 } from "lucide-react";
-import { User } from "@nextui-org/react";
+import { Chip, User } from "@nextui-org/react";
 import Image from "next/image";
 import { PhotoView } from "react-photo-view";
-import { Tooltip } from "@mantine/core";
+
+const userImg =
+  "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?t=st=1734353403~exp=1734357003~hmac=1dbbde6a9a2aef5817bcd7324f2f8b3e49602ae96cc46e4683b72e7b90319dd2&w=826";
 
 export default function RenderChat({
   sendMessage,
@@ -26,12 +28,19 @@ export default function RenderChat({
   const [chat, setChat] = useState([]);
   const chatContainerRef = useRef(null);
   const bottomRef = useRef(null);
+  const audioRef = useRef(null);
 
   const scrollToBottom = () => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView();
+    setTimeout(() => {
+      bottomRef.current?.scrollIntoView();
+    }, 100);
   };
 
   useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.play();
+    }
     setChat(liveChat);
     scrollToBottom();
   }, [liveChat]);
@@ -43,12 +52,96 @@ export default function RenderChat({
     }
   };
 
-  const userImg =
-    "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?t=st=1734353403~exp=1734357003~hmac=1dbbde6a9a2aef5817bcd7324f2f8b3e49602ae96cc46e4683b72e7b90319dd2&w=826";
+  const formatDate = (date) => {
+    const today = new Date();
+    const messageDate = new Date(date);
+
+    if (today.toDateString() === messageDate.toDateString()) {
+      return "Today";
+    }
+
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    if (yesterday.toDateString() === messageDate.toDateString()) {
+      return "Yesterday";
+    }
+
+    return messageDate.toLocaleDateString("en-GB");
+  };
+
+  const renderMessagesWithDateSeparators = () => {
+    let lastDate = null;
+
+    return chat.map((msg, index) => {
+      const messageDate = new Date(msg.timestamp).toDateString();
+      const showDateSeparator = lastDate !== messageDate;
+      lastDate = messageDate;
+
+      return (
+        <div key={index} className="w-full">
+          {showDateSeparator && (
+            <div className="w-full flex justify-center">
+              <Chip className="mx-auto" size="lg" color="default">
+                {formatDate(msg.timestamp)}
+              </Chip>
+            </div>
+          )}
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className={`flex ${
+              msg.sender === "admin" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              ref={bottomRef}
+              className={`max-w-xs md:max-w-md ${
+                msg.sender === "admin"
+                  ? "bg-gray-800 text-gray-300"
+                  : "bg-[#349ae7] text-white"
+              } rounded-lg p-3 shadow-lg`}
+            >
+              {msg.message === "#IMAGE" && msg.url ? (
+                <PhotoView key={msg.url} src={msg.url}>
+                  <Image
+                    src={msg.url}
+                    alt="Sent image"
+                    width={300}
+                    height={300}
+                    className="max-w-full h-auto rounded"
+                  />
+                </PhotoView>
+              ) : (
+                <p className="text-sm">{msg.message}</p>
+              )}
+
+              <p className="text-xs mt-1 opacity-70 flex flex-row items-center justify-between">
+                {new Date(msg?.timestamp).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
+                <div className="ml-3">
+                  {msg?.seen === true ? (
+                    <BadgeCheck size={15} />
+                  ) : (
+                    <BadgeAlert size={15} />
+                  )}
+                </div>
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      );
+    });
+  };
 
   return (
     <div className="flex flex-col  max-h-screen bg-white" ref={bottomRef}>
-      {/* Chat container with scroll */}
+      <audio ref={audioRef} src="/sound/notification.wav" preload="auto" />
       <div className="bg-white pt-5 pl-4 h-20">
         <User
           avatarProps={{
@@ -60,52 +153,7 @@ export default function RenderChat({
       </div>
       <div className="flex-1 overflow-y-auto p-4" ref={chatContainerRef}>
         <div className="space-y-4 pr-4" ref={bottomRef}>
-          {chat?.length > 0 &&
-            chat.map((msg, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className={`flex ${
-                  msg.sender === "admin" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  ref={bottomRef}
-                  className={`max-w-xs md:max-w-md ${
-                    msg.sender === "admin"
-                      ? "bg-[#349ae7] text-white"
-                      : "bg-gray-800 text-gray-300"
-                  } rounded-lg p-3 shadow-lg`}
-                >
-                  {msg.message === "#IMAGE" && msg.url ? (
-                    <PhotoView key={msg.url} src={msg.url}>
-                      <Image
-                        src={msg.url}
-                        alt="Sent image"
-                        width={300}
-                        height={300}
-                        className="max-w-full h-auto rounded"
-                      />
-                    </PhotoView>
-                  ) : (
-                    <p className="text-sm">{msg.message}</p>
-                  )}
-
-                  <p className="text-xs mt-1 opacity-70 flex flex-row items-center justify-between">
-                    {new Date(msg.timestamp).toLocaleTimeString()}
-                    <div className="ml-3">
-                      {msg?.seen === true ? (
-                        <BadgeCheck size={15} />
-                      ) : (
-                        <BadgeAlert size={15} />
-                      )}
-                    </div>
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+          {chat?.length > 0 && renderMessagesWithDateSeparators()}
         </div>
       </div>
       {/* Input and Send Button */}
