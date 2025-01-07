@@ -9,9 +9,12 @@ export default function RootLayout({ children }) {
   const [previousMessageCount, setPreviousMessageCount] = useState(0);
 
   useEffect(() => {
-    const currentMessageCount = chats.reduce((total, chat) => {
-      return total + (chat.messages?.length || 0);
-    }, 0);
+    const currentMessageCount =
+      chats &&
+      chats?.length > 0 &&
+      chats?.reduce((total, chat) => {
+        return total + (chat.messages?.length || 0);
+      }, 0);
 
     if (audioRef.current && currentMessageCount > previousMessageCount) {
       audioRef.current.play();
