@@ -12,6 +12,7 @@ export default function LeafletMap({ liveLocSharingBookings }) {
   useEffect(() => {
     if (!map.current && mapContainer.current) {
       initializeMap();
+      zoomToDrivers();
     }
   }, []);
 
@@ -29,7 +30,7 @@ export default function LeafletMap({ liveLocSharingBookings }) {
     );
   };
 
-  const zoomToDriver = () => {
+  const zoomToDrivers = () => {
     if (liveLocSharingBookings.length > 0) {
       const bounds = L.latLngBounds(
         liveLocSharingBookings.map((driver) => [
@@ -69,7 +70,7 @@ export default function LeafletMap({ liveLocSharingBookings }) {
 
         markers.current.push(marker);
 
-        marker.on("click", () => zoomToDriver(latitude, longitude));
+        marker.on("click", () => zoomToDrivers(latitude, longitude));
       }
     });
 
@@ -87,7 +88,7 @@ export default function LeafletMap({ liveLocSharingBookings }) {
         <Button onClick={() => setAutoZoom(!autoZoom)}>
           {autoZoom ? "Disable Auto-Zoom" : "Enable Auto-Zoom"}
         </Button>{" "}
-        <Button onClick={zoomToDriver}>Zoom</Button>
+        <Button onClick={zoomToDrivers}>Zoom</Button>
       </div>
       <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
     </div>
