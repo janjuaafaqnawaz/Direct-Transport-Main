@@ -9,6 +9,8 @@ export default function RootLayout({ children }) {
   const [previousMessageCount, setPreviousMessageCount] = useState(0);
 
   useEffect(() => {
+    const notificationSound = localStorage.getItem("notificationSound");
+    console.log({ notificationSound });
     const currentMessageCount =
       chats &&
       chats?.length > 0 &&
@@ -16,7 +18,11 @@ export default function RootLayout({ children }) {
         return total + (chat.messages?.length || 0);
       }, 0);
 
-    if (audioRef.current && currentMessageCount > previousMessageCount) {
+    if (
+      audioRef.current &&
+      currentMessageCount > previousMessageCount &&
+      notificationSound === "true"
+    ) {
       audioRef.current.play();
     }
 

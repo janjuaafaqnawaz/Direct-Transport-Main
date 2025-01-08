@@ -3,9 +3,12 @@
 import React, { useEffect, useState } from "react";
 import useAdminContext from "@/context/AdminProvider";
 import Chat from "./components/Chat";
-import { Users, ChevronRight, Home } from "lucide-react";
+import { ChevronRight, Home, VolumeXIcon } from "lucide-react";
 import { Tooltip } from "@mantine/core";
 import Link from "next/link";
+import { Switch } from "@nextui-org/react";
+import { VolumeUpSharp } from "@mui/icons-material";
+import Image from "next/image";
 
 export default function AllChats() {
   const { chats } = useAdminContext();
@@ -19,8 +22,6 @@ export default function AllChats() {
   }, [chats]);
 
   const unReadMessage = (email) => {
-    console.log("unReadMessage called with email:", email);
-
     if (!chats || !email) {
       console.log("No chats available or email is undefined/null.");
       return 0;
@@ -33,7 +34,6 @@ export default function AllChats() {
     }
 
     const messages = myChat.messages || [];
-    console.log(`Messages for ${email}:`, messages.length);
 
     const unRead = messages.filter(
       (message) => !message.seen && message.sender === "user"
@@ -61,21 +61,38 @@ export default function AllChats() {
     <div className="min-h-screen w-screen fixed top-0 bottom-0 left-0 right-0 pl-5 bg-white p-1 grid grid-cols-4">
       <div className=" w-full mx-auto bg-white rounded-xl overflow-hidden">
         <div className="pr-3 w-full">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-            <Tooltip
-              label="Go Home"
-              className="text-black animate-pulse cursor-pointer mx-4"
-            >
-              <Link href="/">
-                <Home size={24} />
-              </Link>
-            </Tooltip>
-            <Users className="mr-2" />
-            All Chats
-          </h1>
-          <p className="font-semibold text-gray-800 ml-3">
-            Sorted by most recent chat.
-          </p>
+          <div className=" ml-5">
+            <Image
+              src="/Direct-Transport-Solutions-2.png"
+              height={200}
+              width={400}
+              alt="logo"
+              className="h-20 my-10 w-auto"
+            />
+            <div className="flex align-middle items-center gap-3">
+              <Tooltip
+                label="Go Home"
+                className="text-black animate-pulse cursor-pointer"
+              >
+                <Link href="/">
+                  <Home size={24} />
+                </Link>
+              </Tooltip>
+              <Switch
+                size="lg"
+                endContent={<VolumeXIcon />}
+                startContent={<VolumeUpSharp />}
+                onValueChange={(e) =>
+                  localStorage.setItem("notificationSound", e)
+                }
+              >
+                Toggle Volume
+              </Switch>
+            </div>
+            <p className="font-semibold text-gray-800">
+              Sorted by most recent chat.
+            </p>
+          </div>
           <div className=" gap-3">
             {chats?.length > 0 &&
               orderedChats.map((chat) => {

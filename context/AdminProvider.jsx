@@ -1,7 +1,7 @@
 import { app } from "@/api/firebase/config";
 import {
   collection,
-  doc, // <-- Add doc for document reference
+  doc,
   getFirestore,
   query,
   onSnapshot,
