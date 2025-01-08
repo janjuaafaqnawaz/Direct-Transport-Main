@@ -4,15 +4,17 @@ import React, { useEffect, useState } from "react";
 import useAdminContext from "@/context/AdminProvider";
 import Chat from "./components/Chat";
 import { ChevronRight, Home, VolumeXIcon } from "lucide-react";
-import { Tooltip } from "@mantine/core";
+import { Switch, Tooltip } from "@mantine/core";
 import Link from "next/link";
-import { Switch } from "@nextui-org/react";
 import { VolumeUpSharp } from "@mui/icons-material";
 import Image from "next/image";
 
 export default function AllChats() {
   const { chats } = useAdminContext();
   const [user, setUser] = useState(null);
+  const [isNotificationSoundOn, setIsNotificationSoundOn] = useState(() => {
+    return localStorage.getItem("notificationSound") === "true";
+  });
 
   useEffect(() => {
     if (user && chats) {
@@ -20,6 +22,17 @@ export default function AllChats() {
       if (!updatedUser) setUser(null);
     }
   }, [chats]);
+
+  useEffect(() => {
+    const mode = localStorage.getItem("notificationSound") === "true";
+    setIsNotificationSoundOn(mode);
+  }, []);
+
+  const handleToggle = (event) => {
+    const value = event.currentTarget.checked;
+    setIsNotificationSoundOn(value);
+    localStorage.setItem("notificationSound", value);
+  };
 
   const unReadMessage = (email) => {
     if (!chats || !email) {
@@ -69,7 +82,25 @@ export default function AllChats() {
               alt="logo"
               className="h-20 my-10 w-auto"
             />
-            <div className="flex align-middle items-center gap-3">
+            <div className="flex align-middle justify-around items-center gap-3 mb-3">
+              <Switch
+              className="-m-8"
+                size="lg"
+                checked={isNotificationSoundOn}
+                onChange={handleToggle}
+                thumbIcon={
+                  isNotificationSoundOn ? (
+                    <VolumeUpSharp
+                      style={{ width: 12, height: 12, color: "teal" }}
+                    />
+                  ) : (
+                    <VolumeXIcon
+                      style={{ width: 12, height: 12, color: "red" }}
+                    />
+                  )
+                }
+                label="Notifications"
+              />
               <Tooltip
                 label="Go Home"
                 className="text-black animate-pulse cursor-pointer"
@@ -78,16 +109,6 @@ export default function AllChats() {
                   <Home size={24} />
                 </Link>
               </Tooltip>
-              <Switch
-                size="lg"
-                endContent={<VolumeXIcon />}
-                startContent={<VolumeUpSharp />}
-                onValueChange={(e) =>
-                  localStorage.setItem("notificationSound", e)
-                }
-              >
-                Toggle Volume
-              </Switch>
             </div>
             <p className="font-semibold text-gray-800">
               Sorted by most recent chat.
