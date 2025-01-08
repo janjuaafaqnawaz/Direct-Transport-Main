@@ -12,26 +12,29 @@ import Image from "next/image";
 export default function AllChats() {
   const { chats } = useAdminContext();
   const [user, setUser] = useState(null);
-  const [isNotificationSoundOn, setIsNotificationSoundOn] = useState(() => {
-    return localStorage.getItem("notificationSound") === "true";
-  });
+  const [isNotificationSoundOn, setIsNotificationSoundOn] = useState(false);
+
+  // Load localStorage value in useEffect to ensure it runs on the client
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedValue = localStorage.getItem("notificationSound") === "true";
+      setIsNotificationSoundOn(storedValue);
+    }
+  }, []);
 
   useEffect(() => {
     if (user && chats) {
       const updatedUser = chats.find((chat) => chat.user.email === user.email);
       if (!updatedUser) setUser(null);
     }
-  }, [chats]);
-
-  useEffect(() => {
-    const mode = localStorage.getItem("notificationSound") === "true";
-    setIsNotificationSoundOn(mode);
-  }, []);
+  }, [chats, user]);
 
   const handleToggle = (event) => {
     const value = event.currentTarget.checked;
     setIsNotificationSoundOn(value);
-    localStorage.setItem("notificationSound", value);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("notificationSound", value);
+    }
   };
 
   const unReadMessage = (email) => {
@@ -47,7 +50,6 @@ export default function AllChats() {
     }
 
     const messages = myChat.messages || [];
-
     const unRead = messages.filter(
       (message) => !message.seen && message.sender === "user"
     );
@@ -82,9 +84,8 @@ export default function AllChats() {
               alt="logo"
               className="h-20 my-10 w-auto"
             />
-            <div className="flex align-middle justify-around items-center gap-3 mb-3">
+            <div className="flex align-middle justify-between items-center gap-3 ">
               <Switch
-              className="-m-8"
                 size="lg"
                 checked={isNotificationSoundOn}
                 onChange={handleToggle}
@@ -105,7 +106,7 @@ export default function AllChats() {
                 label="Go Home"
                 className="text-black animate-pulse cursor-pointer"
               >
-                <Link href="/">
+                <Link href="/" className="m-7">
                   <Home size={24} />
                 </Link>
               </Tooltip>
