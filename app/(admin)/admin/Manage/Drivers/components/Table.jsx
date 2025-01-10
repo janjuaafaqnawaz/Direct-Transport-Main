@@ -13,8 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DriverDetailsDialog from "./Overview";
-import { Trash2, History, RefreshCw, Archive } from "lucide-react";
-import { deleteUserAcc } from "@/api/firebase/functions/auth";
+import { History, RefreshCw, Archive } from "lucide-react";
 import useAdminContext from "@/context/AdminProvider";
 import Create from "./Create";
 import {
@@ -28,7 +27,8 @@ import { updateDoc } from "@/api/firebase/functions/upload";
 import { Switch } from "@/components/ui/switch";
 import TrackDriver from "./TrackDriver/TrackDriverModal";
 import toast from "react-hot-toast";
-import deleteDriverLocation from "@/server/deleteDriverLocation"
+import deleteDriverLocation from "@/server/deleteDriverLocation";
+import { Chip } from "@nextui-org/react";
 
 const roleOptions = [
   { value: "driver", label: "Driver" },
@@ -85,7 +85,8 @@ export default function DriverTable({ filter }) {
             <TableHead>Role</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Status</TableHead>
-            {/* <TableHead>Track Location</TableHead> */}
+            <TableHead>Tracking</TableHead>
+            <TableHead>Permissions</TableHead>
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -135,6 +136,13 @@ export default function DriverTable({ filter }) {
                 });
               };
 
+              const permissions = driver?.permissions;
+              const allGranted =
+                permissions &&
+                Object.values(permissions).every(
+                  (value) => value === "granted"
+                );
+
               return (
                 <TableRow key={index}>
                   <TableCell>
@@ -181,6 +189,12 @@ export default function DriverTable({ filter }) {
                       checked={driver?.tracking}
                       onCheckedChange={toggleTracking}
                     />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      className="aspect-square h-2 w-2 mx-auto"
+                      color={allGranted ? "success" : "danger"}
+                    ></Chip>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
