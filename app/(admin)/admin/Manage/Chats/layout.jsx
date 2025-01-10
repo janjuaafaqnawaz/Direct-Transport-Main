@@ -6,29 +6,35 @@ import { useEffect, useRef, useState } from "react";
 export default function RootLayout({ children }) {
   const audioRef = useRef(null);
   const { chats } = useAdminContext();
-  const [previousMessageCount, setPreviousMessageCount] = useState(0);
+  const [previousMessageCounts, setPreviousMessageCounts] = useState({});
 
   useEffect(() => {
     const notificationSound =
       localStorage.getItem("notificationSound") === "true";
-    console.log(notificationSound);
-    const currentMessageCount =
-      chats &&
-      chats?.length > 0 &&
-      chats?.reduce((total, chat) => {
-        return total + (chat.messages?.length || 0);
-      }, 0);
 
-    if (
-      audioRef.current &&
-      currentMessageCount > previousMessageCount &&
-      notificationSound
-    ) {
-      audioRef.current.play();
+    if (audioRef.current && notificationSound && chats?.length > 0) {
+      const updatedMessageCounts = {};
+
+      chats.forEach((chat) => {
+        const chatId = chat.user.id; // Assuming each chat has a unique user ID
+        const previousCount = previousMessageCounts[chatId] || 0;
+        const currentCount = chat.messages?.length || 0;
+
+        updatedMessageCounts[chatId] = currentCount;
+
+        if (currentCount > previousCount) {
+          const newMessages = chat.messages.slice(previousCount);
+          newMessages.forEach((msg) => {
+            if (msg.sender !== "admin") {
+              audioRef.current.play();
+            }
+          });
+        }
+      });
+
+      setPreviousMessageCounts(updatedMessageCounts);
     }
-
-    setPreviousMessageCount(currentMessageCount);
-  }, [chats]);
+  }, [chats, previousMessageCounts]);
 
   return (
     <>

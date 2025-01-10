@@ -115,7 +115,7 @@ export default function AllChats() {
               Sorted by most recent chat.
             </p>
           </div>
-          <div className=" gap-3">
+          <div className=" gap-3 overflow-y-scroll h-[calc(100vh-180px)]">
             {chats?.length > 0 &&
               orderedChats.map((chat) => {
                 const unSeenCount = unReadMessage(chat.user.email);

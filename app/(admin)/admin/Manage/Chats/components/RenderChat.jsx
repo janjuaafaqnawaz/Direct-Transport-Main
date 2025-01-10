@@ -122,7 +122,10 @@ export default function RenderChat({
                 })}
                 <div className="ml-3">
                   {msg?.seen === true ? (
-                    <BadgeCheck size={15} />
+                    <BadgeCheck
+                      size={15}
+                      color={msg.sender === "admin" ? "#349ae7" : "white"}
+                    />
                   ) : (
                     <BadgeAlert size={15} />
                   )}

@@ -41,42 +41,46 @@ export default function LeafletMap({ liveLocSharingBookings }) {
       map.current.fitBounds(bounds, { padding: [50, 50] });
     }
   };
-
   const updateMap = (drivers) => {
+    // Clear existing markers
     markers.current.forEach((marker) => map.current.removeLayer(marker));
     markers.current = [];
 
-    drivers.forEach((driver) => {
+    // Filter out drivers without names
+    const filteredDrivers = drivers.filter(
+      (driver) =>
+        driver?.driver?.firstName && driver.latitude && driver.longitude
+    );
+
+    filteredDrivers.forEach((driver) => {
       const { latitude, longitude, driver: driverInfo } = driver;
 
-      if (latitude && longitude) {
-        const customIcon = L.icon({
-          iconUrl: "/icons/car.png",
-          iconSize: [40, 40],
-          iconAnchor: [20, 80],
-        });
+      const customIcon = L.icon({
+        iconUrl: "/icons/car.png",
+        iconSize: [40, 40],
+        iconAnchor: [20, 80],
+      });
 
-        const marker = L.marker([latitude, longitude], { icon: customIcon })
-          .addTo(map.current)
-          .bindTooltip(
-            `<div>
-              <strong>${driverInfo?.firstName || "Driver"}</strong> 
-             </div>`,
-            {
-              permanent: true,
-              direction: "top",
-            }
-          );
+      const marker = L.marker([latitude, longitude], { icon: customIcon })
+        .addTo(map.current)
+        .bindTooltip(
+          `<div>
+            <strong>${driverInfo.firstName}</strong>
+           </div>`,
+          {
+            permanent: true,
+            direction: "top",
+          }
+        );
 
-        markers.current.push(marker);
+      markers.current.push(marker);
 
-        marker.on("click", () => zoomToDrivers(latitude, longitude));
-      }
+      marker.on("click", () => zoomToDrivers(latitude, longitude));
     });
 
-    if (autoZoom && drivers.length > 0) {
+    if (autoZoom && filteredDrivers.length > 0) {
       const bounds = L.latLngBounds(
-        drivers.map((driver) => [driver.latitude, driver.longitude])
+        filteredDrivers.map((driver) => [driver.latitude, driver.longitude])
       );
       map.current.fitBounds(bounds, { padding: [50, 50] });
     }
