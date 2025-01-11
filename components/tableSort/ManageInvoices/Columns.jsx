@@ -10,6 +10,7 @@ import InvoicePOD from "./InvoiceAction/pod_invoice_modal/Modal";
 import { Chip } from "@nextui-org/react";
 import Notes from "./InvoiceAction/notes/Notes";
 import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
+import FixPriceModal from "./InvoiceAction/edit_invoice_modal/FixPriceModal";
 
 const toCapitalize = (str) => {
   if (!str) return "";
@@ -105,6 +106,7 @@ export function Columns({ isArchived, hideAction }) {
           <Tooltip label="Pick Status">
             <StatusDropdown booking={params.row} />
           </Tooltip>
+          <FixPriceModal booking={params.row || ""} />
           <Tooltip label="Assign Driver">
             <Assigned booking={params.row || ""} />
           </Tooltip>
