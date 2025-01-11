@@ -23,18 +23,10 @@ export default function CreatePdf({ datesRange, user }) {
     const toDate = parse(end, "dd/MM/yyyy", new Date());
     toDate.setHours(23, 59, 59, 999);
 
-    // console.log({ startDate, toDate });
-
     try {
       return allBookings.filter((booking) => {
         const bookingDate = new Date(convertToISOString(booking.date));
-        // console.error(
-        //   "Email is missing in booking or user object.",
-        //   "driverEmail & userEmail",
-        //   booking.userEmail,
-        //   "userEmail",
-        //   user?.email
-        // );
+
         return (
           booking.userEmail.toLowerCase() === user.email.toLowerCase() &&
           bookingDate >= startDate &&

@@ -47,9 +47,8 @@ export default function History({ email }) {
   const deletePdf = async (docId) => {
     try {
       await deleteDocument("generatedPdfs", docId);
-      // Consider using a notification library to show this message
       console.log("PDF deleted successfully!");
-      setPdfs((prev) => prev.filter((pdf) => pdf.id !== docId)); // Update state without re-fetching
+      setPdfs((prev) => prev.filter((pdf) => pdf.id !== docId));
     } catch (err) {
       console.error("Error deleting PDF:", err);
     }
@@ -60,6 +59,10 @@ export default function History({ email }) {
   }
 
   async function sendEmailToClients(toEmail, url) {
+    alert("sending to:" + toEmail);
+
+    console.log(toEmail);
+
     const cleanEmail = toEmail.trim();
 
     if (!isValidEmail(cleanEmail)) {
@@ -108,6 +111,8 @@ export default function History({ email }) {
       </TableHeader>
       <TableBody emptyContent={"No rows to display."}>
         {pdfs?.map((pdf, index) => {
+          console.log({ pdf });
+
           return (
             <TableRow key={pdf.id}>
               <TableCell>{pdf?.firstName || pdf?.userName}</TableCell>
@@ -132,7 +137,11 @@ export default function History({ email }) {
               <TableCell className="cursor-pointer">
                 <p
                   onClick={() => {
-                    sendEmailToClients(pdf?.email, pdf.url, pdf);
+                    sendEmailToClients(
+                      pdf?.billingEmail || pdf?.email,
+                      pdf.url,
+                      pdf
+                    );
                   }}
                 >
                   📧 Send

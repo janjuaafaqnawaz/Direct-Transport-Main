@@ -34,8 +34,6 @@ export default function PdfButton({
   const bookingCount = bookings.length;
   const [selectedLayout, setSelectedLayout] = useState("Layout2");
 
-  console.log({ bookings, user });
-
   const getPDFDocument = () => {
     if (driverLayout) {
       return (
@@ -80,10 +78,13 @@ export default function PdfButton({
       await uploadBytes(storageRef, blob);
       const downloadURL = await getDownloadURL(storageRef);
 
+      console.log("handleUpload", { user });
+
       await postDoc(
         {
           firstName: user.firstName,
           email: user.email,
+          billingEmail: user?.billingEmail || null,
           url: downloadURL,
           createdAt: new Date(),
           datesRange,

@@ -22,6 +22,7 @@ export default function AddUser({ data }) {
     password: "",
     role: "user",
     companyAddress: "",
+    billingEmail: "",
   });
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function AddUser({ data }) {
       setFormData({
         firstName: data.firstName,
         email: data.email,
+        billingEmail: data.billingEmail,
         password: data.password,
         role: data.role,
         companyAddress: data?.companyAddress || "",
@@ -85,7 +87,7 @@ export default function AddUser({ data }) {
                 value={formData.firstName}
                 onChange={handleChange}
               />
-            </Grid>{" "}
+            </Grid> 
             <Grid item xs={12}>
               <TextField
                 autoComplete="given-name"
@@ -109,6 +111,17 @@ export default function AddUser({ data }) {
                 value={formData.email}
                 onChange={handleChange}
                 disabled={data ? true : false}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                id="billingEmail"
+                label="Billing Email Address"
+                name="billingEmail"
+                autoComplete="billingEmail"
+                value={formData.billingEmail}
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>
