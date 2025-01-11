@@ -20,6 +20,7 @@ import {
   locationSharing,
 } from "@/api/firebase/functions/realtime";
 import { newAssignedBookingNotification } from "@/server/sendNotification";
+import { sendCustomNotification } from "@/server/sendCustomNotification";
 
 export default function DriverAssignmentModal({ booking }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,6 +52,43 @@ export default function DriverAssignmentModal({ booking }) {
 
       setIsOpen(false);
       toast.success("Driver assigned successfully!");
+    } catch (error) {
+      console.error("Error assigning booking to driver:", error);
+      toast.error("Failed to assign driver. Please try again.");
+    }
+  };
+  const handleRemoveDriver = async () => {
+    const driverEmail = booking.driverEmail;
+    const driver = allDrivers.find((d) => d.email === driverEmail);
+    const driverPushToken = driver.expoPushToken;
+
+    try {
+      await removePrevLocation(booking?.driverEmail, booking?.docId);
+
+      const updatedBooking = {
+        ...booking,
+        driverEmail: null,
+        driverName: null,
+        driverAssignedDate: null,
+        driverAssignedTime: null,
+        progressInformation: {
+          ...booking.progressInformation,
+          Allocated: null,
+        },
+        currentStatus: null,
+        isNew: false,
+      };
+
+      await updateDoc("place_bookings", booking.docId, updatedBooking);
+      sendCustomNotification(
+        driverPushToken,
+        "Direct Transport Solution",
+        `You're no longer assigned to booking ${booking.id}`
+      );
+      await locationSharing(driver.email, booking.docId);
+
+      setIsOpen(false);
+      toast.success("Driver removed successfully!");
     } catch (error) {
       console.error("Error assigning booking to driver:", error);
       toast.error("Failed to assign driver. Please try again.");
@@ -127,6 +165,17 @@ export default function DriverAssignmentModal({ booking }) {
                     )}
                   </>
                 ))}
+                <Chip
+                  className="cursor-pointer m-2"
+                  variant={"dot"}
+                  color="danger"
+                  size="lg"
+                  onClick={() => {
+                    handleRemoveDriver();
+                  }}
+                >
+                  Revert Assign
+                </Chip>
               </div>
             )}
           </div>
