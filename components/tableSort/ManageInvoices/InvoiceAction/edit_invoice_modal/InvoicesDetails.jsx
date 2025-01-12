@@ -20,8 +20,11 @@ import { Button, Chip, Image } from "@nextui-org/react";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import PdfButton from "@/components/PdfButton";
 import { PaidTwoTone } from "@mui/icons-material";
+import { sendCustomNotification } from "@/server/sendCustomNotification";
+import useAdminContext from "@/context/AdminProvider";
 
 export default function InvoicesDetails({ invoice, admin, onClose }) {
+  const { allDrivers, loading } = useAdminContext();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     contact: invoice?.contact || "",
@@ -40,8 +43,6 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
     deliveryPhone: invoice?.deliveryPhone || "",
     payment: invoice?.payment || "",
   });
-
-  console.log(invoice);
 
   useEffect(() => {
     if (invoice.isNew === true) {
@@ -64,18 +65,6 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
       },
     });
   };
-  const handleChangeAddressSuburb = (field) => (event) => {
-    setFormData({
-      ...formData,
-      address: {
-        ...formData.address,
-        [field]: {
-          ...formData.address[field],
-          suburb: event.target.value,
-        },
-      },
-    });
-  };
 
   const handleDateChange = (name, val) =>
     setFormData({ ...formData, [name]: val });
@@ -83,8 +72,32 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const update = { ...invoice, ...formData };
-      await updateDoc("place_bookings", invoice.docId, update);
+      const newChangedFields = Object.keys(formData).filter(
+        (key) => invoice[key] !== formData[key] && !key.includes("payment")
+      );
+
+      const updatedChangedFields = invoice.changedFields
+        ? [...invoice.changedFields, newChangedFields]
+        : newChangedFields;
+
+      const driverDetails = allDrivers.find(
+        (d) => d.email === invoice.driverEmail
+      );
+
+      if (driverDetails)
+        sendCustomNotification(
+          driverDetails.expoPushToken,
+          `${invoice.id} Booking Update`,
+          "Your booking details have been updated by management. Please review the latest information."
+        );
+
+      const update = {
+        ...invoice,
+        ...formData,
+        changedFields: updatedChangedFields,
+      };
+
+      // await updateDoc("place_bookings", invoice.docId, update);
     } catch (error) {
       console.log(error);
     } finally {

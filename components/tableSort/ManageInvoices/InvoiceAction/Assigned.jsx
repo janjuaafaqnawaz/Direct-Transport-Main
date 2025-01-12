@@ -20,7 +20,7 @@ import {
   locationSharing,
 } from "@/api/firebase/functions/realtime";
 import { newAssignedBookingNotification } from "@/server/sendNotification";
-import { sendCustomNotification } from "@/server/sendCustomNotification";
+// import { sendCustomNotification } from "@/server/sendCustomNotification";
 
 export default function DriverAssignmentModal({ booking }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,10 +81,10 @@ export default function DriverAssignmentModal({ booking }) {
 
       await updateDoc("place_bookings", booking.docId, updatedBooking);
       sendCustomNotification(
-        driverPushToken,
-        "Direct Transport Solution",
-        `You're no longer assigned to booking ${booking.id}`
-      );
+      //   driverPushToken,
+      //   "Direct Transport Solution",
+      //   `You're no longer assigned to booking ${booking.id}`
+      // );
       await locationSharing(driver.email, booking.docId);
 
       setIsOpen(false);
