@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
       const updatedMessageCounts = {};
 
       chats.forEach((chat) => {
-        const chatId = chat.user.id; // Assuming each chat has a unique user ID
+        const chatId = chat.user.id;
         const previousCount = previousMessageCounts[chatId] || 0;
         const currentCount = chat.messages?.length || 0;
 

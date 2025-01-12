@@ -99,7 +99,7 @@ async function signUpWithEmail(email, password, userData) {
       },
     });
 
-    createNewChat(userData, email);
+    if (userData.role === "driver") await createNewChat(userData, email);
 
     notify("Sign up successful!");
     window.location.reload();
