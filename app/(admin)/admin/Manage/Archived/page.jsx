@@ -47,9 +47,12 @@ export default function Users() {
   const handleStatusChange = async (value, user) => {
     const changedUser = { ...user, role: value };
 
-    console.log(changedUser);
-
     await updateDoc("users", user.email, changedUser);
+
+    if (user.driverOnly)
+      await updateDoc("chats", user.email, {
+        archive: false,
+      });
   };
 
   const handlePassReset = (email, password) => {

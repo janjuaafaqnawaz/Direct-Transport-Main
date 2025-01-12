@@ -265,7 +265,6 @@ async function ResetPassword(email, oldPassword, newPassword) {
 
 const deleteUserAcc = async (email, pass) => {
   try {
-    // Display a confirmation dialog
     const isConfirmed = window.confirm(
       `Are you sure you want to delete the account for ${email}?`
     );
@@ -282,6 +281,7 @@ const deleteUserAcc = async (email, pass) => {
     }
 
     const res = await deleteDocument("users", email);
+    await deleteDocument("chats", email);
     console.log(res);
 
     notify(`Successfully deleted ${user.email}.`);

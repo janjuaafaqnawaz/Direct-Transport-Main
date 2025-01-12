@@ -58,19 +58,23 @@ export default function AllChats() {
 
   const orderedChats =
     chats?.length > 0 &&
-    chats.sort((chatA, chatB) => {
-      const lastMessageA = chatA?.messages?.[chatA.messages.length - 1] || null;
-      const lastMessageB = chatB?.messages?.[chatB.messages.length - 1] || null;
+    chats
+      .sort((chatA, chatB) => {
+        const lastMessageA =
+          chatA?.messages?.[chatA.messages.length - 1] || null;
+        const lastMessageB =
+          chatB?.messages?.[chatB.messages.length - 1] || null;
 
-      const timestampA = lastMessageA
-        ? new Date(lastMessageA.timestamp).getTime()
-        : 0;
-      const timestampB = lastMessageB
-        ? new Date(lastMessageB.timestamp).getTime()
-        : 0;
+        const timestampA = lastMessageA
+          ? new Date(lastMessageA.timestamp).getTime()
+          : 0;
+        const timestampB = lastMessageB
+          ? new Date(lastMessageB.timestamp).getTime()
+          : 0;
 
-      return timestampB - timestampA;
-    });
+        return timestampB - timestampA;
+      })
+      .filter((chat) => !chat.archive);
 
   return (
     <div className="min-h-screen w-screen fixed top-0 bottom-0 left-0 right-0 pl-5 bg-white p-1 grid grid-cols-4">

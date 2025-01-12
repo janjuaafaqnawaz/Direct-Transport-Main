@@ -57,6 +57,11 @@ export default function DriverTable({ filter }) {
       role: "archived",
       driverOnly: true,
     });
+
+    await updateDoc("chats", driver.email, {
+      archive: true,
+    });
+
     toast.success("User archived successfully");
   };
 
