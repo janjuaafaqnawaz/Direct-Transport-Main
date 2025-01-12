@@ -11,15 +11,42 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { app } from "../config";
 import { fetchAllEmail, fetchAllFirstNames, fetchDocById } from "./fetch";
 import { deleteDocument } from "./upload";
-import toast from "react-hot-toast";
 
-const auth = getAuth(app);
 const db = getFirestore();
 
 const notify = (msg) => console.log(msg);
+
+const createNewChat = async (userData, email) => {
+  const chatDocRef = doc(db, "chats", email);
+
+  const currUser = await fetchUserData();
+
+  try {
+    const newChatData = {
+      createdAt: new Date(),
+      user: userData,
+      id: email,
+      driverEmail: email,
+      docId: email,
+      userEmail: currUser.email,
+      userName: currUser.firstName,
+      messages: [
+        {
+          message: "Chat started by system.",
+          sender: "admin",
+          timestamp: new Date().toISOString(),
+          seen: false,
+        },
+      ],
+    };
+
+    await setDoc(chatDocRef, newChatData);
+  } catch (error) {
+    console.error("Error creating new chat:", error);
+  }
+};
 
 async function signUpWithEmail(email, password, userData) {
   try {
@@ -71,6 +98,8 @@ async function signUpWithEmail(email, password, userData) {
         },
       },
     });
+
+    createNewChat(userData, email);
 
     notify("Sign up successful!");
     window.location.reload();

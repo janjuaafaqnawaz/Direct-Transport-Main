@@ -174,7 +174,7 @@ export default function DriverAssignmentModal({ booking }) {
                     handleRemoveDriver();
                   }}
                 >
-                  Revert Assign
+                  Un assign
                 </Chip>
               </div>
             )}
