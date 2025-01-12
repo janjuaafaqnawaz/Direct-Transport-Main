@@ -24,6 +24,7 @@ export default function AddUser({ data }) {
     companyAddress: "",
     billingEmail: "",
   });
+  const [reload, setReload] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -87,7 +88,7 @@ export default function AddUser({ data }) {
                 value={formData.firstName}
                 onChange={handleChange}
               />
-            </Grid> 
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 autoComplete="given-name"
@@ -122,7 +123,17 @@ export default function AddUser({ data }) {
                 autoComplete="billingEmail"
                 value={formData.billingEmail}
                 onChange={handleChange}
+                key={reload}
               />
+              <Button
+                variant="text"
+                onClick={() => {
+                  setFormData({ ...formData, billingEmail: "" });
+                  setReload(null);
+                }}
+              >
+                Remove Billing Email
+              </Button>
             </Grid>
             <Grid item xs={12}>
               <TextField

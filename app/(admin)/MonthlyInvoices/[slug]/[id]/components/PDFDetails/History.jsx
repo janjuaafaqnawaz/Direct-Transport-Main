@@ -14,11 +14,13 @@ import emailjs from "emailjs-com";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
+import useAdminContext from "@/context/AdminProvider";
 
 export default function History({ email }) {
   const [pdfs, setPdfs] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const { allUsers } = useAdminContext();
 
   useEffect(() => {
     const get = async () => {
@@ -59,7 +61,7 @@ export default function History({ email }) {
   }
 
   async function sendEmailToClients(toEmail, url) {
-    alert("sending to:" + toEmail);
+    alert("Sending pdf to: " + toEmail);
 
     console.log(toEmail);
 
@@ -111,7 +113,12 @@ export default function History({ email }) {
       </TableHeader>
       <TableBody emptyContent={"No rows to display."}>
         {pdfs?.map((pdf, index) => {
-          console.log({ pdf });
+          const user = allUsers.find((user) => user.email === pdf.email);
+          const sendingEmail = user.billingEmail
+            ? user.billingEmail
+            : user.email;
+
+          console.log({ user, pdf });
 
           return (
             <TableRow key={pdf.id}>
@@ -135,15 +142,7 @@ export default function History({ email }) {
                 <p onClick={() => deletePdf(pdf.id)}>🗑️</p>
               </TableCell>
               <TableCell className="cursor-pointer">
-                <p
-                  onClick={() => {
-                    sendEmailToClients(
-                      pdf?.billingEmail || pdf?.email,
-                      pdf.url,
-                      pdf
-                    );
-                  }}
-                >
+                <p onClick={() => sendEmailToClients(sendingEmail, pdf.url)}>
                   📧 Send
                 </p>
               </TableCell>
