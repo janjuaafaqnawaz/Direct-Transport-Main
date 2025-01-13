@@ -72,49 +72,37 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      // Identify changed fields
-      const modifiedFields = Object.keys(formData).filter(
+      const newChangedFields = Object.keys(formData).filter(
         (key) => invoice[key] !== formData[key] && !key.includes("payment")
       );
 
-      const mergedChangedFields = invoice.changedFields
-        ? [...invoice.changedFields, modifiedFields]
-        : modifiedFields;
+      const updatedChangedFields = newChangedFields;
 
-      const changedFieldsObject = mergedChangedFields
-        .flat()
-        .reduce((accumulator, field) => {
-          accumulator[field] = true;
-          return accumulator;
-        }, {});
-
-      const driverInfo = allDrivers.find(
-        (driver) => driver.email === invoice.driverEmail
+      const driverDetails = allDrivers.find(
+        (d) => d.email === invoice.driverEmail
       );
 
-      if (driverInfo) {
+      if (driverDetails)
         sendCustomNotification(
-          driverInfo.expoPushToken,
+          driverDetails.expoPushToken,
           `${invoice.id} Booking Update`,
           "Your booking details have been updated by management. Please review the latest information."
         );
-      }
 
-      const updatedInvoice = {
+      const update = {
         ...invoice,
         ...formData,
-        changedFields: changedFieldsObject, // Store as an object
+        changedFields: updatedChangedFields,
       };
 
-      console.log({ changedFieldsObject });
+      console.log({ updatedChangedFields });
 
-      // Uncomment to perform the update
-      await updateDoc("place_bookings", invoice.docId, updatedInvoice);
+      await updateDoc("place_bookings", invoice.docId, update);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     } finally {
       setIsLoading(false);
-      onClose();
+      onClose;
     }
   };
 
