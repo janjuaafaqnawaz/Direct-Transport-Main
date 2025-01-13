@@ -97,7 +97,7 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
         changedFields: updatedChangedFields,
       };
 
-      // await updateDoc("place_bookings", invoice.docId, update);
+      await updateDoc("place_bookings", invoice.docId, update);
     } catch (error) {
       console.log(error);
     } finally {
