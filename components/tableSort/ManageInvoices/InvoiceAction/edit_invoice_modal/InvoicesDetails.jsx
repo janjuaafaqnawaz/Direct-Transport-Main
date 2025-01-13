@@ -72,37 +72,49 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const newChangedFields = Object.keys(formData).filter(
+      // Identify changed fields
+      const modifiedFields = Object.keys(formData).filter(
         (key) => invoice[key] !== formData[key] && !key.includes("payment")
       );
 
-      const updatedChangedFields = invoice.changedFields
-        ? [...invoice.changedFields, newChangedFields]
-        : newChangedFields;
+      const mergedChangedFields = invoice.changedFields
+        ? [...invoice.changedFields, modifiedFields]
+        : modifiedFields;
 
-      const driverDetails = allDrivers.find(
-        (d) => d.email === invoice.driverEmail
+      const changedFieldsObject = mergedChangedFields
+        .flat()
+        .reduce((accumulator, field) => {
+          accumulator[field] = true;
+          return accumulator;
+        }, {});
+
+      const driverInfo = allDrivers.find(
+        (driver) => driver.email === invoice.driverEmail
       );
 
-      if (driverDetails)
+      if (driverInfo) {
         sendCustomNotification(
-          driverDetails.expoPushToken,
+          driverInfo.expoPushToken,
           `${invoice.id} Booking Update`,
           "Your booking details have been updated by management. Please review the latest information."
         );
+      }
 
-      const update = {
+      const updatedInvoice = {
         ...invoice,
         ...formData,
-        changedFields: updatedChangedFields,
+        changedFields: changedFieldsObject, // Store as an object
       };
 
-      await updateDoc("place_bookings", invoice.docId, update);
+      console.log({ changedFieldsObject });
+
+      // Uncomment to perform the update
+      await updateDoc("place_bookings", invoice.docId, updatedInvoice);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setIsLoading(false);
-      onClose;
+      onClose();
     }
   };
 
