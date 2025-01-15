@@ -25,10 +25,19 @@ import TrackDriver from "./ManageInvoices/InvoiceAction/TrackDriver/TrackDriverM
 import { Badge } from "@/components/ui/badge";
 import { Eye, Download } from "lucide-react";
 import { Pagination } from "@nextui-org/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function RecentInvoices({ place_booking, place_job }) {
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState("date");
+  const [sortOrder, setSortOrder] = useState("desc");
   const rowsPerPage = 10;
 
   const combinedData = [...(place_booking || []), ...(place_job || [])];
@@ -37,9 +46,27 @@ export default function RecentInvoices({ place_booking, place_job }) {
     return new Date(year, month - 1, day);
   };
 
-  const sortedBookings = combinedData
-    .filter((booking) => booking.date)
-    .sort((a, b) => parseDate(b.date) - parseDate(a.date));
+  const sortedBookings = useMemo(() => {
+    return combinedData
+      .filter((booking) => booking.date)
+      .sort((a, b) => {
+        if (sortBy === "date") {
+          const dateA = parseDate(a.date);
+          const dateB = parseDate(b.date);
+          return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+        } else if (sortBy === "invoice") {
+          const invoiceA =
+            Number(a?.totalPriceWithGST || 0) + Number(a?.totalTollsCost || 0);
+          const invoiceB =
+            Number(b?.totalPriceWithGST || 0) + Number(b?.totalTollsCost || 0);
+          return sortOrder === "desc"
+            ? invoiceB - invoiceA
+            : invoiceA - invoiceB;
+        }
+        return 0;
+      });
+  }, [combinedData, sortBy, sortOrder]);
+
   const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
 
   const paginatedData = useMemo(() => {
@@ -98,6 +125,26 @@ export default function RecentInvoices({ place_booking, place_job }) {
         <CardDescription>View and manage your recent invoices</CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="flex justify-end mb-4 space-x-4">
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="date">Date</SelectItem>
+              <SelectItem value="invoice">Invoice Amount</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={sortOrder} onValueChange={setSortOrder}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort order" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="desc">Descending</SelectItem>
+              <SelectItem value="asc">Ascending</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
