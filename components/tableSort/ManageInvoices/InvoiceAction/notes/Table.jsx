@@ -1,9 +1,20 @@
+import { updateDoc } from "@/api/firebase/functions/upload";
+import { Button } from "@nextui-org/react";
+import { Trash } from "lucide-react";
 import React from "react";
+import toast from "react-hot-toast";
 
-export default function Table({ entries }) {
-    console.log(entries);
-    
-    
+export default function Table({ entries, booking, id }) {
+  const handleRemoveRow = async (index) => {
+    let updatedArray = entries;
+    updatedArray.splice(index, 1);
+    await updateDoc("place_bookings", id, {
+      ...booking,
+      statusEntries: updatedArray,
+    });
+    toast.success("Notes updated successfully");
+  };
+
   if (!entries) return;
   return (
     <div className="  mx-auto p-4">
@@ -15,6 +26,9 @@ export default function Table({ entries }) {
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Date
+            </th>{" "}
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Remove
             </th>
           </tr>
         </thead>
@@ -26,6 +40,11 @@ export default function Table({ entries }) {
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {item?.date}
+              </td>{" "}
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <Button onClick={() => handleRemoveRow(index)} isIconOnly>
+                  <Trash />
+                </Button>
               </td>
             </tr>
           ))}

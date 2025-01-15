@@ -26,7 +26,7 @@ export default function Body({ booking }) {
     }
   }, [booking]);
 
-  const handleAddEntry = () => {
+  const handleAddEntry = async () => {
     if (!entry.date || !entry.reason.trim()) {
       toast.error("Both date and reason are required");
       return;
@@ -37,30 +37,40 @@ export default function Body({ booking }) {
       date: format(new Date(), "yyyy-MM-dd"),
       reason: "",
     });
-    toast.success("Entry added locally. Save to persist.");
+
+    const formattedEntries = [...statusEntries, entry].map((entry) => ({
+      ...entry,
+      date: entry.date ? format(new Date(entry.date), "yyyy-MM-dd") : "",
+    }));
+
+    await updateDoc("place_bookings", booking.id, {
+      ...booking,
+      statusEntries: formattedEntries,
+    });
+    toast.success("Notes updated successfully");
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      const formattedEntries = [...statusEntries, entry].map((entry) => ({
-        ...entry,
-        date: entry.date ? format(new Date(entry.date), "yyyy-MM-dd") : "",
-      }));
+  // const handleSave = async () => {
+  //   setIsSaving(true);
+  //   try {
+  //     const formattedEntries = [...statusEntries, entry].map((entry) => ({
+  //       ...entry,
+  //       date: entry.date ? format(new Date(entry.date), "yyyy-MM-dd") : "",
+  //     }));
 
-      await updateDoc("place_bookings", booking.id, {
-        ...booking,
-        statusEntries: formattedEntries,
-      });
+  //     await updateDoc("place_bookings", booking.id, {
+  //       ...booking,
+  //       statusEntries: formattedEntries,
+  //     });
 
-      toast.success("Notes updated successfully");
-    } catch (error) {
-      console.error("Failed to save notes:", error);
-      toast.error("Failed to update notes");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  //     toast.success("Notes updated successfully");
+  //   } catch (error) {
+  //     console.error("Failed to save notes:", error);
+  //     toast.error("Failed to update notes");
+  //   } finally {
+  //     setIsSaving(false);
+  //   }
+  // };
 
   return (
     <Card className="w-full border-none shadow-none">
@@ -116,9 +126,16 @@ export default function Body({ booking }) {
       <CardFooter className="flex justify-between">
         <Button variant="outline" onClick={handleAddEntry}>
           <PlusCircle className="mr-2 h-4 w-4" />
-          Add New Note
+          {isSaving ? (
+            <>Saving...</>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Save Notes
+            </>
+          )}{" "}
         </Button>
-        <Button
+        {/* <Button
           onClick={handleSave}
           disabled={isSaving || !statusEntries.length}
         >
@@ -130,7 +147,7 @@ export default function Body({ booking }) {
               Save Notes
             </>
           )}
-        </Button>
+        </Button> */}
       </CardFooter>
     </Card>
   );
