@@ -26,7 +26,6 @@ export default function ReviewBooking({
   // -------------------------------State
 
   const [formData, setFormData] = useState(form || initialFormData);
-  console.log(formData);
   const [showFrequentOrigins, setShowFrequentOrigins] = useState(true);
   const [showFrequentDestinations, setShowFrequentDestinations] =
     useState(true);

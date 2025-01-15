@@ -102,7 +102,7 @@ async function postInvoice(data, collectionName, selectedEmail) {
       docId: docId,
       userEmail: admin && email !== "" ? email : user?.email || "Unknown",
       userName: admin ? name : user?.firstName || data?.contact || "Unknown",
-      createdAt: createdAt,
+      createdAt: createdAt || new Date(),
       isNew: true,
     };
     const docRef = doc(db, collectionName, docId); // Use the custom ID

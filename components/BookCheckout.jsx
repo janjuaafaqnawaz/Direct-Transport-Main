@@ -19,6 +19,7 @@ import sendBookingEmail from "@/api/sendBookingEmail";
 import DimensionsTable from "./ItemDimensions/DimensionsTable";
 import ProcessPrice from "@/api/price_calculation/index";
 import StripeWrapper from "@/components/stripe/StripeWrapper";
+import toast from "react-hot-toast";
 
 export default function BookCheckout({
   formData,
@@ -33,22 +34,30 @@ export default function BookCheckout({
 
   const [loading, setLoading] = useState(true);
   const [invoice, setInvoice] = useState(formData);
-  console.log({ invoice });
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     const processBooking = async () => {
-      const finaleData = await ProcessPrice(formData, fetchTolls);
-      setInvoice(finaleData);
-      setLoading(false);
+      try {
+        const finaleData = await ProcessPrice(formData, fetchTolls);
+        setInvoice(finaleData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error while processing in checkout page:", error);
+        toast.error("Unable to process your booking. Please try again.");
+        nav.push("/");
+      }
     };
     processBooking();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Function to handle form submission
   const handleSubmit = async () => {
-    if (invoice) {
+    console.log("Creating");
+
+    setCreating(true);
+    try {
       const pickupSuburb = await getSuburbByLatLng(
         invoice.address?.Origin?.label
       );
@@ -59,10 +68,19 @@ export default function BookCheckout({
 
       const delivery = { ...invoice, pickupSuburb, deliverySuburb };
 
-      const res = await postInvoice(delivery, "place_bookings", selectedEmail);
-      sendBookingEmail(invoice, res, res?.name || invoice?.contact);
+      const id = await postInvoice(delivery, "place_bookings", selectedEmail);
 
-      nav.push(`/RecentInvoices/${res}`);
+      if (id) {
+        console.log("Booking uploaded with id:", id);
+        sendBookingEmail(invoice, id, invoice?.name || invoice?.contact);
+        nav.push(`/RecentInvoices/${id}`);
+      }
+    } catch (error) {
+      console.log("Error While Submitting.", error);
+      toast.error("Something went wrong");
+      toast.error("Sorry we won't be able to create booking this time!");
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -190,6 +208,7 @@ export default function BookCheckout({
           onClick={handleSubmit}
           marginTop="lg"
           style={{ borderRadius: "8px" }}
+          loading={creating}
         >
           Confirm Booking
         </Button>
