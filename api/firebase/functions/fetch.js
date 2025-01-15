@@ -247,6 +247,14 @@ function formatDateToDDMMYYYY(date) {
   return `${day}/${month}/${year}`;
 }
 
+// Function to pad and normalize date to "dd/mm/yyyy" format
+function padDate(date) {
+  const dateString = formatDateToDDMMYYYY(date);
+  const [day, month, year] = dateString.split("/");
+  return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
+}
+
+// Function to fetch bookings between dates with client-side filtering
 async function getBookingsBetweenDates(
   fromDateString,
   toDateString,
@@ -256,49 +264,49 @@ async function getBookingsBetweenDates(
 ) {
   const user = JSON.parse(localStorage.getItem("userDoc"));
   const collectionRef = collection(db, "place_bookings");
+
   try {
-    // Convert from and to dates to "dd/mm/yyyy" string format
-    const fromDate = new Date(fromDateString);
-    const toDate = new Date(toDateString);
+    // Normalize the input dates to "dd/mm/yyyy"
+    const fromDateFormatted = padDate(fromDateString);
+    const toDateFormatted = padDate(toDateString);
 
-    const fromDateFormatted = formatDateToDDMMYYYY(fromDate);
-    const toDateFormatted = formatDateToDDMMYYYY(toDate);
-
-    // Create a base query with date conditions (lexical comparison for date strings)
+    // Construct Firestore query with lexical bounds
     let baseQuery = query(
       collectionRef,
       where("date", ">=", fromDateFormatted),
       where("date", "<=", toDateFormatted)
     );
 
-    // Add userEmail condition if the role is not admin
+    // Add role-based filtering (e.g., restrict to user's email if not admin)
     if (role !== "admin") {
       baseQuery = query(baseQuery, where("userEmail", "==", user.email));
     }
 
-    // Add reference condition if provided
+    // Add optional reference filtering
     if (reference) {
       baseQuery = query(baseQuery, where("pickupReference1", "==", reference));
     }
 
-    // Execute the query
-    let querySnapshot = await getDocs(baseQuery);
-    let docs = [];
+    // Execute the Firestore query
+    const querySnapshot = await getDocs(baseQuery);
 
-    // If no documents found with the reference and id is provided, query by id
-    if (querySnapshot.empty && reference && id) {
-      baseQuery = query(baseQuery, where("docId", "==", id));
-      querySnapshot = await getDocs(baseQuery);
-    }
+    // Perform client-side filtering to ensure proper date range
+    const filteredDocs = querySnapshot.docs
+      .map((doc) => doc.data())
+      .filter((doc) => {
+        const [day, month, year] = doc.date.split("/");
+        const docDate = new Date(`${year}-${month}-${day}`);
+        return (
+          docDate >= new Date(fromDateString) &&
+          docDate <= new Date(toDateString)
+        );
+      });
 
-    // Collect documents data
-    querySnapshot.forEach((doc) => docs.push(doc.data()));
-
-    console.log(docs);
-    return docs;
+    console.log("Filtered Docs:", filteredDocs);
+    return filteredDocs;
   } catch (error) {
-    console.error("Error:", error);
-    notify("Something Went Wrong");
+    console.error("Error fetching bookings:", error);
+    notify("Something went wrong");
     return null;
   }
 }
@@ -311,10 +319,9 @@ async function getBookingsOnlyBetweenDates(fromDateString, toDateString) {
     const toDate = new Date(toDateString);
     toDate.setHours(23, 59, 59, 999);
 
-    
     const fromDateFormatted = formatDateToDDMMYYYY(fromDate);
     const toDateFormatted = formatDateToDDMMYYYY(toDate);
-    
+
     // Query Firestore to get bookings within the date range
     const baseQuery = query(
       collectionRef,

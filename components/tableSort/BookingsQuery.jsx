@@ -128,7 +128,7 @@ function BookingTable({ bookings }) {
   );
 }
 
-export default function BookingsQuery({ bookings }) {
+export default function BookingsQuery({ bookings, setShow }) {
   return (
     <div className="mt-20">
       <CardTitle className=" text-2xl font-bold flex items-center gap-2">
@@ -138,10 +138,13 @@ export default function BookingsQuery({ bookings }) {
       <div className="overflow-x-auto">
         <BookingTable bookings={bookings} />
       </div>
-      <div className="mt-6 flex justify-center">
-        <Link href="/ClientServices" passHref>
-          <Button size="lg">Client Services</Button>
+      <div className="mt-6 flex justify-center flex-col gap-2">
+        <Link href="/ClientServices" className="w-40" passHref>
+          <Button className="w-full" size="lg">Client Services</Button>
         </Link>
+        <Button onClick={() => setShow(false)} className="w-40" color="red" size="lg">
+          Back
+        </Button>
       </div>
     </div>
   );

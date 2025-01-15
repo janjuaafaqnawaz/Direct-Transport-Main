@@ -83,7 +83,7 @@ export default function Page() {
   return (
     <div style={{ width: "90%", margin: "auto" }}>
       {show ? (
-        <BookingsQuery bookings={bookings} />
+        <BookingsQuery bookings={bookings} setShow={setShow} />
       ) : (
         <Grid container style={containerStyle}>
           <div
@@ -151,6 +151,5 @@ export default function Page() {
     </div>
   );
 }
-
 
 // http://localhost:3000/TrackBooking?fromDate=2023-06-01&toDate=2023-06-30&reference=JOB123
