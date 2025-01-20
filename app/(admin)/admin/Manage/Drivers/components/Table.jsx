@@ -141,12 +141,7 @@ export default function DriverTable({ filter }) {
                 });
               };
 
-              const permissions = driver?.permissions;
-              const allGranted =
-                permissions &&
-                Object.values(permissions).every(
-                  (value) => value === "granted"
-                );
+              const permission = driver?.permissions;
 
               return (
                 <TableRow key={index}>
@@ -155,8 +150,6 @@ export default function DriverTable({ filter }) {
                   </TableCell>
                   <TableCell className="font-medium">
                     <DriverDetailsDialog driverDetails={driver} />
-
-                    {/* {driver?.firstName} */}
                   </TableCell>
                   <TableCell>{driver?.phone || "N/A"}</TableCell>
                   <TableCell>
@@ -198,7 +191,7 @@ export default function DriverTable({ filter }) {
                   <TableCell>
                     <Chip
                       className="aspect-square h-2 w-2 mx-auto"
-                      color={allGranted ? "success" : "danger"}
+                      color={permission ? "success" : "danger"}
                     ></Chip>
                   </TableCell>
                   <TableCell className="text-right">

@@ -86,7 +86,7 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
         sendCustomNotification(
           driverDetails.expoPushToken,
           `${invoice.id} Booking Update`,
-          "Your booking details have been updated by management. Please review the latest information."
+          "Your bookings details have been updated."
         );
 
       const update = {

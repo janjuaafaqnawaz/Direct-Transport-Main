@@ -21,7 +21,7 @@ export async function sendCustomNotification(
         expoPushToken: expoPushToken,
         title: title,
         description: description,
-        channelId: "default",
+        channelId: "new-assigned-booking",
       }),
     };
 
