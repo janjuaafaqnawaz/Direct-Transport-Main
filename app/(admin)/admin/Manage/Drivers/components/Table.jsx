@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 import {
   Table,
   TableBody,
@@ -12,10 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import DriverDetailsDialog from "./Overview";
 import { History, RefreshCw, Archive } from "lucide-react";
-import useAdminContext from "@/context/AdminProvider";
-import Create from "./Create";
 import {
   Select,
   SelectContent,
@@ -23,21 +21,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { updateDoc } from "@/api/firebase/functions/upload";
 import { Switch } from "@/components/ui/switch";
-import TrackDriver from "./TrackDriver/TrackDriverModal";
+import { Chip, Tooltip } from "@nextui-org/react";
 import toast from "react-hot-toast";
+
+import DriverDetailsDialog from "./Overview";
+import useAdminContext from "@/context/AdminProvider";
+import Create from "./Create";
+import TrackDriver from "./TrackDriver/TrackDriverModal";
+import { updateDoc } from "@/api/firebase/functions/upload";
 import deleteDriverLocation from "@/server/deleteDriverLocation";
-import { Chip } from "@nextui-org/react";
 
 const roleOptions = [
   { value: "driver", label: "Driver" },
   { value: "archived", label: "Archived" },
 ];
+
 export default function DriverTable({ filter }) {
   const router = useRouter();
   const { allDrivers } = useAdminContext();
   const [isLoading, setIsLoading] = useState(false);
+  const [activeDriversEmail, setActiveDriversEmail] = useState([]);
 
   const filterVal = filter.toLowerCase();
   const filteredDrivers =
@@ -50,34 +54,75 @@ export default function DriverTable({ filter }) {
         );
 
   const handleArchiveUser = async (driver) => {
-    deleteDriverLocation(driver.email);
-
-    await updateDoc("users", driver.email, {
-      ...driver,
-      role: "archived",
-      driverOnly: true,
-    });
-
-    await updateDoc("chats", driver.email, {
-      archive: true,
-    });
-
-    toast.success("User archived successfully");
-  };
-
-  const handleStatusChange = async (value, index) => {
-    const updatedUsers = [...filteredDrivers];
-    const changedUser = updatedUsers[index];
-    if (value === "archived") {
-      changedUser.driverOnly = true;
+    setIsLoading(true);
+    try {
+      await deleteDriverLocation(driver.email);
+      await updateDoc("users", driver.email, {
+        ...driver,
+        role: "archived",
+        driverOnly: true,
+      });
+      await updateDoc("chats", driver.email, { archive: true });
+      toast.success("User archived successfully");
+    } catch (error) {
+      console.error("Error archiving user:", error);
+      toast.error("Failed to archive user");
+    } finally {
+      setIsLoading(false);
     }
-    changedUser.role = value;
-
-    await updateDoc("users", changedUser.email, changedUser);
   };
 
-  const handleSaveChange = async (data) =>
-    await updateDoc("users", data.email, data);
+  const handleStatusChange = async (value, driver) => {
+    setIsLoading(true);
+    try {
+      const updatedDriver = {
+        ...driver,
+        role: value,
+        driverOnly: value === "archived",
+      };
+      await updateDoc("users", driver.email, updatedDriver);
+      toast.success("Status updated successfully");
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveChange = async (data) => {
+    setIsLoading(true);
+    try {
+      await updateDoc("users", data.email, data);
+      toast.success("Changes saved successfully");
+    } catch (error) {
+      console.error("Error saving changes:", error);
+      toast.error("Failed to save changes");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const monitorUserInactivity = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(
+        "https://direct-transport-server.vercel.app/api/online_signal/monitor_drivers_inactivity"
+      );
+      const { message, activeDriversEmail } = res.data;
+      toast.success(message);
+      setActiveDriversEmail(activeDriversEmail);
+    } catch (error) {
+      console.error("Error monitoring user inactivity:", error);
+      toast.error("Failed to monitor user inactivity");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    monitorUserInactivity();
+  }, []);
 
   return (
     <div className="rounded-md border">
@@ -92,138 +137,114 @@ export default function DriverTable({ filter }) {
             <TableHead>Status</TableHead>
             <TableHead>Tracking</TableHead>
             <TableHead>Permissions</TableHead>
+            <TableHead>
+              <Tooltip content="Refresh" placement="top">
+                <div className="flex gap-2 w-full cursor-pointer h-full items-center">
+                  Active
+                  <RefreshCw
+                    className=" size-4"
+                    onClick={monitorUserInactivity}
+                  />
+                </div>
+              </Tooltip>
+            </TableHead>
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading ? (
-            <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
-                <div className="flex justify-center">
-                  <svg
-                    className="animate-spin h-5 w-5 text-primary"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                </div>
+          {filteredDrivers.map((driver, index) => (
+            <TableRow key={driver.email}>
+              <TableCell>
+                <Badge variant="outline">{index + 1}</Badge>
+              </TableCell>
+              <TableCell className="font-medium">
+                <DriverDetailsDialog driverDetails={driver} />
+              </TableCell>
+              <TableCell>{driver.phone || "N/A"}</TableCell>
+              <TableCell>
+                <Badge variant="secondary" className="bg-gray-700">
+                  {driver.role}
+                </Badge>
+              </TableCell>
+              <TableCell>{driver.email}</TableCell>
+              <TableCell>
+                <Select
+                  value={driver.role}
+                  onValueChange={(value) => handleStatusChange(value, driver)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roleOptions.map((option) => (
+                      <SelectItem
+                        className="bg-white"
+                        key={option.value}
+                        value={option.value}
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </TableCell>
+              <TableCell>
+                <Switch
+                  className="bg-slate-300"
+                  checked={driver.tracking}
+                  onCheckedChange={() =>
+                    handleSaveChange({
+                      ...driver,
+                      tracking: !driver.tracking,
+                    })
+                  }
+                />
+              </TableCell>
+              <TableCell>
+                <Chip
+                  className="aspect-square h-2 w-2 mx-auto"
+                  color={driver.permissions ? "success" : "danger"}
+                />
+              </TableCell>
+              <TableCell>
+                <Chip
+                  className="aspect-square h-2 w-2 mx-auto"
+                  color={
+                    activeDriversEmail.includes(driver.email)
+                      ? "success"
+                      : "danger"
+                  }
+                />
+              </TableCell>
+              <TableCell className="text-right">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleArchiveUser(driver)}
+                  className="mr-2"
+                  disabled={isLoading}
+                >
+                  <Archive className="mr-2 h-4 w-4" />
+                  Archive
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    router.push(`/admin/Manage/Drivers/${driver.email}`)
+                  }
+                  className="mr-2"
+                >
+                  <History className="mr-2 h-4 w-4" /> History
+                </Button>
+                <Create edit={true} driver={driver} />
+                <Button variant="outline" size="sm">
+                  <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
+                </Button>
+                <TrackDriver email={driver.email} />
               </TableCell>
             </TableRow>
-          ) : filteredDrivers.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
-                You have no more drivers to show here
-              </TableCell>
-            </TableRow>
-          ) : (
-            filteredDrivers.map((driver, index) => {
-              const toggleTracking = () => {
-                console.log("Toggle tracking for driver:", driver.email);
-
-                handleSaveChange({
-                  ...driver,
-                  tracking:
-                    driver?.tracking === undefined ? true : !driver?.tracking,
-                });
-              };
-
-              const permission = driver?.permissions;
-
-              return (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Badge variant="outline">{index + 1}</Badge>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    <DriverDetailsDialog driverDetails={driver} />
-                  </TableCell>
-                  <TableCell>{driver?.phone || "N/A"}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="bg-gray-700">
-                      {driver?.role}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{driver?.email}</TableCell>
-                  <TableCell>
-                    <Select
-                      value={driver?.role}
-                      onValueChange={(value) =>
-                        handleStatusChange(value, index)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {roleOptions.map((option) => (
-                          <SelectItem
-                            className="bg-white"
-                            key={option.value}
-                            value={option.value}
-                          >
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    <Switch
-                      className="bg-slate-300"
-                      checked={driver?.tracking}
-                      onCheckedChange={toggleTracking}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      className="aspect-square h-2 w-2 mx-auto"
-                      color={permission ? "success" : "danger"}
-                    ></Chip>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleArchiveUser(driver)}
-                      className="mr-2"
-                    >
-                      <Archive className="mr-2 h-4 w-4" />
-                      Archive
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        router.push(`/admin/Manage/Drivers/${driver?.email}`)
-                      }
-                      className="mr-2"
-                    >
-                      <History className="mr-2 h-4 w-4" /> History
-                    </Button>
-                    <Create edit={true} driver={driver} />
-                    <Button variant="outline" size="sm">
-                      <RefreshCw className="mr-2 h-4 w-4" /> Reset Password
-                    </Button>
-                    <TrackDriver email={driver?.email} />
-                  </TableCell>
-                </TableRow>
-              );
-            })
-          )}
+          ))}
         </TableBody>
       </Table>
     </div>
