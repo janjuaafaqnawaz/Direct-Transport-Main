@@ -139,12 +139,12 @@ export default function DriverTable({ filter }) {
             <TableHead>Permissions</TableHead>
             <TableHead>
               <Tooltip content="Refresh" placement="top">
-                <div className="flex gap-2 w-full cursor-pointer h-full items-center">
+                <div
+                  onClick={monitorUserInactivity}
+                  className="flex gap-2 w-full cursor-pointer h-full items-center"
+                >
                   Active
-                  <RefreshCw
-                    className=" size-4"
-                    onClick={monitorUserInactivity}
-                  />
+                  <RefreshCw className=" size-4" />
                 </div>
               </Tooltip>
             </TableHead>
