@@ -9,6 +9,8 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
   const { start, end } = datesRange;
   const { totalPriceWithGST, totalGst } = getTotalInvoicePrice(invoices);
 
+  const paymentPercentage = Number(user?.paymentPercentage) || 1;
+
   const useGst = user?.includeGst;
   const totalFinalPayment = useGst
     ? Number(totalPriceWithGST)
@@ -39,7 +41,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
 
     const final = (
       ((useGst ? totalWithGst : totalWithoutGst || 0) / 100) *
-      (user?.paymentPercentage || 1)
+      paymentPercentage
     ).toFixed(2);
 
     return final;
@@ -49,6 +51,11 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
   const sortedDates = Object.keys(bookingsByDate).sort(
     (a, b) => parseDate(b) - parseDate(a)
   );
+
+  const final_driver_pay = (
+    ((totalFinalPayment || 0) / 100) *
+    paymentPercentage
+  ).toFixed(2);
 
   return (
     <Document>
@@ -192,11 +199,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
             </Text>
 
             <Text style={{ fontSize: 12, fontWeight: "500", color: "#d9534f" }}>
-              $
-              {(
-                ((totalFinalPayment || 0) / 100) *
-                (user?.paymentPercentage || 1)
-              ).toFixed(2)}
+              ${final_driver_pay}
             </Text>
           </View>
         </View>
