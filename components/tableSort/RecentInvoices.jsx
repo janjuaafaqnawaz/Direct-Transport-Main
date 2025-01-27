@@ -126,20 +126,24 @@ export default function RecentInvoices({ place_booking, place_job }) {
       </CardHeader>
       <CardContent>
         <div className="flex justify-end mb-4 space-x-4">
-          <Select value={sortBy} onValueChange={setSortBy}>
+          <Select value={sortBy} onValueChange={setSortBy} className="bg-white">
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white">
               <SelectItem value="date">Date</SelectItem>
               <SelectItem value="invoice">Invoice Amount</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={sortOrder} onValueChange={setSortOrder}>
+          <Select
+            value={sortOrder}
+            onValueChange={setSortOrder}
+            className="bg-white"
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort order" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white">
               <SelectItem value="desc">Descending</SelectItem>
               <SelectItem value="asc">Ascending</SelectItem>
             </SelectContent>
