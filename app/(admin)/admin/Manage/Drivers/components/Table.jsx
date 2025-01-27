@@ -136,7 +136,7 @@ export default function DriverTable({ filter }) {
             <TableHead>Email</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Tracking</TableHead>
-            <TableHead>Permissions</TableHead>
+            {/* <TableHead>Permissions</TableHead> */}
             <TableHead>
               <Tooltip content="Refresh" placement="top">
                 <div
@@ -206,7 +206,7 @@ export default function DriverTable({ filter }) {
                   color={driver.permissions ? "success" : "danger"}
                 />
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <Chip
                   className="aspect-square h-2 w-2 mx-auto"
                   color={
@@ -215,7 +215,7 @@ export default function DriverTable({ filter }) {
                       : "danger"
                   }
                 />
-              </TableCell>
+              </TableCell> */}
               <TableCell className="text-right">
                 <Button
                   variant="outline"
