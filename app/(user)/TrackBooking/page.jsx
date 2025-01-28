@@ -45,7 +45,9 @@ export default function Page() {
     // Update form data with URL parameters
     setFormData({
       fromDate: fromDate ? new Date(fromDate) : null,
-      toDate: toDate ? new Date(toDate) : null,
+      toDate: toDate
+        ? new Date(new Date(toDate).setDate(new Date(toDate).getDate() + 1))
+        : null,
       reference: reference || "",
     });
 
@@ -64,7 +66,12 @@ export default function Page() {
     try {
       const bookings = await getBookingsBetweenDates(
         formData.fromDate,
-        formData.toDate,
+        new Date(
+          new Date(formData.toDate).setDate(
+            new Date(formData.toDate).getDate() + 1
+          )
+        ),
+
         formData.reference,
         formData.reference,
         role

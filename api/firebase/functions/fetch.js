@@ -270,6 +270,8 @@ async function getBookingsBetweenDates(
     const fromDateFormatted = padDate(fromDateString);
     const toDateFormatted = padDate(toDateString);
 
+    console.log({ fromDateFormatted, toDateFormatted });
+
     // Construct Firestore query with lexical bounds
     let baseQuery = query(
       collectionRef,
