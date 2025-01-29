@@ -2,33 +2,21 @@
 
 import POD from "./POD";
 import QrCodeScannerRoundedIcon from "@mui/icons-material/QrCodeScannerRounded";
-import { useEffect, useState } from "react";
-import { fetchDocById } from "@/api/firebase/functions/fetch";
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
-  Button,
   useDisclosure,
 } from "@nextui-org/react";
 import { ActionIcon, Tooltip } from "@mantine/core";
+import useAdminContext from "@/context/AdminProvider";
 
 export default function InvoicePOD({ id }) {
-  const [booking, setBooking] = useState([]);
+  const { allBookings } = useAdminContext();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  useEffect(() => {
-    const fetchInvoice = async () => {
-      if (id) {
-        const data = await fetchDocById(id, "place_bookings");
-        setBooking(data);
-      }
-    };
-
-    fetchInvoice();
-  }, [id]);
+  const booking = allBookings.find((booking) => booking.docId === id);
 
   return (
     <>

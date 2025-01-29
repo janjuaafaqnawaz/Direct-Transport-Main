@@ -340,14 +340,3 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
     </>
   );
 }
-
-{
-  /* <Group grow wrap="nowrap" align="flex-end">
-<Text className="font-semibold">Distance Data:</Text>
-<div className="w-64">
-  <Text>Status: {invoice.distanceData.status}</Text>
-  <Text>Distance: {invoice.distanceData.distance.text}</Text>
-  <Text>Duration: {invoice.distanceData.duration.text}</Text>
-</div>
-</Group> */
-}

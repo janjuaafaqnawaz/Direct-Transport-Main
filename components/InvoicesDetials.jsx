@@ -57,7 +57,6 @@ const InvoiceDetails = ({ invoice, admin }) => {
     contact,
     docId,
     address,
-    images,
     serviceCharges,
   } = invoice;
 
@@ -174,6 +173,11 @@ const InvoiceDetails = ({ invoice, admin }) => {
     },
   ];
 
+  const driverUploadedImages = [
+    ...(Array.isArray(invoice?.images) ? invoice.images : []),
+    ...(Array.isArray(invoice?.pickupImages) ? invoice.pickupImages : []),
+  ].filter((img) => typeof img === "string");
+
   return (
     <section>
       <Center style={{ fontSize: "2rem", fontWeight: "bolder" }}>
@@ -191,16 +195,16 @@ const InvoiceDetails = ({ invoice, admin }) => {
           admin={admin}
           invoice={invoice}
         />
-        {images && (
-          <>
-            <h2>POD</h2> <h2>Receiver Name: {invoice?.receiverName || ""}</h2>
-          </>
-        )}
+        {/* {invoice?.images && ( */}
+        <>
+          <h2>POD</h2> <h2>Receiver Name: {invoice?.receiverName || ""}</h2>
+        </>
+        {/* )} */}
 
         <div className="flex flex-wrap gap-4">
-          {images &&
-            images.length > 0 &&
-            images.map((item, index) => (
+          {invoice?.images &&
+            driverUploadedImages.length > 0 &&
+            driverUploadedImages.map((item, index) => (
               <PhotoView key={index} src={item}>
                 <Image
                   src={item}
@@ -209,6 +213,7 @@ const InvoiceDetails = ({ invoice, admin }) => {
                 />
               </PhotoView>
             ))}
+
           {invoice?.signUrl && (
             <Image
               src={invoice?.signUrl}

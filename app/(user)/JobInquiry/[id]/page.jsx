@@ -3,13 +3,10 @@ import { fetchDocById } from "@/api/firebase/functions/fetch";
 import { InvoicesDetials } from "@/components/Index";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { CAP } from "@/components/Index";
 
 export default function Page() {
   const pathname = usePathname();
   const [invoice, setInvoice] = useState(null);
-
-  console.log(invoice);
 
   useEffect(() => {
     const fetchInvoice = async () => {

@@ -57,7 +57,7 @@ export default function App() {
   const isNew = (newItems) =>
     newItems.length > 0 ? `(New ${newItems.length})` : "";
 
-  console.log("todaysBookings", todaysBookings.length);
+  // console.log("todaysBookings", todaysBookings.length);
   
   
   return (

@@ -84,6 +84,7 @@ function BookingTable({ bookings }) {
   const sortedBookings = bookings.sort(
     (a, b) => parseDate(b.date) - parseDate(a.date)
   );
+
   return (
     <Table>
       <TableHeader>
@@ -102,27 +103,34 @@ function BookingTable({ bookings }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sortedBookings?.map((booking) => (
-          <TableRow key={booking?.docId}>
-            <TableCell>{booking?.docId}</TableCell>
-            <TableCell>{booking?.date}</TableCell>
-            <TableCell>{booking?.address?.Origin?.label}</TableCell>
-            <TableCell>{booking?.address?.Destination?.label}</TableCell>
-            <TableCell>{booking?.service}</TableCell>
-            <TableCell>{booking?.currentStatus || "Pending"}</TableCell>
-            <TableCell>
-              {booking?.progressInformation?.pickedup || "Pending"}
-            </TableCell>
-            <TableCell>
-              {booking?.progressInformation?.delivered || "Pending"}
-            </TableCell>
-            <TableCell>${booking?.totalPrice}</TableCell>
-            <TableCell>{calculateTotalQuantity(booking)}</TableCell>
-            <TableCell>
-              <ImgsDialog imgs={booking.images} />
-            </TableCell>
-          </TableRow>
-        ))}
+        {sortedBookings?.map((booking) => {
+          const driverUploadedImages = [
+            ...(booking?.images ?? []),
+            ...(booking?.pickupImages ?? []),
+          ].filter((img) => typeof img === "string");
+
+          return (
+            <TableRow key={booking?.docId}>
+              <TableCell>{booking?.docId}</TableCell>
+              <TableCell>{booking?.date}</TableCell>
+              <TableCell>{booking?.address?.Origin?.label}</TableCell>
+              <TableCell>{booking?.address?.Destination?.label}</TableCell>
+              <TableCell>{booking?.service}</TableCell>
+              <TableCell>{booking?.currentStatus || "Pending"}</TableCell>
+              <TableCell>
+                {booking?.progressInformation?.pickedup || "Pending"}
+              </TableCell>
+              <TableCell>
+                {booking?.progressInformation?.delivered || "Pending"}
+              </TableCell>
+              <TableCell>${booking?.totalPrice}</TableCell>
+              <TableCell>{calculateTotalQuantity(booking)}</TableCell>
+              <TableCell>
+                <ImgsDialog imgs={driverUploadedImages} />
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );
@@ -140,9 +148,16 @@ export default function BookingsQuery({ bookings, setShow }) {
       </div>
       <div className="mt-6 flex justify-center flex-col gap-2">
         <Link href="/ClientServices" className="w-40" passHref>
-          <Button className="w-full" size="lg">Client Services</Button>
+          <Button className="w-full" size="lg">
+            Client Services
+          </Button>
         </Link>
-        <Button onClick={() => setShow(false)} className="w-40" color="red" size="lg">
+        <Button
+          onClick={() => setShow(false)}
+          className="w-40"
+          color="red"
+          size="lg"
+        >
           Back
         </Button>
       </div>

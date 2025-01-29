@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DropzoneButton from "@/components/Dropzone/index";
 import {
   updateDoc,
@@ -13,47 +13,62 @@ import { Button, Image, Input } from "@nextui-org/react";
 
 export default function Page({ booking, close }) {
   const [name, setName] = useState(booking?.receiverName || "");
-  const [images, setImages] = useState(booking?.images || []);
-  const [refreash, setRefreash] = useState(1);
-  const router = useRouter();
+  const [images, setImages] = useState(booking?.images);
+  const [refresh, setRefresh] = useState(1);
   const [loadingOverlay, setLoadingOverlay] = useState(false);
 
-  const handleSave = async () => {
-    // if (!images.length) {
-    //   console.log("No images to save.");
-    //   return;
-    // }
+  console.log({ images: booking.images });
 
+  useEffect(() => {
+    setImages(booking?.images);
+  }, [booking]);
+
+  const handleSave = async () => {
     try {
       setLoadingOverlay(true);
-      // Clear the images state
-      setImages([]);
 
-      const uploadedImageUrls = await Promise.all(
-        images.map(async (image, index) => {
-          const url = await uploadImageToFirestore(image);
-          setImages([...images, url]);
-          return url;
-        })
-      );
+      let uploadedImageUrls = [];
 
-      console.log("All images uploaded successfully:", uploadedImageUrls);
+      if (images && images.length > 0) {
+        uploadedImageUrls = await Promise.all(
+          images.map(async (image) => {
+            try {
+              const downloadURL = await uploadImageToFirestore(image);
+              if (downloadURL) {
+                return downloadURL;
+              } else {
+                console.log("Error while saving image.");
+                return null;
+              }
+            } catch (error) {
+              console.error("Error uploading image:", error);
+              return null;
+            }
+          })
+        );
+
+        uploadedImageUrls = uploadedImageUrls.filter((url) => url !== null);
+
+        console.log("All images uploaded successfully:", uploadedImageUrls);
+      } else {
+        console.log("No images to upload");
+      }
 
       await updateDoc("place_bookings", booking.docId, {
         ...booking,
-        images: uploadedImageUrls,
+        images: uploadedImageUrls.length > 0 ? uploadedImageUrls : [],
         receiverName: name,
       });
 
+      setImages(uploadedImageUrls);
       setLoadingOverlay(false);
+      close();
     } catch (error) {
       console.error("Error uploading images:", error);
-    } finally {
-      close();
+      setLoadingOverlay(false);
     }
   };
 
-  // Function to remove a specific image
   const removeImage = (index) => {
     const newImages = [...images];
     newImages.splice(index, 1);
@@ -90,10 +105,10 @@ export default function Page({ booking, close }) {
               className="mb-4"
             />
             <DropzoneButton
-              key={refreash}
+              key={refresh}
               handleImage={(blob) => {
                 setImages([...images, blob]);
-                setRefreash(refreash + 1);
+                setRefresh(refresh + 1);
               }}
             />
 
@@ -101,7 +116,7 @@ export default function Page({ booking, close }) {
               {images &&
                 images.length > 0 &&
                 images.map((item, index) => (
-                  <PhotoView key={index} src={item}>
+                  <PhotoView key={`${index}-${item}`} src={item}>
                     <div className="w-full flex flex-col justify-center align-middle">
                       <Image
                         src={item}
