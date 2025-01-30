@@ -3,10 +3,9 @@
 
 import React, { useEffect, useState } from "react";
 import useAdminContext from "@/context/AdminProvider";
-import { parse } from "date-fns";
 import PdfButton from "./pdf/PdfButton";
 import { Loader } from "@mantine/core";
-import convertToISOString from "./convertToISOString";
+import { fetchBookingsBetweenDates } from "@/api/firebase/functions/fetch";
 
 export default function CreatePdfForDrivers({ datesRange, user }) {
   const [loading, setLoading] = useState(true);
@@ -15,46 +14,10 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
   const pdfId = Math.floor(100000 + Math.random() * 900000);
   console.log(pdfId);
 
-  async function placeBookingsExistingAccsMonthly() {
-    const { start, end } = datesRange;
-
-    const startDate = parse(start, "dd/MM/yyyy", new Date());
-    startDate.setHours(0, 0, 0, 0);
-    const toDate = parse(end, "dd/MM/yyyy", new Date());
-    toDate.setHours(23, 59, 59, 999);
-
-    try {
-      return allBookings.filter((booking) => {
-        if (!booking.driverEmail || !user?.email) {
-          console.error(
-            "Email is missing in booking or user object.",
-            "driverEmail",
-            booking.driverEmail,
-            "userEmail",
-            user?.email
-          );
-          return false;
-        }
-
-        const bookingDate = new Date(convertToISOString(booking.date));
-
-        return (
-          booking.driverEmail.toLowerCase() === user.email.toLowerCase() &&
-          bookingDate >= startDate &&
-          bookingDate <= toDate
-        );
-      });
-    } catch (error) {
-      console.error("Error:", error);
-      console.log("Something Went Wrong");
-      return [];
-    }
-  }
-
   useEffect(() => {
     async function fetchData() {
       try {
-        const bookings = await placeBookingsExistingAccsMonthly(user.email);
+        const bookings = await fetchBookingsBetweenDates(datesRange, user);
         setMyBookings(bookings?.filter((item) => item?.isArchived !== true));
       } catch (error) {
         console.error("Error Creating PDF:", error);

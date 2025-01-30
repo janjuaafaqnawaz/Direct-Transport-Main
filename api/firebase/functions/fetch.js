@@ -10,6 +10,7 @@ import {
   limit,
   orderBy,
   query,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { app } from "../config";
@@ -445,6 +446,52 @@ async function getUsersEmailAndNames() {
   }
 }
 
+const sanitizeDate = (dateStr) => {
+  if (!dateStr) return "";
+
+  const [day, month, year] = dateStr.split("/");
+  return `${year}-${month}-${day}`.trim();
+};
+
+
+const fetchBookingsBetweenDates = async (datesRange, user) => {
+  const { start, end } = datesRange;
+  const email = user.email;
+
+  
+  // Sanitize the date strings to remove spaces
+  const sanitizedStart = sanitizeDate(start);
+  const sanitizedEnd = sanitizeDate(end);
+  console.log({ sanitizedStart, sanitizedEnd, email });
+
+  const startDate = Timestamp.fromDate(new Date(sanitizedStart));
+  const endDate = Timestamp.fromDate(new Date(sanitizedEnd));
+
+  try {
+    const bookingsRef = collection(db, "place_bookings");
+
+    const bookingsQuery = query(
+      bookingsRef,
+      where("dateTimestamp", ">", startDate),
+      where("dateTimestamp", "<", endDate),
+      where("driverEmail", "==", email)
+    );
+
+    const querySnapshot = await getDocs(bookingsQuery);
+
+    const bookings = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    console.log("Fetched bookings:", bookings.length);
+    return bookings;
+  } catch (error) {
+    console.error("Error fetching bookings:", error.message);
+    throw new Error("Error fetching bookings");
+  }
+};
+
 export {
   fetchDocById,
   fetchFrequentAddresses,
@@ -464,4 +511,5 @@ export {
   getDriverBookings,
   fetchMyPdfsOfDoc,
   getBookingsOnlyBetweenDates,
+  fetchBookingsBetweenDates,
 };
