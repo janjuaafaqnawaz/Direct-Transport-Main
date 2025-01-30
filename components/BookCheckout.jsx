@@ -20,6 +20,7 @@ import DimensionsTable from "./ItemDimensions/DimensionsTable";
 import ProcessPrice from "@/api/price_calculation/index";
 import StripeWrapper from "@/components/stripe/StripeWrapper";
 import toast from "react-hot-toast";
+import { Timestamp } from "firebase/firestore";
 
 export default function BookCheckout({
   formData,
@@ -53,6 +54,11 @@ export default function BookCheckout({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const convertToTimestamp = (dateStr) => {
+    const [day, month, year] = dateStr.split("/");
+    return Timestamp.fromDate(new Date(`${year}-${month}-${day}T00:00:00Z`));
+  };
+
   const handleSubmit = async () => {
     console.log("Creating");
 
@@ -66,7 +72,14 @@ export default function BookCheckout({
         invoice.address?.Destination?.label
       );
 
-      const delivery = { ...invoice, pickupSuburb, deliverySuburb };
+      const dateTimestamp = convertToTimestamp(invoice.date);
+
+      const delivery = {
+        ...invoice,
+        pickupSuburb,
+        deliverySuburb,
+        dateTimestamp,
+      };
 
       const id = await postInvoice(delivery, "place_bookings", selectedEmail);
 

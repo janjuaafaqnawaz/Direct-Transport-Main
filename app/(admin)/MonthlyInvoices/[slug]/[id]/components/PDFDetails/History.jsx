@@ -113,25 +113,23 @@ export default function History({ email }) {
       </TableHeader>
       <TableBody emptyContent={"No rows to display."}>
         {pdfs?.map((pdf, index) => {
-          const user = allUsers.find((user) => user.email === pdf.email);
+          const user = allUsers.find((user) => user?.email === pdf?.email);
           const sendingEmail = user.billingEmail
-            ? user.billingEmail
-            : user.email;
-
-          console.log({ user, pdf });
+            ? user?.billingEmail
+            : user?.email;
 
           return (
             <TableRow key={pdf.id}>
               <TableCell>{pdf?.firstName || pdf?.userName}</TableCell>
               <TableCell>{formatToSydneyTime(pdf.createdAt)}</TableCell>
               <TableCell>
-                {pdf.datesRange.start + "-" + pdf.datesRange.end}
+                {pdf?.datesRange?.start + "-" + pdf?.datesRange?.end}
               </TableCell>
               <TableCell>{pdf?.pdfId}</TableCell>
               <TableCell>
                 <a
                   target="_blank"
-                  href={pdf.url}
+                  href={pdf?.url}
                   rel="noopener noreferrer"
                   download
                 >
@@ -139,10 +137,10 @@ export default function History({ email }) {
                 </a>
               </TableCell>
               <TableCell className="cursor-pointer">
-                <p onClick={() => deletePdf(pdf.id)}>🗑️</p>
+                <p onClick={() => deletePdf(pdf?.id)}>🗑️</p>
               </TableCell>
               <TableCell className="cursor-pointer">
-                <p onClick={() => sendEmailToClients(sendingEmail, pdf.url)}>
+                <p onClick={() => sendEmailToClients(sendingEmail, pdf?.url)}>
                   📧 Send
                 </p>
               </TableCell>

@@ -1,61 +1,20 @@
 "use client";
 
 import { Page, Text, View, Document, Image } from "@react-pdf/renderer";
-import getTotalInvoicePrice from "./getTotalInvoicePrice";
+import getTotalInvoicePrice, {
+  calculateInvoiceDetails,
+} from "./getTotalInvoicePrice";
 import { format } from "date-fns";
 import styles from "./pdf.styles";
 
 export default function MyDocument({ datesRange, invoices, user, pdfId }) {
   const { start, end } = datesRange;
-  const { totalPriceWithGST, totalGst } = getTotalInvoicePrice(invoices);
 
-  const paymentPercentage = Number(user?.paymentPercentage) || 1;
-
-  const useGst = user?.includeGst;
-  const totalFinalPayment = useGst
-    ? Number(totalPriceWithGST)
-    : Number(totalPriceWithGST) - Number(totalGst);
-
-  const parseDate = (dateStr) => {
-    const [day, month, year] = dateStr.split("/").map(Number);
-    return new Date(year, month - 1, day);
-  };
-
-  const bookingsByDate = invoices.reduce((acc, booking) => {
-    const formattedDate = format(parseDate(booking.date), "dd/MM/yyyy");
-    if (!acc[formattedDate]) {
-      acc[formattedDate] = [];
-    }
-    acc[formattedDate].push(booking);
-    return acc;
-  }, {});
-
-  const calcDayPayment = (bookings) => {
-    let totalWithGst = 0;
-    let totalWithoutGst = 0;
-
-    bookings.forEach((booking) => {
-      totalWithGst += booking.totalPriceWithGST;
-      totalWithoutGst += booking.totalPriceWithGST - booking.gst;
-    });
-
-    const final = (
-      ((useGst ? totalWithGst : totalWithoutGst || 0) / 100) *
-      paymentPercentage
-    ).toFixed(2);
-
-    return final;
-  };
-
-  // Sort the dates in ascending order
-  const sortedDates = Object.keys(bookingsByDate).sort(
-    (a, b) => parseDate(b) - parseDate(a)
-  );
-
-  const final_driver_pay = (
-    ((totalFinalPayment || 0) / 100) *
-    paymentPercentage
-  ).toFixed(2);
+  console.log(invoices.length);
+  
+  
+  const { sortedDates, bookingsByDate, calcDayPayment, finalDriverPay } =
+    calculateInvoiceDetails(invoices, user);
 
   return (
     <Document>
@@ -199,7 +158,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
             </Text>
 
             <Text style={{ fontSize: 12, fontWeight: "500", color: "#d9534f" }}>
-              ${final_driver_pay}
+              ${finalDriverPay}
             </Text>
           </View>
         </View>
