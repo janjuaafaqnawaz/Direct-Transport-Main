@@ -255,7 +255,6 @@ function padDate(date) {
   return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
 }
 
-// Function to fetch bookings between dates with client-side filtering
 async function getBookingsBetweenDates(
   fromDateString,
   toDateString,
@@ -267,50 +266,47 @@ async function getBookingsBetweenDates(
   const collectionRef = collection(db, "place_bookings");
 
   try {
-    // Normalize the input dates to "dd/mm/yyyy"
-    const fromDateFormatted = padDate(fromDateString);
-    const toDateFormatted = padDate(toDateString);
+    // Convert input strings to Firestore Timestamp
+    const fromDateFormatted = Timestamp.fromDate(new Date(fromDateString));
+    const toDateFormatted = Timestamp.fromDate(new Date(toDateString));
 
     console.log({ fromDateFormatted, toDateFormatted });
 
-    // Construct Firestore query with lexical bounds
+    // Construct Firestore query with date filtering
     let baseQuery = query(
       collectionRef,
-      where("date", ">=", fromDateFormatted),
-      where("date", "<=", toDateFormatted)
+      where("dateTimestamp", ">=", fromDateFormatted),
+      where("dateTimestamp", "<=", toDateFormatted)
     );
 
-    // Add role-based filtering (e.g., restrict to user's email if not admin)
+    // Role-based filtering
     if (role !== "admin") {
+      console.log("fetch only for:", user.email);
+
       baseQuery = query(baseQuery, where("userEmail", "==", user.email));
     }
 
-    // Add optional reference filtering
+    // Add reference filtering (handle array vs string cases)
     if (reference) {
       baseQuery = query(baseQuery, where("pickupReference1", "==", reference));
+      // If pickupReference1 is an array, use: where("pickupReference1", "array_contains", reference)
     }
 
-    // Execute the Firestore query
+    // Execute query
     const querySnapshot = await getDocs(baseQuery);
 
-    // Perform client-side filtering to ensure proper date range
-    const filteredDocs = querySnapshot.docs
-      .map((doc) => doc.data())
-      .filter((doc) => {
-        const [day, month, year] = doc.date.split("/");
-        const docDate = new Date(`${year}-${month}-${day}`);
-        return (
-          docDate >= new Date(fromDateString) &&
-          docDate <= new Date(toDateString)
-        );
-      });
+    // Convert querySnapshot to an array of data
+    const bookings = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-    console.log("Filtered Docs:", filteredDocs);
-    return filteredDocs;
+    console.log("Fetched bookings:", bookings);
+    return bookings;
   } catch (error) {
     console.error("Error fetching bookings:", error);
     notify("Something went wrong");
-    return null;
+    return [];
   }
 }
 
@@ -453,12 +449,10 @@ const sanitizeDate = (dateStr) => {
   return `${year}-${month}-${day}`.trim();
 };
 
-
 const fetchBookingsBetweenDates = async (datesRange, user) => {
   const { start, end } = datesRange;
   const email = user.email;
 
-  
   // Sanitize the date strings to remove spaces
   const sanitizedStart = sanitizeDate(start);
   const sanitizedEnd = sanitizeDate(end);

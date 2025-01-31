@@ -63,6 +63,8 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
+    console.log(formData.toDate, formData.fromDate);
+
     try {
       const bookings = await getBookingsBetweenDates(
         formData.fromDate,
