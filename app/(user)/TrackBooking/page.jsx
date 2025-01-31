@@ -26,6 +26,7 @@ export default function Page() {
   const [role, setRole] = useState(null);
   const [show, setShow] = useState(false);
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fromDate: null,
     toDate: null,
@@ -63,8 +64,7 @@ export default function Page() {
   };
 
   const handleSubmit = async () => {
-    console.log(formData.toDate, formData.fromDate);
-
+    setLoading(true);
     try {
       const bookings = await getBookingsBetweenDates(
         formData.fromDate,
@@ -73,19 +73,22 @@ export default function Page() {
             new Date(formData.toDate).getDate() + 1
           )
         ),
-
         formData.reference,
         formData.reference,
         role
       );
       if (!bookings.length) {
         alert("Not Found");
-        return;
+      } else {
+        const allDates = bookings.map((obj) => obj.createdAt);
+        console.log("allDates", allDates);
+        setBookings(bookings);
+        setShow(true);
       }
-      setBookings(bookings);
-      setShow(true);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -140,8 +143,10 @@ export default function Page() {
               color="#1384e1"
               size="lg"
               style={styleField}
+              disabled={loading}
+              loading={loading}
             >
-              Run Query
+              {loading ? "Loading..." : "Run Query"}
             </Button>
             <Link href="/ClientServices" style={{ textDecoration: "none" }}>
               <Button
@@ -160,5 +165,3 @@ export default function Page() {
     </div>
   );
 }
-
-// http://localhost:3000/TrackBooking?fromDate=2023-06-01&toDate=2023-06-30&reference=JOB123

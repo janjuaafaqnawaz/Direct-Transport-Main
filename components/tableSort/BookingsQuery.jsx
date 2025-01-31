@@ -17,7 +17,6 @@ import {
 import { PhotoView } from "react-photo-view";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, ScrollArea } from "@mantine/core";
-import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 export function ImgsDialog({ imgs }) {
   const [opened, { open, close }] = useDisclosure(false); // Manage modal state
@@ -76,14 +75,19 @@ function calculateTotalQuantity(data) {
 }
 
 function BookingTable({ bookings }) {
-  const parseDate = (dateStr) => {
-    const [day, month, year] = dateStr.split("/").map(Number);
-    return new Date(year, month - 1, day);
-  };
+  // const sortedBookings = bookings.sort((a, b) => {
+  //   // Convert Firestore Timestamp to JavaScript Date
+  //   const dateA =
+  //     a.createdAt instanceof Date
+  //       ? a.createdAt
+  //       : new Date(a.createdAt.seconds * 1000);
+  //   const dateB =
+  //     b.createdAt instanceof Date
+  //       ? b.createdAt
+  //       : new Date(b.createdAt.seconds * 1000);
 
-  const sortedBookings = bookings.sort(
-    (a, b) => parseDate(b.date) - parseDate(a.date)
-  );
+  //   return dateB - dateA; // Sort in descending order
+  // });
 
   return (
     <Table>
@@ -103,16 +107,26 @@ function BookingTable({ bookings }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sortedBookings?.map((booking) => {
+        {bookings?.map((booking) => {
           const driverUploadedImages = [
             ...(booking?.images ?? []),
             ...(booking?.pickupImages ?? []),
           ].filter((img) => typeof img === "string");
 
+          function convertTimestampToDate(createdAt) {
+            if (createdAt && createdAt.seconds) {
+              const date = new Date(createdAt.seconds * 1000);
+              return date.toLocaleDateString("en-GB");
+            }
+            return null;
+          }
+
           return (
             <TableRow key={booking?.docId}>
               <TableCell>{booking?.docId}</TableCell>
-              <TableCell>{booking?.date}</TableCell>
+              <TableCell>
+                {convertTimestampToDate(booking?.createdAt)}{" "}
+              </TableCell>
               <TableCell>{booking?.address?.Origin?.label}</TableCell>
               <TableCell>{booking?.address?.Destination?.label}</TableCell>
               <TableCell>{booking?.service}</TableCell>

@@ -254,29 +254,30 @@ function padDate(date) {
   const [day, month, year] = dateString.split("/");
   return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
 }
-
 async function getBookingsBetweenDates(
   fromDateString,
   toDateString,
   reference,
   id,
-  role
+  role,
+  sortField = "createdAt",
+  sortOrder = "asc"
 ) {
   const user = JSON.parse(localStorage.getItem("userDoc"));
   const collectionRef = collection(db, "place_bookings");
 
   try {
     // Convert input strings to Firestore Timestamp
-    const fromDateFormatted = Timestamp.fromDate(new Date(fromDateString));
-    const toDateFormatted = Timestamp.fromDate(new Date(toDateString));
+    const fromDateFormatted = new Date(fromDateString);
+    const toDateFormatted = new Date(toDateString);
 
     console.log({ fromDateFormatted, toDateFormatted });
 
     // Construct Firestore query with date filtering
     let baseQuery = query(
       collectionRef,
-      where("dateTimestamp", ">=", fromDateFormatted),
-      where("dateTimestamp", "<=", toDateFormatted)
+      where("createdAt", ">=", fromDateFormatted),
+      where("createdAt", "<=", toDateFormatted)
     );
 
     // Role-based filtering
@@ -289,20 +290,21 @@ async function getBookingsBetweenDates(
     // Add reference filtering (handle array vs string cases)
     if (reference) {
       baseQuery = query(baseQuery, where("pickupReference1", "==", reference));
-      // If pickupReference1 is an array, use: where("pickupReference1", "array_contains", reference)
     }
 
-    // Execute query
-    const querySnapshot = await getDocs(baseQuery);
+    // Add sorting
+    baseQuery = query(baseQuery, orderBy(sortField, sortOrder));
 
-    // Convert querySnapshot to an array of data
+    const querySnapshot = await getDocs(baseQuery);
+    console.log({ querySnapshot, baseQuery });
+
     const bookings = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
     console.log("Fetched bookings:", bookings);
-    return bookings;
+    return bookings.reverse();
   } catch (error) {
     console.error("Error fetching bookings:", error);
     notify("Something went wrong");
