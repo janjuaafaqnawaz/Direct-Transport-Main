@@ -75,19 +75,9 @@ function calculateTotalQuantity(data) {
 }
 
 function BookingTable({ bookings }) {
-  // const sortedBookings = bookings.sort((a, b) => {
-  //   // Convert Firestore Timestamp to JavaScript Date
-  //   const dateA =
-  //     a.createdAt instanceof Date
-  //       ? a.createdAt
-  //       : new Date(a.createdAt.seconds * 1000);
-  //   const dateB =
-  //     b.createdAt instanceof Date
-  //       ? b.createdAt
-  //       : new Date(b.createdAt.seconds * 1000);
-
-  //   return dateB - dateA; // Sort in descending order
-  // });
+  const sortedBookings = bookings.sort(
+    (a, b) => b.dateTimestamp - a.dateTimestamp
+  );
 
   return (
     <Table>
@@ -107,26 +97,16 @@ function BookingTable({ bookings }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {bookings?.map((booking) => {
+        {sortedBookings?.map((booking) => {
           const driverUploadedImages = [
             ...(booking?.images ?? []),
             ...(booking?.pickupImages ?? []),
           ].filter((img) => typeof img === "string");
 
-          function convertTimestampToDate(createdAt) {
-            if (createdAt && createdAt.seconds) {
-              const date = new Date(createdAt.seconds * 1000);
-              return date.toLocaleDateString("en-GB");
-            }
-            return null;
-          }
-
           return (
             <TableRow key={booking?.docId}>
               <TableCell>{booking?.docId}</TableCell>
-              <TableCell>
-                {convertTimestampToDate(booking?.createdAt)}{" "}
-              </TableCell>
+              <TableCell>{booking?.date}</TableCell>
               <TableCell>{booking?.address?.Origin?.label}</TableCell>
               <TableCell>{booking?.address?.Destination?.label}</TableCell>
               <TableCell>{booking?.service}</TableCell>
