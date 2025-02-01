@@ -17,6 +17,7 @@ import {
 import { PhotoView } from "react-photo-view";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, ScrollArea } from "@mantine/core";
+import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 
 export function ImgsDialog({ imgs }) {
   const [opened, { open, close }] = useDisclosure(false); // Manage modal state
@@ -76,13 +77,25 @@ function calculateTotalQuantity(data) {
 
 function BookingTable({ bookings }) {
   const sortedBookings = bookings.sort(
-    (a, b) => b.dateTimestamp - a.dateTimestamp
+    (a, b) => b.createdAtStandardized - a.createdAtStandardized
   );
+
+  const dates = bookings.map((booking) => {
+    return {
+      id: booking.id,
+      createAt: formatToSydneyTime(booking?.createAt),
+      createdAtStandardized: formatToSydneyTime(booking?.createdAtStandardized),
+      ready: booking.date,
+    };
+  });
+
+  console.log(dates);
 
   return (
     <Table>
       <TableHeader>
         <TableRow>
+          <TableHead>No.</TableHead>
           <TableHead>Job No</TableHead>
           <TableHead>Date & Time</TableHead>
           <TableHead>From</TableHead>
@@ -97,16 +110,19 @@ function BookingTable({ bookings }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sortedBookings?.map((booking) => {
+        {sortedBookings?.map((booking, index) => {
           const driverUploadedImages = [
             ...(booking?.images ?? []),
             ...(booking?.pickupImages ?? []),
           ].filter((img) => typeof img === "string");
 
           return (
-            <TableRow key={booking?.docId}>
+            <TableRow key={booking?.docId + Date.now}>
+              <TableCell>{index + 1}</TableCell>
               <TableCell>{booking?.docId}</TableCell>
-              <TableCell>{booking?.date}</TableCell>
+              <TableCell>
+                {formatToSydneyTime(booking?.createdAtStandardized)}
+              </TableCell>
               <TableCell>{booking?.address?.Origin?.label}</TableCell>
               <TableCell>{booking?.address?.Destination?.label}</TableCell>
               <TableCell>{booking?.service}</TableCell>

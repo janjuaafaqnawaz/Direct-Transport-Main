@@ -8,6 +8,7 @@ import { BookingsQuery } from "@/components/Index";
 import { DatePickerInput } from "@mantine/dates";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Timestamp } from "firebase/firestore";
 
 const styleField = {
   width: "16rem",
@@ -65,19 +66,23 @@ export default function Page() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    const fromDate = new Date(formData.fromDate);
+    const toDate = new Date(formData.toDate);
+    const fromTimestamp = Timestamp.fromDate(fromDate);
+    const toTimestamp = Timestamp.fromDate(toDate);
+
     try {
       const bookings = await getBookingsBetweenDates(
-        formData.fromDate,
-        formData.toDate,
+        fromDate,
+        toDate,
         formData.reference,
         formData.reference,
         role
       );
-      if (!bookings.length) {
+
+      if (!bookings.length && !bookings2.length) {
         alert("Not Found");
       } else {
-        const allDates = bookings.map((obj) => obj.createdAt);
-        console.log("allDates", allDates);
         setBookings(bookings);
         setShow(true);
       }

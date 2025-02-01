@@ -48,6 +48,7 @@ export default function Create({ edit, driver }) {
     emergencyContact: "",
     driverNumber: "",
     bankDetails: "",
+    payPalEmail: "",
   });
   const [includeGst, setIncludeGst] = useState(false);
 
@@ -126,7 +127,7 @@ export default function Create({ edit, driver }) {
           {edit ? "Edit Driver" : "Add Driver"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-5xl w-full">
+      <DialogContent className="max-w-5xl w-full max-h-[95vh] overflow-y-scroll">
         <DialogHeader>
           <DialogTitle>
             {edit ? "Edit Driver" : "Create New Driver"}
@@ -298,7 +299,15 @@ export default function Create({ edit, driver }) {
               onChange={handleChange}
             />
           </div>
-
+          <div className="flex flex-col ">
+            <Label htmlFor="accountNumber">PayPal Email Address</Label>
+            <Input
+              id="payPalEmail"
+              name="payPalEmail"
+              value={form.payPalEmail}
+              onChange={handleChange}
+            />
+          </div>
           <div className="items-top flex space-x-2 mt-4">
             <Checkbox
               checked={includeGst}

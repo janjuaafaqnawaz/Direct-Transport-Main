@@ -255,47 +255,29 @@ function padDate(date) {
   return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
 }
 
-async function getBookingsBetweenDates(
-  fromDateString,
-  toDateString,
-  reference,
-  id,
-  role,
-  sortField = "createdAt",
-  sortOrder = "asc"
-) {
+async function getBookingsBetweenDates(fromDate, toDate, reference, id, role) {
   const user = JSON.parse(localStorage.getItem("userDoc"));
   const collectionRef = collection(db, "place_bookings");
 
   try {
-    // Convert input strings to JavaScript Dates and then to Firestore Timestamps
-    const fromDateFormatted = new Date(fromDateString);
-    const toDateFormatted = new Date(toDateString);
-    console.log({ fromDateFormatted, toDateFormatted });
+    console.log({ fromDate, toDate });
 
-    const fromTimestamp = Timestamp.fromDate(fromDateFormatted);
-    const toTimestamp = Timestamp.fromDate(toDateFormatted);
-
-    // Construct the Firestore query with date filtering
     let baseQuery = query(
       collectionRef,
-      where("dateTimestamp", ">=", fromTimestamp),
-      where("dateTimestamp", "<=", toTimestamp)
+      where("createdAtStandardized", ">=", fromDate),
+      where("createdAtStandardized", "<=", toDate)
     );
 
-    // Role-based filtering: if the user is not an admin, filter by email
     if (role !== "admin") {
       console.log("fetch only for:", user.email);
       baseQuery = query(baseQuery, where("userEmail", "==", user.email));
     }
 
-    // Reference filtering if provided
     if (reference) {
       baseQuery = query(baseQuery, where("pickupReference1", "==", reference));
     }
 
     const querySnapshot = await getDocs(baseQuery);
-    console.log({ querySnapshot, baseQuery });
 
     const bookings = querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -303,7 +285,6 @@ async function getBookingsBetweenDates(
     }));
 
     console.log("Fetched bookings:", bookings);
-    // Reverse the bookings if required by your application logic
     return bookings.reverse();
   } catch (error) {
     console.error("Error fetching bookings:", error);
