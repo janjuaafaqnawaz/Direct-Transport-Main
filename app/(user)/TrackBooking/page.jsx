@@ -137,7 +137,10 @@ export default function Page() {
               onChange={handleChange}
             />
             <p style={{ color: "ghostwhite" }}>...</p>
-
+            <p className=" text-sm text-muted-foreground bg-blue-200 p-3 w-[48%] rounded-sm mb-2">
+              Kindly select the booking creation date to ensure accurate
+              tracking of your delivery
+            </p>
             <Button
               onClick={() => handleSubmit()}
               variant="filled"
