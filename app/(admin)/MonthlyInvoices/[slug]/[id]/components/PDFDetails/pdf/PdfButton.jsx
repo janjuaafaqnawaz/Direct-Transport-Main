@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { pdf } from "@react-pdf/renderer";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -12,9 +12,11 @@ import toast from "react-hot-toast";
 import PDFLayout1 from "./PDFLayout1";
 import PDFLayout2 from "./PDFLayout2";
 import PDFLayoutDriver from "./PDFLayoutDriver";
+import { calculateInvoiceDetails } from "./getTotalInvoicePrice";
 
 const storage = getStorage(app);
 
+// Lazy load PDFDownloadLink for SSR optimization
 const PDFDownloadLink = dynamic(
   () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
   {
@@ -30,12 +32,19 @@ export default function PdfButton({
   driverLayout,
   pdfId,
 }) {
+  // State Hooks
   const [uploading, setUploading] = useState(false);
-  const bookingCount = bookings.length;
   const [selectedLayout, setSelectedLayout] = useState("Layout2");
+  const [pay, setPay] = useState(null);
 
-  const getPDFDocument = () => {
+  const bookingCount = bookings.length;
+  const pdfFileName = `monthly_bookings_${user.firstName}.pdf`;
+
+  // Generate the correct PDF layout based on props
+  const PDFDocument = useMemo(() => {
     if (driverLayout) {
+      const { finalDriverPay } = calculateInvoiceDetails(bookings, user);
+      setPay(finalDriverPay); // Update driver pay only when necessary
       return (
         <PDFLayoutDriver
           datesRange={datesRange}
@@ -44,17 +53,15 @@ export default function PdfButton({
           pdfId={pdfId}
         />
       );
-    } else if (selectedLayout === "Layout2") {
-      return (
-        <PDFLayout2
-          datesRange={datesRange}
-          invoices={bookings}
-          user={user}
-          pdfId={pdfId}
-        />
-      );
     }
-    return (
+    return selectedLayout === "Layout2" ? (
+      <PDFLayout2
+        datesRange={datesRange}
+        invoices={bookings}
+        user={user}
+        pdfId={pdfId}
+      />
+    ) : (
       <PDFLayout1
         datesRange={datesRange}
         invoices={bookings}
@@ -62,23 +69,17 @@ export default function PdfButton({
         pdfId={pdfId}
       />
     );
-  };
+  }, [driverLayout, selectedLayout, bookings, user, pdfId]);
 
-  const PDFDocument = getPDFDocument();
-
+  // Handles PDF Upload
   const handleUpload = async () => {
     setUploading(true);
-    const blob = await pdf(PDFDocument).toBlob();
-    const storageRef = ref(
-      storage,
-      `pdfs/monthly_bookings_${user.firstName}.pdf`
-    );
-
     try {
+      const blob = await pdf(PDFDocument).toBlob();
+      const storageRef = ref(storage, `pdfs/${pdfFileName}`);
+
       await uploadBytes(storageRef, blob);
       const downloadURL = await getDownloadURL(storageRef);
-
-      console.log("handleUpload", { user });
 
       await postDoc(
         {
@@ -89,12 +90,12 @@ export default function PdfButton({
           createdAt: new Date(),
           datesRange,
           pdfId: pdfId || "",
+          finalDriverPay: pay,
         },
         "generatedPdfs"
       );
 
       toast.success("PDF uploaded successfully!");
-
       window.location.reload();
     } catch (error) {
       console.error("Error uploading PDF:", error);
@@ -112,30 +113,29 @@ export default function PdfButton({
           setSelectedLayout={setSelectedLayout}
         />
       )}
-      <div className="flex justify-center space-x-4">
-        {bookingCount > 0 && (
-          <>
-            <PDFDownloadLink
-              document={PDFDocument} // Use dynamically selected PDF layout
-              fileName={`monthly_bookings_${user.firstName}.pdf`}
-              className="inline-flex items-center px-4 py-2 text-white bg-red-600 border border-transparent rounded-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-            >
-              {({ loading }) =>
-                loading ? <Spinner color="white" /> : <span>Download PDF</span>
-              }
-            </PDFDownloadLink>
 
-            <Button
-              onClick={handleUpload}
-              disabled={uploading}
-              color="primary"
-              className="rounded-full"
-            >
-              {uploading ? <Spinner color="white" /> : "Save PDF"}
-            </Button>
-          </>
-        )}
-      </div>
+      {bookingCount > 0 && (
+        <div className="flex justify-center space-x-4">
+          <PDFDownloadLink
+            document={PDFDocument}
+            fileName={pdfFileName}
+            className="inline-flex items-center px-4 py-2 text-white bg-red-600 border border-transparent rounded-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            {({ loading }) =>
+              loading ? <Spinner color="white" /> : <span>Download PDF</span>
+            }
+          </PDFDownloadLink>
+
+          <Button
+            onClick={handleUpload}
+            disabled={uploading}
+            color="primary"
+            className="rounded-full"
+          >
+            {uploading ? <Spinner color="white" /> : "Save PDF"}
+          </Button>
+        </div>
+      )}
     </>
   );
 }

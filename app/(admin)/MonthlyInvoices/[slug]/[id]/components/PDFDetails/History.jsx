@@ -8,18 +8,21 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Button,
 } from "@nextui-org/react";
-import { format } from "date-fns";
 import emailjs from "emailjs-com";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 import useAdminContext from "@/context/AdminProvider";
+import sendInvoice from "@/server/Paypal/createDraftInvoice";
+import { Delete, DeleteIcon, Mail, TrashIcon } from "lucide-react";
+import { IconBrandPaypal } from "@tabler/icons-react";
 
 export default function History({ email }) {
   const [pdfs, setPdfs] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { allUsers } = useAdminContext();
 
   useEffect(() => {
@@ -108,8 +111,7 @@ export default function History({ email }) {
         <TableColumn>Dates</TableColumn>
         <TableColumn>ID</TableColumn>
         <TableColumn>Download</TableColumn>
-        <TableColumn>Delete</TableColumn>
-        <TableColumn>Send to Client</TableColumn>
+        <TableColumn>Action</TableColumn>
       </TableHeader>
       <TableBody emptyContent={"No rows to display."}>
         {pdfs?.map((pdf, index) => {
@@ -136,13 +138,30 @@ export default function History({ email }) {
                   View
                 </a>
               </TableCell>
-              <TableCell className="cursor-pointer">
-                <p onClick={() => deletePdf(pdf?.id)}>🗑️</p>
-              </TableCell>
-              <TableCell className="cursor-pointer">
-                <p onClick={() => sendEmailToClients(sendingEmail, pdf?.url)}>
-                  📧 Send
-                </p>
+              <TableCell>
+                <div className="flex flex-row gap-2">
+                  <Button
+                    size="sm"
+                    startContent={<TrashIcon className="size-3" />}
+                    onClick={() => deletePdf(pdf?.id)}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    size="sm"
+                    startContent={<Mail className="size-3" />}
+                    onClick={() => sendEmailToClients(sendingEmail, pdf?.url)}
+                  >
+                    Email
+                  </Button>
+                  <Button
+                    size="sm"
+                    startContent={<IconBrandPaypal className="size-3" />}
+                    onClick={() => sendInvoice(JSON.stringify(pdf))}
+                  >
+                    Paypal
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           );
