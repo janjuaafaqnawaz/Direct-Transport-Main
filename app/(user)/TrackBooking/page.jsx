@@ -68,11 +68,7 @@ export default function Page() {
     try {
       const bookings = await getBookingsBetweenDates(
         formData.fromDate,
-        new Date(
-          new Date(formData.toDate).setDate(
-            new Date(formData.toDate).getDate() + 1
-          )
-        ),
+        formData.toDate,
         formData.reference,
         formData.reference,
         role
