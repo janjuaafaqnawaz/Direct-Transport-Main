@@ -18,7 +18,6 @@ import { app } from "../config";
 import SendEmailToClients from "@/api/emails/SendEmailToClients";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import toast from "react-hot-toast";
-import getCurrentTime from "@/api/getCurrentTime";
 
 const notify = (msg) => toast(msg);
 
@@ -32,7 +31,7 @@ async function postCustomIdDoc(data, collectionName, customId) {
   }
 
   try {
-    const createdAt = await getCurrentTime();
+    const createdAt = new Date();
     const collectionRef = collection(db, collectionName);
 
     // Use the custom ID to reference the document
@@ -46,6 +45,7 @@ async function postCustomIdDoc(data, collectionName, customId) {
       userEmail: user.email,
       userName: user.firstName,
       createdAt: createdAt,
+      createdAtStandardized: createdAt,
       isNew: true,
     };
 
@@ -68,7 +68,7 @@ async function postDoc(data, collectionName) {
   }
 
   try {
-    const createdAt = await getCurrentTime();
+    const createdAt = new Date();
     const collectionRef = collection(db, collectionName);
     const docRef = await addDoc(collectionRef, data);
     const updatedData = {
@@ -76,6 +76,7 @@ async function postDoc(data, collectionName) {
       userEmail: user.email,
       userName: user.firstName,
       createdAt: createdAt,
+      createdAtStandardized: createdAt,
       isNew: true,
     };
     await updateDoc(collectionName, docRef.id, updatedData);
@@ -92,7 +93,7 @@ async function postInvoice(data, collectionName, selectedEmail) {
   const { name, email, admin } = selectedEmail || {};
 
   try {
-    const createdAt = await getCurrentTime();
+    const createdAt = new Date();
     const user = JSON.parse(localStorage.getItem("userDoc"));
 
     const docId = `DTS${Math.floor(Math.random() * 99999) + 10000}`;
@@ -102,7 +103,8 @@ async function postInvoice(data, collectionName, selectedEmail) {
       docId: docId,
       userEmail: admin && email !== "" ? email : user?.email || "Unknown",
       userName: admin ? name : user?.firstName || data?.contact || "Unknown",
-      createdAt: createdAt || new Date(),
+      createdAt: createdAt,
+      createdAtStandardized: createdAt,
       isNew: true,
     };
     const docRef = doc(db, collectionName, docId); // Use the custom ID

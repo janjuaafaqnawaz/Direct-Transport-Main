@@ -56,7 +56,7 @@ export function Columns({ isArchived, hideAction }) {
       field: "createdAt",
       headerName: "Booking Created",
       width: 170,
-      valueGetter: (value, row) => formatToSydneyTime(row?.createdAt),
+      valueGetter: (value, row) => formatToSydneyTime(row?.createdAtStandardized),
     },
     { field: "userName", headerName: "Customer", width: 100 },
     {

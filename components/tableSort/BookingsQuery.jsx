@@ -83,7 +83,7 @@ function BookingTable({ bookings }) {
   const dates = bookings.map((booking) => {
     return {
       id: booking.id,
-      createAt: formatToSydneyTime(booking?.createAt),
+      createdAt: formatToSydneyTime(booking?.createdAt),
       createdAtStandardized: formatToSydneyTime(booking?.createdAtStandardized),
       ready: booking.date,
     };
