@@ -28,28 +28,29 @@ export default function History({ email }) {
   const [error, setError] = useState(null);
   const { allUsers } = useAdminContext();
 
+  const getPdfs = async () => {
+    try {
+      const pdfs = await fetchMyPdfsOfDoc(email);
+      const sortedPdfs = pdfs
+        .filter(
+          (pdf) => pdf.createdAt && typeof pdf.createdAt.toDate === "function"
+        )
+        .sort(
+          (a, b) =>
+            b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()
+        );
+      setPdfs(sortedPdfs);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch PDFs.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const getPdfs = async () => {
-      try {
-        const pdfs = await fetchMyPdfsOfDoc(email);
-        const sortedPdfs = pdfs
-          .filter(
-            (pdf) => pdf.createdAt && typeof pdf.createdAt.toDate === "function"
-          )
-          .sort(
-            (a, b) =>
-              b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()
-          );
-        setPdfs(sortedPdfs);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch PDFs.");
-      } finally {
-        setLoading(false);
-      }
-    };
     getPdfs();
-  }, [email]);
+  }, []);
 
   const deletePdf = async (docId) => {
     try {
@@ -131,6 +132,8 @@ export default function History({ email }) {
       await updateDoc("generatedPdfs", docId, {
         paypal_id: response.invoiceId,
       });
+
+      getPdfs();
 
       toast.success(response.message, { id: toastId });
     } catch (error) {
