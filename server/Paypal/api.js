@@ -23,7 +23,7 @@ export const generateInvoiceNumber = async () => {
     const accessToken = await getAccessToken();
 
     const response = await fetch(
-      "https://api-m.sandbox.paypal.com/v2/invoicing/generate-next-invoice-number",
+      `${BASE_URL}/v2/invoicing/generate-next-invoice-number`,
       {
         method: "POST",
         headers: {
@@ -37,6 +37,32 @@ export const generateInvoiceNumber = async () => {
     return data.invoice_number;
   } catch (error) {
     console.error("Error generating invoice number:", error);
+    throw error;
+  }
+};
+
+export const getInvoice = async (id) => {
+  console.log(id);
+
+  try {
+    const accessToken = await getAccessToken();
+
+    const response = await axios.get(
+      `${BASE_URL}/v2/invoicing/invoices/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching invoice details:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };

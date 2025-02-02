@@ -1,21 +1,16 @@
 "use server";
 
 import axios from "axios";
-import { GenerateInvoiceNumber, getAccessToken } from "./api";
+import { generateInvoiceNumber, getAccessToken } from "./api";
 import { BASE_URL } from "./credentials";
 
-export default async function sendInvoice(pdf) {
+export default async function sendInvoice(finalDriverPay, pdfId, firstName) {
   const accessToken = await getAccessToken();
-  const invoiceNumber = await GenerateInvoiceNumber();
+  const invoiceNumber = pdfId;
 
-  console.log({
-    accessToken,
-    invoiceNumber,
-  });
-
-  const currentDate = new Date().toISOString().split("T")[0]; // Today's date
+  const currentDate = new Date().toISOString().split("T")[0];
   const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 10); // NET_10 means 10 days from now
+  dueDate.setDate(dueDate.getDate() + 10);
   const formattedDueDate = dueDate.toISOString().split("T")[0];
 
   try {
@@ -31,30 +26,28 @@ export default async function sendInvoice(pdf) {
         payment_term: { term_type: "NET_10", due_date: formattedDueDate },
       },
       invoicer: {
-        name: { given_name: "David", surname: "Larusso" },
+        name: { given_name: "DTS", surname: "" },
         address: {
           address_line_1: "1234 First Street",
-          address_line_2: "337673 Hillside Court",
-          admin_area_2: "Anytown",
           admin_area_1: "CA",
           postal_code: "98765",
           country_code: "US",
         },
-        email_address: "merchant@example.com",
+        email_address: "sb-ttuuv36087370@business.example.com",
       },
       primary_recipients: [
         {
           billing_info: {
-            name: { given_name: "John", surname: "Doe" },
-            email_address: "customer@example.com",
+            name: { given_name: firstName, surname: "" },
+            email_address: "sb-ttuuv36087370@business.example.com",
           },
         },
       ],
       items: [
         {
-          name: "Web Development Service",
+          name: "Direct Transport Solution Service",
           quantity: 1,
-          unit_amount: { currency_code: "USD", value: "500.00" },
+          unit_amount: { currency_code: "AUD", value: finalDriverPay },
           tax: { name: "Sales Tax", percent: "7.25" },
         },
       ],
@@ -65,7 +58,8 @@ export default async function sendInvoice(pdf) {
       },
     };
 
-    const response = await axios.post(
+    // Create the invoice
+    const createResponse = await axios.post(
       `${BASE_URL}/v2/invoicing/invoices`,
       invoiceData,
       {
@@ -76,11 +70,12 @@ export default async function sendInvoice(pdf) {
       }
     );
 
-    const invoiceId = response.data.id;
-    console.log("Invoice created:", response.data);
+    const invoiceUrl = createResponse.data.href;
+    const invoiceId = invoiceUrl.split("/").pop();
+    console.log("Invoice created successfully!");
 
-    // Sending the invoice
-    await axios.post(
+    // Send the invoice
+    const sendResponse = await axios.post(
       `${BASE_URL}/v2/invoicing/invoices/${invoiceId}/send`,
       {},
       {
@@ -91,8 +86,21 @@ export default async function sendInvoice(pdf) {
     );
 
     console.log("Invoice sent successfully!");
-    return response.data;
+    return {
+      success: true,
+      message: "Invoice created and sent successfully!",
+      data: sendResponse.data,
+      invoiceId,
+    };
   } catch (error) {
-    console.error("Error creating invoice:", error.response?.data || error);
+    console.error(
+      "Error in invoice process:",
+      error.response?.data || error.message
+    );
+    return {
+      success: false,
+      message: "Failed to create or send invoice.",
+      error: error.response?.data || error.message,
+    };
   }
 }
