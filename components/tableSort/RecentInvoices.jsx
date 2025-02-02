@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +19,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { PdfButton } from "@/components/Index";
-import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 import TrackDriver from "./ManageInvoices/InvoiceAction/TrackDriver/TrackDriverModal";
 import { Badge } from "@/components/ui/badge";
 import { Eye } from "lucide-react";
@@ -31,61 +30,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { parse } from "date-fns";
 
-export default function RecentInvoices({ place_booking, place_job }) {
+export default function RecentInvoices({ place_booking }) {
   const router = useRouter();
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
   const rowsPerPage = 10;
 
-  const combinedData = useMemo(() => {
-    return [...(place_booking || []), ...(place_job || [])].filter(
-      (booking) => booking.date
-    );
-  }, [place_booking, place_job]);
-
-  const sortedBookings = useMemo(() => {
-    return [...combinedData].sort((a, b) => {
-      if (sortBy === "date") {
-        const dateA = a.dateTimestamp;
-        const dateB = b.dateTimestamp;
-        return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
-      } else if (sortBy === "invoice") {
-        const invoiceA =
-          Number(a?.totalPriceWithGST || 0) + Number(a?.totalTollsCost || 0);
-        const invoiceB =
-          Number(b?.totalPriceWithGST || 0) + Number(b?.totalTollsCost || 0);
-        return sortOrder === "desc" ? invoiceB - invoiceA : invoiceA - invoiceB;
-      }
-      return 0;
-    });
-  }, [combinedData, sortBy, sortOrder]);
-
-  const userDoc = useMemo(() => {
-    if (typeof window !== "undefined") {
-      return JSON.parse(localStorage.getItem("userDoc") || "{}");
-    }
-    return {};
-  }, []);
-
-  const paginatedData = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    return sortedBookings.slice(start, end);
-  }, [page, sortedBookings]);
-
-  const handleNavigate = (id) => {
-    router.push(`/RecentInvoices/${id}`);
+  const parseDate = (dateStr) => {
+    if (!dateStr || typeof dateStr !== "string") return new Date(0);
+    return parse(dateStr, "dd/MM/yyyy", new Date());
   };
 
+  const sortedBookings = useMemo(() => {
+    return place_booking
+      .filter((booking) => booking?.date && booking?.returnType)
+      .sort((a, b) => {
+        if (sortBy === "date") {
+          const dateA = parseDate(a.date).getTime();
+          const dateB = parseDate(b.date).getTime();
+          return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+        } else if (sortBy === "invoice") {
+          const invoiceA =
+            Number(a?.totalPriceWithGST || 0) + Number(a?.totalTollsCost || 0);
+          const invoiceB =
+            Number(b?.totalPriceWithGST || 0) + Number(b?.totalTollsCost || 0);
+          return sortOrder === "desc"
+            ? invoiceB - invoiceA
+            : invoiceA - invoiceB;
+        }
+        return 0;
+      });
+  }, [place_booking, sortBy, sortOrder]);
+
+  // Pagination Logic
+  const paginatedData = useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    return sortedBookings.slice(start, start + rowsPerPage);
+  }, [page, sortedBookings]);
+
+  // Handle navigation
+  const handleNavigate = (id) => router.push(`/RecentInvoices/${id}`);
+
+  const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
+
+  // Render each row
   const renderTableRow = (row) => (
     <TableRow key={row.docId}>
       <TableCell className="font-medium">{row.returnType}</TableCell>
       <TableCell>{row.docId}</TableCell>
-      <TableCell>{formatToSydneyTime(row.dateTimestamp)}</TableCell>
+      <TableCell>{row.date}</TableCell>
       <TableCell>
-        $
+        $$
         {(
           Number(row?.totalPriceWithGST || 0) + Number(row?.totalTollsCost || 0)
         ).toFixed(2)}
@@ -107,7 +105,9 @@ export default function RecentInvoices({ place_booking, place_job }) {
             <Eye className="mr-2 h-4 w-4" />
             View
           </Button>
-          {userDoc?.tracking && <TrackDriver customBtn={true} booking={row} />}
+          {userDoc && userDoc?.tracking && (
+            <TrackDriver customBtn={true} booking={row} />
+          )}
         </div>
       </TableCell>
       <TableCell>
@@ -115,8 +115,6 @@ export default function RecentInvoices({ place_booking, place_job }) {
       </TableCell>
     </TableRow>
   );
-
-  const total = Math.ceil(combinedData.length / rowsPerPage);
 
   return (
     <Card className="w-full max-w-6xl mx-auto mt-8">
@@ -126,7 +124,8 @@ export default function RecentInvoices({ place_booking, place_job }) {
       </CardHeader>
       <CardContent>
         <div className="flex justify-end mb-4 space-x-4">
-          <Select value={sortBy} onValueChange={setSortBy}>
+          {/* Sort By Dropdown */}
+          <Select value={sortBy} onValueChange={setSortBy} className="bg-white">
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -135,7 +134,12 @@ export default function RecentInvoices({ place_booking, place_job }) {
               <SelectItem value="invoice">Invoice Amount</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={sortOrder} onValueChange={setSortOrder}>
+          {/* Sort Order Dropdown */}
+          <Select
+            value={sortOrder}
+            onValueChange={setSortOrder}
+            className="bg-white"
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort order" />
             </SelectTrigger>
@@ -145,6 +149,7 @@ export default function RecentInvoices({ place_booking, place_job }) {
             </SelectContent>
           </Select>
         </div>
+        {/* Table */}
         <Table>
           <TableHeader>
             <TableRow>
@@ -157,16 +162,19 @@ export default function RecentInvoices({ place_booking, place_job }) {
               <TableHead>Download Invoice</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>{paginatedData.map(renderTableRow)}</TableBody>
+          <TableBody>
+            {paginatedData.map((row) => renderTableRow(row))}
+          </TableBody>
         </Table>
+        {/* Pagination */}
         <div className="flex w-full justify-center mt-4">
           <Pagination
             isCompact
             showControls
             showShadow
-            color="primary"
+            color="secondary"
             page={page}
-            total={total}
+            total={Math.ceil(sortedBookings.length / rowsPerPage)}
             onChange={setPage}
           />
         </div>
