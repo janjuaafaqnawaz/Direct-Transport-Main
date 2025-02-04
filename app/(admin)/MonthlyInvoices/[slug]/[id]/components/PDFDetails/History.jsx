@@ -222,7 +222,7 @@ export default function History({ email }) {
                     >
                       Email
                     </Button>
-                    <Button
+                    {/* <Button
                       startContent={<IconBrandPaypal className="size-3" />}
                       onClick={() => handlePayPal(pdf)}
                       color="primary"
@@ -234,7 +234,7 @@ export default function History({ email }) {
                       onPress={() => getInvoiceStatus(pdf)}
                     >
                       Status
-                    </Button>
+                    </Button> */}
                   </ButtonGroup>
                 </div>
               </TableCell>

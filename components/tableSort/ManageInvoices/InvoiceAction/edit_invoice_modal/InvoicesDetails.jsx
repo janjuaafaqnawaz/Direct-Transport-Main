@@ -165,7 +165,6 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
                 value={formData.pickupPhone}
                 onChange={handleChange("pickupPhone")}
                 className="w-64"
-                type="number"
               />
             </Group>
             <Group grow wrap="nowrap" align="flex-end">
@@ -198,7 +197,6 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
                 value={formData.deliveryPhone}
                 onChange={handleChange("deliveryPhone")}
                 className="w-64"
-                type="number"
               />
             </Group>
             <Divider my="sm" />
