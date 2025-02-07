@@ -152,7 +152,26 @@ export default function History({ email }) {
 
     try {
       const details = await getInvoice(paypal_id);
-      toast.success(`Invoice Status: ${details.status}`, { id: toastId });
+      console.log({ details });
+
+      let statusMessage = details.status;
+
+      if (details.status === "SENT") {
+        const dueDate = new Date(details.detail.payment_term.due_date);
+        const today = new Date();
+
+        if (details.due_amount.value > 0) {
+          if (today > dueDate) {
+            statusMessage = "UNPAID";
+          } else {
+            statusMessage = "DUE";
+          }
+        } else {
+          statusMessage = "PAID";
+        }
+      }
+
+      toast.success(`Invoice Status: ${statusMessage}`, { id: toastId });
     } catch (error) {
       console.error("Error fetching invoice status:", error);
       toast.error("Failed to fetch invoice status.", { id: toastId });
