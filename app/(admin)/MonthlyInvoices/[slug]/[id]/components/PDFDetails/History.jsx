@@ -1,6 +1,6 @@
 "use client";
-import { fetchMyPdfsOfDoc } from "@/api/firebase/functions/fetch";
-import { deleteDocument, updateDoc } from "@/api/firebase/functions/upload";
+import { useEffect, useState } from "react";
+
 import {
   Table,
   TableHeader,
@@ -13,14 +13,15 @@ import {
   Chip,
 } from "@nextui-org/react";
 import emailjs from "emailjs-com";
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 import useAdminContext from "@/context/AdminProvider";
-import sendInvoice from "@/server/Paypal/sendInvoice";
-import { FolderOpen, Mail, TrashIcon, View } from "lucide-react";
-import { IconBrandPaypal } from "@tabler/icons-react";
 import { getInvoice } from "@/server/Paypal/api";
+import { FolderOpen, Mail, TrashIcon } from "lucide-react";
+import { IconBrandPaypal } from "@tabler/icons-react";
+import { fetchMyPdfsOfDoc } from "@/api/firebase/functions/fetch";
+import { deleteDocument, updateDoc } from "@/api/firebase/functions/upload";
+import sendInvoice from "@/server/Paypal/sendInvoice";
 
 export default function History({ email }) {
   const [pdfs, setPdfs] = useState([]);
@@ -28,7 +29,11 @@ export default function History({ email }) {
   const [error, setError] = useState(null);
   const { allUsers } = useAdminContext();
 
-  const getPdfs = async () => {
+  useEffect(() => {
+    fetchPdfs();
+  }, []);
+
+  const fetchPdfs = async () => {
     try {
       const pdfs = await fetchMyPdfsOfDoc(email);
       const sortedPdfs = pdfs
@@ -48,11 +53,7 @@ export default function History({ email }) {
     }
   };
 
-  useEffect(() => {
-    getPdfs();
-  }, []);
-
-  const deletePdf = async (docId) => {
+  const handleDeletePdf = async (docId) => {
     try {
       await deleteDocument("generatedPdfs", docId);
       setPdfs((prev) => prev.filter((pdf) => pdf.id !== docId));
@@ -63,30 +64,18 @@ export default function History({ email }) {
     }
   };
 
-  const isValidEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
-  const sendEmailToClients = async (toEmail, url) => {
+  const handleSendEmail = async (toEmail, url) => {
     const cleanEmail = toEmail.trim();
 
-    if (!isValidEmail(cleanEmail)) {
-      toast.error("Invalid email address.");
-      return;
-    }
-
     try {
-      const templateParams = {
-        toEmail: cleanEmail,
-        url: url,
-        download: url,
-      };
-
       await emailjs.send(
         "service_i9cmmnr",
         "template_n4vn10i",
-        templateParams,
+        {
+          toEmail: cleanEmail,
+          url: url,
+          download: url,
+        },
         "vYni03aqa3sHW_yf9"
       );
 
@@ -97,10 +86,12 @@ export default function History({ email }) {
     }
   };
 
-  const handlePayPal = async (pdf) => {
+  const handlePayPalInvoice = async (pdf) => {
     const { finalDriverPay, pdfId, firstName, docId } = pdf;
-
     const toastId = toast.loading("Checking details...");
+    const user = allUsers.find((user) => user?.email === pdf?.email);
+    const sendingEmail = user?.billingEmail || user?.email;
+    const cleanEmail = sendingEmail.trim();
 
     if (!finalDriverPay || !pdfId || !firstName) {
       toast.error(
@@ -110,31 +101,38 @@ export default function History({ email }) {
       return;
     }
 
-    toast.loading("Sending to paypal...", { id: toastId });
-
     try {
       const response = await sendInvoice(finalDriverPay, pdfId, firstName);
 
       if (!response.success) {
-        if (
+        const errorMessage =
           response.error?.details?.[0]?.issue === "DUPLICATE_INVOICE_NUMBER"
-        ) {
-          toast.error("This invoice is already created.", { id: toastId });
-        } else {
-          toast.error(
-            response.error?.details?.[0]?.issue || "An error occurred.",
-            { id: toastId }
-          );
-        }
+            ? "This invoice is already created."
+            : response.error?.details?.[0]?.issue || "An error occurred.";
+        toast.error(errorMessage, { id: toastId });
         return;
       }
 
+      console.log({ response });
+
       await updateDoc("generatedPdfs", docId, {
         paypal_id: response.invoiceId,
+        paypal_link: response.data.href,
       });
 
-      getPdfs();
-
+      await emailjs.send(
+        "service_i9cmmnr",
+        "template_txk0pyh",
+        {
+          driver_email: cleanEmail,
+          driver_name: firstName,
+          paypal_link: response.data.href,
+          firstName,
+          finalDriverPay,
+        },
+        "vYni03aqa3sHW_yf9"
+      );
+      fetchPdfs();
       toast.success(response.message, { id: toastId });
     } catch (error) {
       console.error("Error handling PayPal:", error);
@@ -142,7 +140,7 @@ export default function History({ email }) {
     }
   };
 
-  const getInvoiceStatus = async (pdf) => {
+  const handleGetInvoiceStatus = async (pdf) => {
     const { paypal_id } = pdf;
 
     if (!paypal_id) {
@@ -154,12 +152,9 @@ export default function History({ email }) {
 
     try {
       const details = await getInvoice(paypal_id);
-      console.log(details);
-
       toast.success(`Invoice Status: ${details.status}`, { id: toastId });
     } catch (error) {
       console.error("Error fetching invoice status:", error);
-
       toast.error("Failed to fetch invoice status.", { id: toastId });
     }
   };
@@ -180,63 +175,55 @@ export default function History({ email }) {
       <TableBody emptyContent={"No rows to display."}>
         {pdfs.map((pdf) => {
           const user = allUsers.find((user) => user?.email === pdf?.email);
-          const sendingEmail = user?.billingEmail
-            ? user.billingEmail
-            : user?.email;
+          const sendingEmail = user?.billingEmail || user?.email;
 
           return (
             <TableRow key={pdf.id}>
               <TableCell>{pdf?.firstName || pdf?.userName}</TableCell>
               <TableCell>{formatToSydneyTime(pdf.createdAt)}</TableCell>
+              <TableCell>{`${pdf?.datesRange?.start} - ${pdf?.datesRange?.end}`}</TableCell>
               <TableCell>
-                {pdf?.datesRange?.start + " - " + pdf?.datesRange?.end}
-              </TableCell>
-              <TableCell>
-                <Chip size="sm ">{pdf?.pdfId}</Chip>
-                <br />
+                <Chip size="sm">{pdf?.pdfId}</Chip>
                 {pdf?.paypal_id && <Chip size="sm">{pdf?.paypal_id}</Chip>}
               </TableCell>
-
               <TableCell>
-                <div className="flex flex-row gap-2">
-                  <ButtonGroup size="sm">
-                    <Button startContent={<FolderOpen className="size-3" />}>
-                      <a
-                        href={pdf?.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download
-                      >
-                        View
-                      </a>
-                    </Button>
-                    <Button
-                      startContent={<TrashIcon className="size-3" />}
-                      onClick={() => deletePdf(pdf?.id)}
+                <ButtonGroup size="sm">
+                  <Button startContent={<FolderOpen className="size-3" />}>
+                    <a
+                      href={pdf?.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
                     >
-                      Delete
-                    </Button>
-                    <Button
-                      startContent={<Mail className="size-3" />}
-                      onClick={() => sendEmailToClients(sendingEmail, pdf?.url)}
-                    >
-                      Email
-                    </Button>
-                    {/* <Button
-                      startContent={<IconBrandPaypal className="size-3" />}
-                      onClick={() => handlePayPal(pdf)}
-                      color="primary"
-                    >
-                      PayPal
-                    </Button>
-                    <Button
-                      color="primary"
-                      onPress={() => getInvoiceStatus(pdf)}
-                    >
-                      Status
-                    </Button> */}
-                  </ButtonGroup>
-                </div>
+                      View
+                    </a>
+                  </Button>
+                  <Button
+                    startContent={<TrashIcon className="size-3" />}
+                    onClick={() => handleDeletePdf(pdf?.id)}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    startContent={<Mail className="size-3" />}
+                    onClick={() => handleSendEmail(sendingEmail, pdf?.url)}
+                  >
+                    Email
+                  </Button>
+                  <Button
+                    startContent={<IconBrandPaypal className="size-3" />}
+                    onClick={() => handlePayPalInvoice(pdf)}
+                    color="primary"
+                  >
+                    PayPal
+                  </Button>
+                  <Button
+                    color="primary"
+                    onPress={() => handleGetInvoiceStatus(pdf)}
+                  >
+                    Status
+                  </Button>
+                </ButtonGroup>
               </TableCell>
             </TableRow>
           );

@@ -26,7 +26,7 @@ export default async function sendInvoice(finalDriverPay, pdfId, firstName) {
         payment_term: { term_type: "NET_10", due_date: formattedDueDate },
       },
       invoicer: {
-        name: { given_name: "DTS", surname: "" },
+        name: { given_name: "Direct Transport Solution", surname: "" },
         address: {
           address_line_1: "1234 First Street",
           admin_area_1: "CA",
@@ -48,7 +48,6 @@ export default async function sendInvoice(finalDriverPay, pdfId, firstName) {
           name: "Direct Transport Solution Service",
           quantity: 1,
           unit_amount: { currency_code: "AUD", value: finalDriverPay },
-          tax: { name: "Sales Tax", percent: "7.25" },
         },
       ],
       configuration: {
