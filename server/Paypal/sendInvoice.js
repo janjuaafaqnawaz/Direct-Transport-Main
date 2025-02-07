@@ -4,7 +4,12 @@ import axios from "axios";
 import { generateInvoiceNumber, getAccessToken } from "./api";
 import { BASE_URL } from "./credentials";
 
-export default async function sendInvoice(finalDriverPay, pdfId, firstName) {
+export default async function sendInvoice(
+  finalDriverPay,
+  pdfId,
+  firstName,
+  payPalEmail
+) {
   const accessToken = await getAccessToken();
   const invoiceNumber = pdfId;
 
@@ -39,7 +44,7 @@ export default async function sendInvoice(finalDriverPay, pdfId, firstName) {
         {
           billing_info: {
             name: { given_name: firstName, surname: "" },
-            email_address: "sb-ttuuv36087370@business.example.com",
+            email_address: payPalEmail,
           },
         },
       ],

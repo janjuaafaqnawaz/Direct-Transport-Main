@@ -93,7 +93,7 @@ export default function History({ email }) {
     const sendingEmail = user?.billingEmail || user?.email;
     const cleanEmail = sendingEmail.trim();
 
-    if (!finalDriverPay || !pdfId || !firstName) {
+    if (!finalDriverPay || !pdfId || !firstName || !user.payPalEmail) {
       toast.error(
         "Invalid invoice data. Please retry creating a new invoice.",
         { id: toastId }
@@ -102,7 +102,12 @@ export default function History({ email }) {
     }
 
     try {
-      const response = await sendInvoice(finalDriverPay, pdfId, firstName);
+      const response = await sendInvoice(
+        finalDriverPay,
+        pdfId,
+        firstName,
+        user.payPalEmail
+      );
 
       if (!response.success) {
         const errorMessage =
