@@ -17,45 +17,16 @@ const toCapitalize = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
-function formatDateToMidnight(dateString) {
-  console.log({ dateString });
-
-  if (!dateString) {
-    console.warn("Invalid input: dateString is undefined or not a string");
-    return " ";
-  }
-
-  // Validate the date format using regex
-  const regex = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}$/;
-  if (!regex.test(dateString)) {
-    console.warn("Invalid date format: expected 'dd/mm/yyyy hh:mm:ss'");
-    return " ";
-  }
-
+const parseDeliveredDate = (date) => {
+  const deliveredDate = date;
   try {
-    const [datePart, timePart] = dateString.split(" ");
+    const [datePart, timePart] = deliveredDate.split(" ");
     const [day, month, year] = datePart.split("/");
-    const [hour, minute, second] = timePart.split(":");
-
-    const date = new Date(year, month - 1, day, hour, minute, second);
-
-    if (isNaN(date.getTime())) {
-      console.warn("Invalid date: the provided date is not valid");
-      return " ";
-    }
-
-    date.setHours(0, 0, 0, 0);
-
-    const formattedDay = String(date.getDate()).padStart(2, "0");
-    const formattedMonth = String(date.getMonth() + 1).padStart(2, "0");
-    const formattedYear = date.getFullYear();
-
-    return `${formattedDay}/${formattedMonth}/${formattedYear} 12:00 AM`;
+    return `${day}/${month}/${year}`;
   } catch (error) {
-    console.error("Error formatting date:", error);
     return " ";
   }
-}
+};
 
 export function RowsWithIds({ invoice }) {
   const sortedInvoices = [...invoice].sort(
@@ -105,7 +76,7 @@ export function Columns({ isArchived, hideAction }) {
       width: 170,
       valueGetter: (value, row) =>
         row?.progressInformation?.delivered &&
-        formatDateToMidnight(row?.progressInformation?.delivered),
+        parseDeliveredDate(row?.progressInformation?.delivered),
     },
     { field: "userName", headerName: "Customer", width: 100 },
     {
