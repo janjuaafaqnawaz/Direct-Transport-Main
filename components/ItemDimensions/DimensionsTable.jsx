@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import CheckCircleTwoToneIcon from "@mui/icons-material/CheckCircleTwoTone";
 import { updateDoc } from "@/api/firebase/functions/upload";
 import { Button } from "@nextui-org/react";
+
 export default function DimensionsTable({
   items,
   handleDelete,
@@ -29,6 +30,10 @@ export default function DimensionsTable({
   const [allItems, setAllItems] = useState(items);
   const [formData, setFormData] = useState(initForm);
 
+  useEffect(() => {
+    handleSave();
+  }, [allItems]);
+
   const tableStyle = {
     width: "100%",
     borderCollapse: "collapse",
@@ -42,15 +47,16 @@ export default function DimensionsTable({
     fontWeight: 600,
   };
 
-  const handleAddNewDimensions = () => {
+  const handleAddNewDimensions = async () => {
     const updatedItems = [...allItems];
     updatedItems[input.index] = {
       ...updatedItems[input.index],
       dimensionsAD: formData,
     };
     setAllItems(updatedItems);
+
     setFormData(initForm);
-    setInput({ state: false, index: 0, saved: false });
+    setInput({ state: false, index: 0, saved: true });
   };
 
   const handleChange = (name, value) => {
@@ -58,11 +64,15 @@ export default function DimensionsTable({
   };
 
   const handleSave = async () => {
-    await updateDoc("place_bookings", invoice.docId, {
-      ...invoice,
-      items: allItems,
-    });
-    setInput({ state: false, index: 0, saved: true });
+    try {
+      await updateDoc("place_bookings", invoice.docId, {
+        ...invoice,
+        items: allItems,
+      });
+      setInput({ state: false, index: 0, saved: true });
+    } catch (error) {
+      console.error("Error saving dimensions:", error);
+    }
   };
 
   return (
