@@ -16,7 +16,6 @@ import { calculateInvoiceDetails } from "./getTotalInvoicePrice";
 
 const storage = getStorage(app);
 
-// Lazy load PDFDownloadLink for SSR optimization
 const PDFDownloadLink = dynamic(
   () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
   {
@@ -32,7 +31,6 @@ export default function PdfButton({
   driverLayout,
   pdfId,
 }) {
-  // State Hooks
   const [uploading, setUploading] = useState(false);
   const [selectedLayout, setSelectedLayout] = useState("Layout2");
   const [pay, setPay] = useState(null);
@@ -40,11 +38,14 @@ export default function PdfButton({
   const bookingCount = bookings.length;
   const pdfFileName = `monthly_bookings_${user.firstName}.pdf`;
 
-  // Generate the correct PDF layout based on props
+  console.log({
+    bookings,
+  });
+
   const PDFDocument = useMemo(() => {
     if (driverLayout) {
       const { finalDriverPay } = calculateInvoiceDetails(bookings, user);
-      setPay(finalDriverPay); // Update driver pay only when necessary
+      setPay(finalDriverPay);
       return (
         <PDFLayoutDriver
           datesRange={datesRange}
@@ -71,7 +72,6 @@ export default function PdfButton({
     );
   }, [driverLayout, selectedLayout, bookings, user, pdfId]);
 
-  // Handles PDF Upload
   const handleUpload = async () => {
     setUploading(true);
     try {

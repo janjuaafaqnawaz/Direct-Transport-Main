@@ -18,9 +18,8 @@ const toCapitalize = (str) => {
 };
 
 function formatDateToMidnight(dateString) {
-  console.log({dateString});
-  
-  
+  console.log({ dateString });
+
   if (!dateString) {
     console.warn("Invalid input: dateString is undefined or not a string");
     return " ";
@@ -100,7 +99,7 @@ export function Columns({ isArchived, hideAction }) {
       valueGetter: (value, row) =>
         formatToSydneyTime(row?.createdAtStandardized),
     },
-    {
+    hideAction && {
       field: "delivered",
       headerName: "Delivered",
       width: 170,

@@ -9,19 +9,20 @@ import { Timestamp } from "firebase/firestore";
 
 const pdfId = Math.floor(100000 + Math.random() * 900000);
 
+const parseDate = (dateString) => {
+  const [day, month, year] = dateString.split("/");
+  return new Date(year, month - 1, day);
+};
+
 export default function CreatePdfForDrivers({ datesRange, user }) {
   const [loading, setLoading] = useState(true);
   const [clientBookings, setClientBookings] = useState([]);
   const [driverBookings, setDriverBookings] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const { allBookings } = useAdminContext();
 
   async function userBookings() {
     try {
-      const parseDate = (dateString) => {
-        const [day, month, year] = dateString.split("/");
-        return new Date(year, month - 1, day);
-      };
-
       const startDate = parseDate(datesRange.start);
       const endDate = parseDate(datesRange.end);
 
@@ -35,22 +36,17 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
         if (item?.createdAtStandardized) {
           const createdAtTimestamp = item.createdAtStandardized;
 
-          // console.log({
-          //   startTimestamp,
-          //   endTimestamp,
-          //   createdAtTimestamp,
-          // });
-
           return (
             createdAtTimestamp.seconds >= startTimestamp.seconds &&
-            createdAtTimestamp.seconds <= endTimestamp.seconds
+            createdAtTimestamp.seconds <= endTimestamp.seconds &&
+            user.email === item.userEmail
           );
         }
 
         return false;
       });
 
-      setClientBookings(filteredBookings);
+      setBookings(filteredBookings);
     } catch (error) {
       console.error("Error filtering bookings:", error);
     } finally {
@@ -60,38 +56,53 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
 
   async function driverDeliveredBookings() {
     try {
+      const startDate = parseDate(datesRange.start);
+      const endDate = parseDate(datesRange.end);
+
+      const startTimestamp = Timestamp.fromDate(startDate);
+      const endTimestamp = Timestamp.fromDate(endDate);
+
       const filteredBookings = allBookings?.filter((item) => {
         if (item?.isArchived === true) return false;
 
         if (item?.progressInformation?.delivered) {
-          const deliveredDate = item.progressInformation.delivered;
+          const createdAtTimestamp = item.createdAtStandardized;
 
-          const [datePart, timePart] = deliveredDate.split(" ");
-          const [day, month, year] = datePart.split("/");
-          const [hour, minute, second] = timePart.split(":");
-          const deliveredDateObj = new Date(
-            year,
-            month - 1,
-            day,
-            hour,
-            minute,
-            second
-          );
+          // const deliveredDate = item.progressInformation.delivered;
+          // console.log(item?.progressInformation?.delivered);
 
-          const currentDate = new Date();
+          try {
+            // const [datePart, timePart] = deliveredDate.split(" ");
+            // const [day, month, year] = datePart.split("/");
+            // const [hour, minute, second] = timePart.split(":");
+            // const deliveredDateObj = new Date(
+            //   year,
+            //   month - 1,
+            //   day,
+            //   hour,
+            //   minute,
+            //   second
+            // );
 
-          const thirtyDaysAgo = new Date();
-          thirtyDaysAgo.setDate(currentDate.getDate() - 30);
+            // console.log(
+            //   deliveredDateObj >= startDate && deliveredDateObj <= endDate
+            // );
 
-          return (
-            deliveredDateObj >= thirtyDaysAgo && deliveredDateObj <= currentDate
-          );
+            return (
+              createdAtTimestamp.seconds >= startTimestamp.seconds &&
+              createdAtTimestamp.seconds <= endTimestamp.seconds &&
+              item.driverEmail === user.email
+            );
+          } catch (error) {
+            console.warn("Invalid delivered date format:", deliveredDate);
+            return false;
+          }
         }
 
         return false;
       });
 
-      setDriverBookings(filteredBookings);
+      setBookings(filteredBookings);
     } catch (error) {
       console.error("Error filtering bookings:", error);
     } finally {
@@ -110,11 +121,10 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
 
   return (
     <div style={{ borderRadius: 30, backgroundColor: "#f8f9fa", padding: 50 }}>
-      {clientBookings.length > 0 ? (
+      {bookings.length > 0 ? (
         <PdfButton
           user={user}
-          bookings={clientBookings}
-          driverBookings={driverBookings}
+          bookings={bookings}
           datesRange={datesRange}
           driverLayout={true}
           pdfId={"#" + pdfId}
