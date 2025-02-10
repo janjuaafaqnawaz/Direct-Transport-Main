@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
-
+import { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -27,12 +26,14 @@ export default function History({ email }) {
   const [pdfs, setPdfs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [statuses, setStatuses] = useState({}); // Store status for each PDF
   const { allUsers } = useAdminContext();
 
   useEffect(() => {
     fetchPdfs();
   }, []);
 
+  // Fetch PDFs
   const fetchPdfs = async () => {
     try {
       const pdfs = await fetchMyPdfsOfDoc(email);
@@ -46,26 +47,48 @@ export default function History({ email }) {
         );
       setPdfs(sortedPdfs);
     } catch (err) {
-      console.error(err);
-      setError("Failed to fetch PDFs.");
+      console.error("Error fetching PDFs:", err);
+      setError("Failed to fetch PDFs. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Fetch invoice statuses for all PDFs with PayPal IDs
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      const statusMap = {};
+      for (const pdf of pdfs) {
+        if (pdf.paypal_id) {
+          const status = await handleGetInvoiceStatus(pdf);
+          statusMap[pdf.id] = status;
+        }
+      }
+      setStatuses(statusMap);
+    };
+
+    if (pdfs.length > 0) {
+      fetchStatuses();
+    }
+  }, [pdfs]);
+
+  // Delete a PDF
   const handleDeletePdf = async (docId) => {
+    const toastId = toast.loading("Deleting PDF...");
     try {
       await deleteDocument("generatedPdfs", docId);
       setPdfs((prev) => prev.filter((pdf) => pdf.id !== docId));
-      toast.success("PDF deleted successfully!");
+      toast.success("PDF deleted successfully!", { id: toastId });
     } catch (err) {
       console.error("Error deleting PDF:", err);
-      toast.error("Failed to delete PDF.");
+      toast.error("Failed to delete PDF. Please try again.", { id: toastId });
     }
   };
 
+  // Send an email
   const handleSendEmail = async (toEmail, url) => {
     const cleanEmail = toEmail.trim();
+    const toastId = toast.loading("Sending email...");
 
     try {
       await emailjs.send(
@@ -78,87 +101,91 @@ export default function History({ email }) {
         },
         "vYni03aqa3sHW_yf9"
       );
-
-      toast.success(`Email sent to: ${cleanEmail}`);
+      toast.success(`Email sent to: ${cleanEmail}`, { id: toastId });
     } catch (error) {
       console.error("Error sending email:", error);
-      toast.error("Failed to send the email. Please try again.");
+      toast.error("Failed to send the email. Please try again.", {
+        id: toastId,
+      });
     }
   };
 
-  const handlePayPalInvoice = async (pdf) => {
-    const { finalDriverPay, pdfId, firstName, docId } = pdf;
-    const toastId = toast.loading("Checking details...");
-    const user = allUsers.find((user) => user?.email === pdf?.email);
-    const sendingEmail = user?.billingEmail || user?.email;
-    const cleanEmail = sendingEmail.trim();
+  const handlePayPalInvoice = useCallback(
+    async (pdf) => {
+      const { finalDriverPay, pdfId, firstName, docId, datesRange } = pdf;
+      const toastId = toast.loading("Creating PayPal invoice...");
+      const user = allUsers.find((user) => user?.email === pdf?.email);
+      const sendingEmail = user?.billingEmail || user?.email;
+      const cleanEmail = sendingEmail.trim();
 
-    if (!finalDriverPay || !pdfId || !firstName || !user.payPalEmail) {
-      toast.error(
-        "Invalid invoice data. Please retry creating a new invoice.",
-        { id: toastId }
-      );
-      return;
-    }
-
-    try {
-      const response = await sendInvoice(
-        finalDriverPay,
-        pdfId,
-        firstName,
-        user.payPalEmail
-      );
-
-      if (!response.success) {
-        const errorMessage =
-          response.error?.details?.[0]?.issue === "DUPLICATE_INVOICE_NUMBER"
-            ? "This invoice is already created."
-            : response.error?.details?.[0]?.issue || "An error occurred.";
-        toast.error(errorMessage, { id: toastId });
+      if (!finalDriverPay || !pdfId || !firstName || !user?.payPalEmail) {
+        toast.error(
+          "Invalid invoice data. Please retry creating a new invoice.",
+          { id: toastId }
+        );
         return;
       }
 
-      console.log({ response });
-
-      await updateDoc("generatedPdfs", docId, {
-        paypal_id: response.invoiceId,
-        paypal_link: response.data.href,
-      });
-
-      await emailjs.send(
-        "service_i9cmmnr",
-        "template_txk0pyh",
-        {
-          driver_email: cleanEmail,
-          driver_name: firstName,
-          paypal_link: response.data.href,
-          firstName,
+      try {
+        const response = await sendInvoice(
           finalDriverPay,
-        },
-        "vYni03aqa3sHW_yf9"
-      );
-      fetchPdfs();
-      toast.success(response.message, { id: toastId });
-    } catch (error) {
-      console.error("Error handling PayPal:", error);
-      toast.error("Failed to process PayPal invoice.");
-    }
-  };
+          pdfId,
+          firstName,
+          user.payPalEmail,
+          datesRange
+        );
 
+        if (!response.success) {
+          const errorMessage =
+            response.error?.details?.[0]?.issue === "DUPLICATE_INVOICE_NUMBER"
+              ? "This invoice is already created."
+              : response.error?.details?.[0]?.issue || "An error occurred.";
+          toast.error(errorMessage, { id: toastId });
+          return;
+        }
+
+        await updateDoc("generatedPdfs", docId, {
+          paypal_id: response.invoiceId,
+          paypal_link: response.data.href,
+        });
+
+        await emailjs.send(
+          "service_i9cmmnr",
+          "template_txk0pyh",
+          {
+            driver_email: cleanEmail,
+            driver_name: firstName,
+            paypal_link: response.data.href,
+            firstName,
+            finalDriverPay,
+          },
+          "vYni03aqa3sHW_yf9"
+        );
+
+        fetchPdfs();
+        toast.success("PayPal invoice created and sent successfully!", {
+          id: toastId,
+        });
+      } catch (error) {
+        console.error("Error handling PayPal invoice:", error);
+        toast.error("Failed to process PayPal invoice. Please try again.", {
+          id: toastId,
+        });
+      }
+    },
+    [allUsers]
+  );
+
+  // Get invoice status
   const handleGetInvoiceStatus = async (pdf) => {
     const { paypal_id } = pdf;
 
     if (!paypal_id) {
-      toast.error("Failed to process PayPal invoice.");
-      return;
+      return "No Status";
     }
-
-    const toastId = toast.loading("Getting Status...");
 
     try {
       const details = await getInvoice(paypal_id);
-      console.log({ details });
-
       let statusMessage = details.status;
 
       if (details.status === "SENT") {
@@ -176,10 +203,11 @@ export default function History({ email }) {
         }
       }
 
-      toast.success(`Invoice Status: ${statusMessage}`, { id: toastId });
+      return statusMessage;
     } catch (error) {
       console.error("Error fetching invoice status:", error);
-      toast.error("Failed to fetch invoice status.", { id: toastId });
+      toast.error("Failed to fetch invoice status. Please try again.");
+      return "Error";
     }
   };
 
@@ -193,13 +221,14 @@ export default function History({ email }) {
         <TableColumn>Name</TableColumn>
         <TableColumn>Created At</TableColumn>
         <TableColumn>Date Range</TableColumn>
-        <TableColumn>PDF ID</TableColumn>
+        <TableColumn>More Information</TableColumn>
         <TableColumn>Action</TableColumn>
       </TableHeader>
       <TableBody emptyContent={"No rows to display."}>
         {pdfs.map((pdf) => {
           const user = allUsers.find((user) => user?.email === pdf?.email);
           const sendingEmail = user?.billingEmail || user?.email;
+          const status = statuses[pdf.id] || "Loading...";
 
           return (
             <TableRow key={pdf.id}>
@@ -208,7 +237,16 @@ export default function History({ email }) {
               <TableCell>{`${pdf?.datesRange?.start} - ${pdf?.datesRange?.end}`}</TableCell>
               <TableCell>
                 <Chip size="sm">{pdf?.pdfId}</Chip>
-                {pdf?.paypal_id && <Chip size="sm">{pdf?.paypal_id}</Chip>}
+                {pdf?.paypal_id && (
+                  <div>
+                    <Chip className="my-1" size="sm">
+                      {pdf?.paypal_id}
+                    </Chip>
+                    <Chip size="sm" color="primary">
+                      {status}
+                    </Chip>
+                  </div>
+                )}
               </TableCell>
               <TableCell>
                 <ButtonGroup size="sm">
@@ -240,12 +278,6 @@ export default function History({ email }) {
                     color="primary"
                   >
                     PayPal
-                  </Button>
-                  <Button
-                    color="primary"
-                    onPress={() => handleGetInvoiceStatus(pdf)}
-                  >
-                    Status
                   </Button>
                 </ButtonGroup>
               </TableCell>

@@ -8,7 +8,8 @@ export default async function sendInvoice(
   finalDriverPay,
   pdfId,
   firstName,
-  payPalEmail
+  payPalEmail,
+  datesRange
 ) {
   const accessToken = await getAccessToken();
   const invoiceNumber = pdfId;
@@ -21,22 +22,22 @@ export default async function sendInvoice(
   try {
     const invoiceData = {
       detail: {
-        invoice_number: invoiceNumber,
+        invoice_number: invoiceNumber.slice(1),
         reference: "deal-ref",
         invoice_date: currentDate,
-        currency_code: "USD",
+        currency_code: "AUD",
         note: "Thank you for your business.",
         terms_and_conditions: "No refunds after 10 days.",
         memo: "This is a long contract",
         payment_term: { term_type: "NET_10", due_date: formattedDueDate },
       },
       invoicer: {
-        name: { given_name: "Direct Transport Solution", surname: "" },
+        name: { given_name: "Direct Transport Solutions Pty Ltd", surname: "" },
         address: {
-          address_line_1: "1234 First Street",
-          admin_area_1: "CA",
-          postal_code: "98765",
-          country_code: "US",
+          address_line_1: "ABN 87 658 348 808",
+          address_line_2: "1353 The Horsley Dr, Wetherill Park NSW 2164",
+          admin_area_1: "(02) 9030 0333",
+          country_code: "AU",
         },
         email_address: "sb-ttuuv36087370@business.example.com",
       },
@@ -50,9 +51,9 @@ export default async function sendInvoice(
       ],
       items: [
         {
-          name: "Direct Transport Solution Service",
-          quantity: 1,
+          name: `${datesRange.start} - ${datesRange.end}`,
           unit_amount: { currency_code: "AUD", value: finalDriverPay },
+          quantity: 1,
         },
       ],
       configuration: {
