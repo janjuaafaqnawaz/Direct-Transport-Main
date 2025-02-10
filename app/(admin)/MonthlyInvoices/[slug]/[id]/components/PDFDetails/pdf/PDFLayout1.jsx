@@ -282,6 +282,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
                 marginRight: 20,
               }}
             >
+              Total Price incl GST: ${" "}
               {(Number(totalPriceWithGST) + Number(totalTolls)).toFixed(2)}
             </Text>
           </View>
