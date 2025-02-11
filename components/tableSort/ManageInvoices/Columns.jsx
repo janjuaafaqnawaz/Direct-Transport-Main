@@ -21,7 +21,7 @@ const parseDeliveredDate = (date) => {
   const deliveredDate = date;
   try {
     const [datePart, timePart] = deliveredDate.split(" ");
-    const [day, month, year] = datePart.split("/");
+    const [month, day, year] = datePart.split("/");
     return `${day}/${month}/${year}`;
   } catch (error) {
     return " ";
