@@ -68,7 +68,14 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
         startDate,
         endDate,
         (item) => {
-          if (!item?.progressInformation?.delivered) return false;
+          if (!item?.progressInformation?.delivered) {
+            console.log(
+              "No deliver date."
+              // item?.progressInformation
+            );
+
+            return false;
+          }
 
           const deliveredDateObj = parseDeliveredDate(
             item.progressInformation.delivered
