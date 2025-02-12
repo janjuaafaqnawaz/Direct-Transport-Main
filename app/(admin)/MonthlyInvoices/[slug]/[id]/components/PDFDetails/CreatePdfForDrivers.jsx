@@ -14,6 +14,12 @@ const parseDate = (dateString) => {
   return new Date(year, month - 1, day);
 };
 
+function addOneDay(date) {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + 1);
+  return newDate;
+}
+
 const parseDeliveredDate = (deliveredDate) => {
   try {
     const [datePart, timePart] = deliveredDate.split(" ");
@@ -107,7 +113,10 @@ export default function CreatePdfForDrivers({ datesRange, user }) {
 
     try {
       const startDate = parseDate(datesRange.start);
-      const endDate = parseDate(datesRange.end);
+      const endDate = addOneDay(parseDate(datesRange.end));
+
+      console.log({startDate,endDate});
+      
 
       const filteredBookings =
         user.role === "driver"

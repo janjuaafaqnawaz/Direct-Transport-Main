@@ -53,13 +53,16 @@ export function getTotalInvoicePrice(invoices) {
 }
 
 export function calculateInvoiceDetails(invoices, user) {
-  const { totalPriceWithGST, totalGst } = getTotalInvoicePrice(invoices);
+  const { totalPriceWithGST, totalGst, totalTolls } =
+    getTotalInvoicePrice(invoices);
+  console.log({ totalPriceWithGST });
 
   const paymentPercentage = Number(user?.paymentPercentage) || 1;
   const useGst = Boolean(user?.includeGst);
-  const totalFinalPayment = useGst
-    ? Number(totalPriceWithGST)
-    : Number(totalPriceWithGST) - Number(totalGst);
+  const totalFinalPayment =
+    (useGst
+      ? Number(totalPriceWithGST)
+      : Number(totalPriceWithGST) - Number(totalGst)) + Number(totalTolls);
 
   const bookingsByDate = invoices.reduce((acc, booking) => {
     const deliveredDate = parseDeliveredDate(
@@ -86,10 +89,10 @@ export function calculateInvoiceDetails(invoices, user) {
 
     const { totalWithGst, totalWithoutGst, totalTollsCost } = totals;
 
-    const paymentBase = useGst ? totalWithGst : totalWithoutGst;
+    const paymentBase =
+      (useGst ? totalWithGst : totalWithoutGst) + totalTollsCost;
 
-    const totalPayment =
-      (paymentBase * paymentPercentage) / 100 + totalTollsCost;
+    const totalPayment = (paymentBase * paymentPercentage) / 100;
 
     return totalPayment.toFixed(2);
   };
