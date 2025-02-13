@@ -2,8 +2,8 @@
 
 import { Page, Text, View, Document, Image } from "@react-pdf/renderer";
 import styles from "./userPDFStyles";
-import getTotalInvoicePrice from "./getTotalInvoicePrice";
 import { format } from "date-fns";
+import { getTotalInvoicePrice } from "./getTotalInvoicePrice";
 
 const currentDate = new Date();
 const futureDate = new Date();

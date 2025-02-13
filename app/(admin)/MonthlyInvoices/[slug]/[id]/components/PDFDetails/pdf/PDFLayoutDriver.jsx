@@ -1,9 +1,7 @@
 "use client";
 
 import { Page, Text, View, Document, Image } from "@react-pdf/renderer";
-import getTotalInvoicePrice, {
-  calculateInvoiceDetails,
-} from "./getTotalInvoicePrice";
+import { calculateInvoiceDetails } from "./getTotalInvoicePrice";
 import { format } from "date-fns";
 import styles from "./pdf.styles";
 
@@ -11,8 +9,7 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
   const { start, end } = datesRange;
 
   console.log(invoices.length);
-  
-  
+
   const { sortedDates, bookingsByDate, calcDayPayment, finalDriverPay } =
     calculateInvoiceDetails(invoices, user);
 
