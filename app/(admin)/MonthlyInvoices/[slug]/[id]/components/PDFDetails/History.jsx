@@ -140,7 +140,7 @@ export default function History({ email }) {
             response.error?.details?.[0]?.issue === "DUPLICATE_INVOICE_NUMBER"
               ? "This invoice is already created."
               : response.error?.details?.[0]?.issue || "An error occurred.";
-          toast.error(errorMessage, { id: toastId });
+          toast.error(response.error.details[0].description, { id: toastId });
           return;
         }
 

@@ -66,3 +66,32 @@ export const getInvoice = async (id) => {
     throw error;
   }
 };
+
+export const deleteInvoice = async (id) => {
+  try {
+    console.log(`Attempting to delete invoice with ID: ${id}`);
+
+    const accessToken = await getAccessToken();
+    console.log("Access token retrieved successfully.");
+
+    const response = await axios.delete(
+      `${BASE_URL}/v2/invoicing/invoices/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Invoice deleted successfully:", response.data);
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error deleting invoice:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
