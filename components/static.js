@@ -111,7 +111,7 @@ const getServiceOptions = (bookingDateStr, bookingTimeStr) => {
 const serviceOptions = [
   {
     value: "Standard",
-    disc: "4 - 6hrs completion time",
+    disc: "Upto 6hrs completion time",
     disc2: "Service Not Available After 3pm",
   },
   {
