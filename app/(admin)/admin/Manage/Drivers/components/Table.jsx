@@ -138,7 +138,7 @@ export default function DriverTable({ filter }) {
             <TableHead>Tracking</TableHead>
             <TableHead>
               <Tooltip
-                content="DAMS (Driver Activity Management System) shows the driver's permission status"
+                content="DAMS (Driver Activity Management System Beta) shows the driver's permission status"
                 placement="top"
                 color="primary"
               >
@@ -149,7 +149,7 @@ export default function DriverTable({ filter }) {
             </TableHead>
             <TableHead>
               <Tooltip
-                content="DAMS (Driver Activity Management System) provides real-time driver status updates and issues warnings when necessary"
+                content="DAMS (Driver Activity Management System Beta) provides real-time driver status updates and issues warnings when necessary"
                 placement="top"
                 color="secondary"
               >
