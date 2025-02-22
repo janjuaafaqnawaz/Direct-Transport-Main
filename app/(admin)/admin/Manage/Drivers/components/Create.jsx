@@ -52,8 +52,6 @@ export default function Create({ edit, driver }) {
   });
   const [includeGst, setIncludeGst] = useState(false);
 
-  console.log(includeGst);
-
   const [isLoading, setIsLoading] = useState(false);
   const [vehiclePicture, setVehiclePicture] = useState(null);
   const [driverLicense, setDriverLicense] = useState(null);

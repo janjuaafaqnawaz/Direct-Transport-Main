@@ -138,17 +138,21 @@ export default function DriverTable({ filter }) {
             <TableHead>Tracking</TableHead>
             <TableHead>
               <Tooltip
-                content="Driver Activity Management System"
+                content="DAMS (Driver Activity Management System) shows the driver's permission status"
                 placement="top"
+                color="primary"
               >
                 <div className="flex gap-2 w-full cursor-pointer h-full items-center">
-                  DAMS
-                  <RefreshCw className=" size-4" />
+                  Permission
                 </div>
               </Tooltip>
             </TableHead>
             <TableHead>
-              <Tooltip content="Refresh" placement="top">
+              <Tooltip
+                content="DAMS (Driver Activity Management System) provides real-time driver status updates and issues warnings when necessary"
+                placement="top"
+                color="secondary"
+              >
                 <div
                   onClick={monitorUserInactivity}
                   className="flex gap-2 w-full cursor-pointer h-full items-center"
@@ -220,8 +224,8 @@ export default function DriverTable({ filter }) {
                 <Tooltip
                   content={
                     activeDriversEmail.includes(driver.email)
-                      ? "Driver is Online"
-                      : "Driver is Offline"
+                      ? `${driver.firstName} is Online`
+                      : `${driver.firstName} is Offline`
                   }
                   placement="top"
                 >
