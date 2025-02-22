@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: "row",
+    maxHeight: 50,
   },
   tableColHeader: {
     width: "12%",
