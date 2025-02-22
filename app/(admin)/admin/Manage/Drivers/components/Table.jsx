@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { History, RefreshCw, Archive } from "lucide-react";
+import { History, RefreshCw, Archive, Activity } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -136,7 +136,17 @@ export default function DriverTable({ filter }) {
             <TableHead>Email</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Tracking</TableHead>
-            {/* <TableHead>Permissions</TableHead> */}
+            <TableHead>
+              <Tooltip
+                content="Driver Activity Management System"
+                placement="top"
+              >
+                <div className="flex gap-2 w-full cursor-pointer h-full items-center">
+                  DAMS
+                  <RefreshCw className=" size-4" />
+                </div>
+              </Tooltip>
+            </TableHead>
             <TableHead>
               <Tooltip content="Refresh" placement="top">
                 <div
@@ -206,16 +216,26 @@ export default function DriverTable({ filter }) {
                   color={driver.permissions ? "success" : "danger"}
                 />
               </TableCell>
-              {/* <TableCell>
-                <Chip
-                  className="aspect-square h-2 w-2 mx-auto"
-                  color={
+              <TableCell>
+                <Tooltip
+                  content={
                     activeDriversEmail.includes(driver.email)
-                      ? "success"
-                      : "danger"
+                      ? "Driver is Online"
+                      : "Driver is Offline"
                   }
-                />
-              </TableCell> */}
+                  placement="top"
+                >
+                  <Chip
+                    className="aspect-square h-2 w-2 mx-auto cursor-pointer"
+                    color={
+                      activeDriversEmail.includes(driver.email)
+                        ? "success"
+                        : "danger"
+                    }
+                  />
+                </Tooltip>
+              </TableCell>
+
               <TableCell className="text-right">
                 <Button
                   variant="outline"
