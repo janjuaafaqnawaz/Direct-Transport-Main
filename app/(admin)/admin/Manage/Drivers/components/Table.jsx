@@ -217,7 +217,7 @@ export default function DriverTable({ filter }) {
               <TableCell>
                 <Chip
                   className="aspect-square h-2 w-2 mx-auto"
-                  color={driver.permission ? "success" : "danger"}
+                  color={driver.permissions ? "success" : "danger"}
                 />
               </TableCell>
               <TableCell>
