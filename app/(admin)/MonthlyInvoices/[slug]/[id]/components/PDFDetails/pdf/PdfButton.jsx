@@ -37,7 +37,7 @@ export default function PdfButton({
   const [pay, setPay] = useState(null);
 
   const bookingCount = bookings.length;
-  const pdfFileName = `monthly_bookings_${user.firstName}.pdf`;
+  const pdfFileName = `monthly_bookings_${user.firstName}_${pdfId}.pdf`;
 
   console.log({
     bookings,
