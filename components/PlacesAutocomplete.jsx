@@ -3,12 +3,19 @@
 import { useState, useCallback } from "react";
 import { useLoadScript, Autocomplete } from "@react-google-maps/api";
 import { Input } from "@/components/ui/input";
+import { Button } from "@nextui-org/react";
+import { Save, Upload, Check, Loader2, UploadCloud } from "lucide-react";
+import { addFrequentAddress } from "@/api/firebase/functions/upload";
+import { fetchFrequentAddresses } from "@/api/firebase/functions/fetch";
 
 const libraries = ["places"];
 
 export default function GooglePlacesInput({ onLocationSelect }) {
   const [autocomplete, setAutocomplete] = useState(null);
-  
+  const [newAddress, setNewAddress] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
   const API = "AIzaSyACXmi5Hwi2SRE_VqmYqSI7gdLOa9neomg";
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: API,
@@ -36,18 +43,12 @@ export default function GooglePlacesInput({ onLocationSelect }) {
       };
 
       const formattedLocation = {
-        coordinates: {
-          lat: lat,
-          lng: lng,
-        },
+        coordinates: { lat, lng },
         label: place.formatted_address,
         address: {
           latitude: lat,
           longitude: lng,
-          geometry: {
-            type: "Point",
-            coordinates: [lng, lat],
-          },
+          geometry: { type: "Point", coordinates: [lng, lat] },
           country: getAddressComponent(["country"]),
           countryCode: getAddressComponent(["country"]),
           county: getAddressComponent(["administrative_area_level_2"]),
@@ -62,6 +63,30 @@ export default function GooglePlacesInput({ onLocationSelect }) {
 
       console.log(formattedLocation);
       onLocationSelect(formattedLocation);
+      setNewAddress(formattedLocation);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!newAddress) return;
+
+    setIsSaving(true);
+    setSaveSuccess(false);
+    const disabledReload = true;
+
+    try {
+      const company = {
+        ...newAddress,
+        label: newAddress.label,
+      };
+      await addFrequentAddress(company, disabledReload);
+      await fetchFrequentAddresses();
+      setSaveSuccess(true);
+    } catch (error) {
+      console.error("Error adding address:", error);
+    } finally {
+      setIsSaving(false);
+      // setTimeout(() => setSaveSuccess(false), 10000);
     }
   };
 
@@ -73,16 +98,31 @@ export default function GooglePlacesInput({ onLocationSelect }) {
       <Autocomplete
         onLoad={onLoad}
         onPlaceChanged={onPlaceChanged}
-        options={{
-          componentRestrictions: { country: "AU" },
-        }}
+        options={{ componentRestrictions: { country: "AU" } }}
       >
-        <Input
-          id="place-input"
-          type="text"
-          placeholder="Enter a location"
-          className="w-full border-gray-400 h-10 placeholder:text-gray-600 "
-        />
+        <div className="relative w-full flex flex-row">
+          <Input
+            id="place-input"
+            type="text"
+            placeholder="Enter a location"
+            className="w-full border-gray-400 h-10 placeholder:text-gray-600"
+          />
+          <Button
+            variant="bordered"
+            className="rounded-md ml-1"
+            isIconOnly
+            onClick={handleSubmit}
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <Loader2 className="animate-spin" />
+            ) : saveSuccess ? (
+              <Check />
+            ) : (
+              <UploadCloud />
+            )}
+          </Button>
+        </div>
       </Autocomplete>
     </div>
   );

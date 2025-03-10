@@ -131,7 +131,7 @@ async function updateDoc(collectionName, docId, data) {
   }
 }
 
-async function addFrequentAddress(address) {
+async function addFrequentAddress(address, disabledReload) {
   if (
     !address ||
     !address.coordinates ||
@@ -178,7 +178,11 @@ async function addFrequentAddress(address) {
         userData.frequentAddresses.push(address);
         await updateDoc("users", docId, userData);
         console.log(`Added successfully.`);
-        window.location.reload();
+
+        if (!disabledReload) {
+          window.location.reload();
+        }
+        
         return true;
       } else {
         console.log(`Address already exists.`);
