@@ -133,6 +133,20 @@ export default function Page({ booking, close }) {
                     </div>
                   </PhotoView>
                 ))}
+            <h1 style={{ marginBottom: "1rem", color: "#333" }}>  Pick up Images</h1>
+
+              {booking?.pickupImages.length > 0 &&
+                booking?.pickupImages.map((item, index) => (
+                  <PhotoView key={`${index}-${item}`} src={item}>
+                    <div className="w-full flex flex-col justify-center align-middle">
+                      <Image
+                        src={item}
+                        alt=""
+                        className="w-full aspect-square object-cover h-auto my-4 rounded-lg "
+                      />
+                    </div>
+                  </PhotoView>
+                ))}
             </div>
             <Button
               color="primary"
