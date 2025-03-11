@@ -24,7 +24,6 @@ import ProcessPrice from "@/api/price_calculation/index";
 import StripeWrapper from "@/components/stripe/StripeWrapper";
 import toast from "react-hot-toast";
 import { Timestamp } from "firebase/firestore";
-import { fetchFrequentAddresses } from "@/api/firebase/functions/fetch";
 
 export default function BookCheckout({
   formData,
@@ -59,15 +58,13 @@ export default function BookCheckout({
   }, []);
 
   const handleAddressSave = async (address) => {
-    try {
-      const company = {
+    await addFrequentAddress(
+      {
         ...address,
         label: address.label,
-      };
-      await addFrequentAddress(company);
-    } catch (error) {
-      console.error("Error adding address:", error);
-    }
+      },
+      (disabledReload = true)
+    );
   };
 
   const convertToTimestamp = (dateStr) => {
@@ -77,20 +74,20 @@ export default function BookCheckout({
 
   const handleSubmit = async () => {
     setCreating(true);
-    try {
-      if (invoice.savePickAddress) handleAddressSave(invoice.address?.Origin);
-      if (invoice.saveDropAddress)
-        handleAddressSave(invoice.address?.Destination);
 
-      const pickupSuburb = await getSuburbByLatLng(
-        invoice.address?.Origin?.label
-      );
+    try {
+      const { savePickAddress, saveDropAddress, address, date } = invoice;
+
+      if (savePickAddress) handleAddressSave(invoice.address?.Origin);
+      if (saveDropAddress) handleAddressSave(invoice.address?.Destination);
+
+      const pickupSuburb = await getSuburbByLatLng(address?.Origin?.label);
 
       const deliverySuburb = await getSuburbByLatLng(
-        invoice.address?.Destination?.label
+        address?.Destination?.label
       );
 
-      const dateTimestamp = convertToTimestamp(invoice.date);
+      const dateTimestamp = convertToTimestamp(date);
 
       const delivery = {
         ...invoice,
