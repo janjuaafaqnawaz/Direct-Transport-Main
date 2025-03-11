@@ -303,6 +303,11 @@ function Form({
               onLocationSelect={(e) => handle_address("Origin", e, true)}
               address={formData.address.Origin}
               pickup={true}
+              handleCheckboxChange={(e) =>
+                setFormData({ ...formData, savePickAddress: e.target.checked })
+              }
+              checkbox={formData.savePickAddress}
+              saveOption={true}
             />
           ) : (
             <CustomInput
@@ -358,6 +363,11 @@ function Form({
             <PlacesAutocomplete
               onLocationSelect={(e) => handle_address("Destination", e, true)}
               address={formData.address.Destination}
+              handleCheckboxChange={(e) =>
+                setFormData({ ...formData, saveDropAddress: e.target.checked })
+              }
+              checkbox={formData.saveDropAddress}
+              saveOption={true}
             />
           ) : (
             <CustomInput

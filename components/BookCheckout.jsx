@@ -11,7 +11,10 @@ import {
 import { useEffect, useState } from "react";
 import { Text, Button, Container, ActionIcon } from "@mantine/core";
 import getSuburbByLatLng from "@/api/getSuburbByLatLng";
-import { postInvoice } from "@/api/firebase/functions/upload";
+import {
+  addFrequentAddress,
+  postInvoice,
+} from "@/api/firebase/functions/upload";
 import { useRouter } from "next/navigation";
 import Loading from "./Loading";
 import "@mantine/dates/styles.css";
@@ -21,6 +24,7 @@ import ProcessPrice from "@/api/price_calculation/index";
 import StripeWrapper from "@/components/stripe/StripeWrapper";
 import toast from "react-hot-toast";
 import { Timestamp } from "firebase/firestore";
+import { fetchFrequentAddresses } from "@/api/firebase/functions/fetch";
 
 export default function BookCheckout({
   formData,
@@ -54,16 +58,30 @@ export default function BookCheckout({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleAddressSave = async (address) => {
+    try {
+      const company = {
+        ...address,
+        label: address.label,
+      };
+      await addFrequentAddress(company);
+    } catch (error) {
+      console.error("Error adding address:", error);
+    }
+  };
+
   const convertToTimestamp = (dateStr) => {
     const [day, month, year] = dateStr.split("/");
     return Timestamp.fromDate(new Date(`${year}-${month}-${day}T00:00:00Z`));
   };
 
   const handleSubmit = async () => {
-    console.log("Creating");
-
     setCreating(true);
     try {
+      if (invoice.savePickAddress) handleAddressSave(invoice.address?.Origin);
+      if (invoice.saveDropAddress)
+        handleAddressSave(invoice.address?.Destination);
+
       const pickupSuburb = await getSuburbByLatLng(
         invoice.address?.Origin?.label
       );

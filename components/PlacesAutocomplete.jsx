@@ -3,18 +3,17 @@
 import { useState, useCallback } from "react";
 import { useLoadScript, Autocomplete } from "@react-google-maps/api";
 import { Input } from "@/components/ui/input";
-import { Button } from "@nextui-org/react";
-import { Save, Upload, Check, Loader2, UploadCloud } from "lucide-react";
-import { addFrequentAddress } from "@/api/firebase/functions/upload";
-import { fetchFrequentAddresses } from "@/api/firebase/functions/fetch";
+import { Checkbox } from "@nextui-org/react";
 
 const libraries = ["places"];
 
-export default function GooglePlacesInput({ onLocationSelect }) {
+export default function GooglePlacesInput({
+  onLocationSelect,
+  handleCheckboxChange,
+  checkbox,
+  saveOption,
+}) {
   const [autocomplete, setAutocomplete] = useState(null);
-  const [newAddress, setNewAddress] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const API = "AIzaSyACXmi5Hwi2SRE_VqmYqSI7gdLOa9neomg";
   const { isLoaded, loadError } = useLoadScript({
@@ -63,35 +62,11 @@ export default function GooglePlacesInput({ onLocationSelect }) {
 
       console.log(formattedLocation);
       onLocationSelect(formattedLocation);
-      setNewAddress(formattedLocation);
     }
   };
 
-  const handleSubmit = async () => {
-    if (!newAddress) return;
-
-    setIsSaving(true);
-    setSaveSuccess(false);
-    const disabledReload = true;
-
-    try {
-      const company = {
-        ...newAddress,
-        label: newAddress.label,
-      };
-      await addFrequentAddress(company, disabledReload);
-      await fetchFrequentAddresses();
-      setSaveSuccess(true);
-    } catch (error) {
-      console.error("Error adding address:", error);
-    } finally {
-      setIsSaving(false);
-      // setTimeout(() => setSaveSuccess(false), 10000);
-    }
-  };
-
-  if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading...</div>;
+  if (loadError) return <div>Loading...</div>;
 
   return (
     <div className="w-full mb-2 mt-4">
@@ -100,28 +75,22 @@ export default function GooglePlacesInput({ onLocationSelect }) {
         onPlaceChanged={onPlaceChanged}
         options={{ componentRestrictions: { country: "AU" } }}
       >
-        <div className="relative w-full flex flex-row">
+        <div className="relative w-full flex flex-row items-center">
           <Input
             id="place-input"
             type="text"
             placeholder="Enter a location"
             className="w-full border-gray-400 h-10 placeholder:text-gray-600"
           />
-          <Button
-            variant="bordered"
-            className="rounded-md ml-1"
-            isIconOnly
-            onClick={handleSubmit}
-            disabled={isSaving}
-          >
-            {isSaving ? (
-              <Loader2 className="animate-spin" />
-            ) : saveSuccess ? (
-              <Check />
-            ) : (
-              <UploadCloud />
-            )}
-          </Button>
+          {saveOption && (
+            <Checkbox
+              className="ml-2"
+              isSelected={checkbox}
+              onChange={handleCheckboxChange}
+            >
+              Save
+            </Checkbox>
+          )}
         </div>
       </Autocomplete>
     </div>
