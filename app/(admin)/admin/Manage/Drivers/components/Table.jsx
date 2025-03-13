@@ -147,7 +147,7 @@ export default function DriverTable({ filter }) {
                 </div>
               </Tooltip>
             </TableHead>
-            <TableHead>
+            {/* <TableHead>
               <Tooltip
                 content="DAMS (Driver Activity Management System Beta) provides real-time driver status updates and issues warnings when necessary"
                 placement="top"
@@ -161,7 +161,7 @@ export default function DriverTable({ filter }) {
                   <RefreshCw className=" size-4" />
                 </div>
               </Tooltip>
-            </TableHead>
+            </TableHead> */}
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -220,7 +220,7 @@ export default function DriverTable({ filter }) {
                   color={driver.permissions ? "success" : "danger"}
                 />
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <Tooltip
                   content={
                     activeDriversEmail.includes(driver.email)
@@ -238,7 +238,7 @@ export default function DriverTable({ filter }) {
                     }
                   />
                 </Tooltip>
-              </TableCell>
+              </TableCell> */}
 
               <TableCell className="text-right">
                 <Button
