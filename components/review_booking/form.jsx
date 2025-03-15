@@ -191,7 +191,7 @@ function Form({
 
   return (
     <>
-      <div className="container">
+      <div className="container mx-auto">
         <div className="box">
           <h3>Job information</h3>
           <p>
@@ -224,14 +224,14 @@ function Form({
           <div
             style={{
               padding: "20px",
-              backgroundColor: "steelblue",
-              color: "wheat",
+              backgroundColor: "#1582e1",
+              color: "white",
               width: "100%",
               borderRadius: 10,
             }}
           >
             <p>
-              <strong>Please Note:</strong>
+              <strong>Please Note: </strong>
               {type === "same_day" ? (
                 "Interstate/regional prices may vary from the original quote. Please wait for the job to be accepted and we will contact you if any changes are necessary."
               ) : (
@@ -410,28 +410,25 @@ function Form({
           flexDirection: "column",
         }}
       >
-        <ButtonGroup orientation="vertical">
+        <ButtonGroup orientation="vertical" className="gap-[2px]">
           <Button
             variant="filled"
-            mt={3}
-            color="#1384e1"
+            color="#1582e1"
             size="md"
-            w={230}
             onClick={handleCheckOut}
           >
             Book Job
           </Button>
 
-          <Button w={230} variant="filled" mt={3} color="#1384e1" size="md">
+          <Button w={230} variant="filled" color="#1582e1" size="md">
             <Link href="/ClientServices" style={{ textDecoration: "none" }}>
               Client Services
             </Link>
           </Button>
           {action ? null : (
             <Button
-              color="lime"
+              color="#29bf12"
               w={230}
-              mt={3}
               variant="filled"
               size="md"
               onClick={handleRefresh}
@@ -443,8 +440,7 @@ function Form({
             <Button
               w={230}
               variant="filled"
-              mt={10}
-              color="#1384e1"
+              color="#1582e1"
               size="md"
               onClick={() => action("summary")}
             >
