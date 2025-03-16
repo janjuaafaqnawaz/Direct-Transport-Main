@@ -126,7 +126,7 @@ export default function BookCheckout({
       }}
       className="container my-10"
     >
-      <div className="space-y-8">
+      <div className="space-y-1">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">
             Booking Summary
@@ -186,13 +186,13 @@ export default function BookCheckout({
         ])}
 
         {/* Pricing Information */}
-        <div className=" ">
+        <div>
           <Text
             tt="uppercase"
             size="lg"
             fw={900}
             c="rgba(59, 58, 58, 1)"
-            className="mb-4 border-b pb-2"
+            className="mb-4   pb-2"
           >
             Pricing Details
           </Text>
@@ -338,7 +338,7 @@ export default function BookCheckout({
             <DimensionsTable
               items={invoice.items}
               handleDelete={null}
-              disable={true}
+              diseble={true}
               invoice={invoice}
               className="w-full"
             />

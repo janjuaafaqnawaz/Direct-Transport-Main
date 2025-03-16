@@ -191,7 +191,7 @@ function Form({
 
   return (
     <>
-      <div className="container mx-auto">
+      <div className="container mx-auto mt-8">
         <div className="box">
           <h3>Job information</h3>
           <p>
@@ -401,7 +401,7 @@ function Form({
         </div>
       </div>
       <div
-        className="sm:-mt-44"
+        className="-mt-60"
         style={{
           width: "100%",
           display: "flex",
