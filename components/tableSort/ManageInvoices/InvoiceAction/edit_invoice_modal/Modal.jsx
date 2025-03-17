@@ -36,9 +36,11 @@ export default function App({ id }) {
                 Invoice Details
               </ModalHeader>
               <ModalBody>
-                <ScrollArea>
-                  <Invoice id={id} onClose={onClose} />
-                </ScrollArea>
+                {isOpen && (
+                  <ScrollArea>
+                    <Invoice id={id} onClose={onClose} />
+                  </ScrollArea>
+                )}
               </ModalBody>
             </>
           )}

@@ -49,60 +49,64 @@ export default function DeleteInvoice({ isArchived, id, booking }) {
   return (
     <>
       <Modal opened={opened} onClose={close} withCloseButton={false}>
-        <Center>
-          {isArchived ? (
-            <>
-              <Text size="lg" weight={500} style={{ marginTop: 10 }}>
-                Are you sure you want to delete this archived job?
-              </Text>
-            </>
-          ) : (
-            <>
-              <Text size="lg" weight={500} style={{ marginTop: 10 }}>
-                Are you sure you want to archive this job?
-              </Text>
-            </>
-          )}
-        </Center>
-        <br />
-        {isArchived && (
-          <Button
-            fullWidth
-            variant="light"
-            style={{ margin: 5 }}
-            color="green"
-            radius="md"
-            size="xs"
-            onClick={handleRestore}
-          >
-            <RestoreRoundedIcon style={{ marginRight: 5 }} />
-            Restore this Job
-          </Button>
-        )}
-        <Button
-          fullWidth
-          variant="light"
-          style={{ margin: 5 }}
-          color="red"
-          radius="md"
-          size="xs"
-          onClick={handleDeleteOrArchive}
-        >
-          <DeleteOutlineRounded style={{ marginRight: 5 }} />
-          {isArchived ? "Delete" : "Archive"} this Job
-        </Button>
+        {opened && (
+          <>
+            <Center>
+              {isArchived ? (
+                <>
+                  <Text size="lg" weight={500} style={{ marginTop: 10 }}>
+                    Are you sure you want to delete this archived job?
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text size="lg" weight={500} style={{ marginTop: 10 }}>
+                    Are you sure you want to archive this job?
+                  </Text>
+                </>
+              )}
+            </Center>
+            <br />
+            {isArchived && (
+              <Button
+                fullWidth
+                variant="light"
+                style={{ margin: 5 }}
+                color="green"
+                radius="md"
+                size="xs"
+                onClick={handleRestore}
+              >
+                <RestoreRoundedIcon style={{ marginRight: 5 }} />
+                Restore this Job
+              </Button>
+            )}
+            <Button
+              fullWidth
+              variant="light"
+              style={{ margin: 5 }}
+              color="red"
+              radius="md"
+              size="xs"
+              onClick={handleDeleteOrArchive}
+            >
+              <DeleteOutlineRounded style={{ marginRight: 5 }} />
+              {isArchived ? "Delete" : "Archive"} this Job
+            </Button>
 
-        <Button
-          fullWidth
-          variant="light"
-          style={{ margin: 5 }}
-          color="teal"
-          radius="md"
-          size="xs"
-          onClick={close}
-        >
-          No, Go back
-        </Button>
+            <Button
+              fullWidth
+              variant="light"
+              style={{ margin: 5 }}
+              color="teal"
+              radius="md"
+              size="xs"
+              onClick={close}
+            >
+              No, Go back
+            </Button>
+          </>
+        )}
       </Modal>
 
       <Tooltip

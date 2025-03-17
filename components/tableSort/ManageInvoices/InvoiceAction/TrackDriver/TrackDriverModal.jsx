@@ -25,7 +25,7 @@ export default function TrackDriver({ booking, customBtn }) {
                 Driver Live Location
               </ModalHeader>
               <ModalBody>
-                <TrackDriverContent email={booking?.driverEmail} />
+                {isOpen && <TrackDriverContent email={booking?.driverEmail} />}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>

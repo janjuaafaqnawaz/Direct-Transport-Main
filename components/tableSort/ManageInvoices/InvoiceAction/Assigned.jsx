@@ -123,63 +123,67 @@ export default function DriverAssignmentModal({ booking }) {
         size="lg"
         centered
       >
-        <ScrollArea>
-          <div className="space-y-4">
-            {/* Search Input */}
-            <div className="relative">
-              <TextInput
-                icon={<Search />}
-                placeholder="Search drivers..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
-            {/* Driver List */}
-            {loading ? (
-              <p>Loading drivers...</p>
-            ) : filteredDrivers.length === 0 ? (
-              <p>No drivers available.</p>
-            ) : (
-              <div className="rounded-md">
-                {filteredDrivers.map((driver) => (
-                  <>
-                    {isOpen && (
-                      <Chip
-                        className="cursor-pointer m-2"
-                        variant={
-                          driver?.firstName === booking?.driverName
-                            ? "solid"
-                            : "flat"
-                        }
-                        color="primary"
-                        size="lg"
-                        key={driver?.id}
-                        onClick={() => {
-                          newAssignedBookingNotification(driver?.expoPushToken);
-                          handleAssignDriver(driver);
-                        }}
-                      >
-                        {driver?.firstName}
-                      </Chip>
-                    )}
-                  </>
-                ))}
-                <Chip
-                  className="cursor-pointer m-2"
-                  variant={"dot"}
-                  color="danger"
-                  size="lg"
-                  onClick={() => {
-                    handleRemoveDriver();
-                  }}
-                >
-                  Un assign
-                </Chip>
+        {isOpen && (
+          <ScrollArea>
+            <div className="space-y-4">
+              {/* Search Input */}
+              <div className="relative">
+                <TextInput
+                  icon={<Search />}
+                  placeholder="Search drivers..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-            )}
-          </div>
-        </ScrollArea>
+
+              {/* Driver List */}
+              {loading ? (
+                <p>Loading drivers...</p>
+              ) : filteredDrivers.length === 0 ? (
+                <p>No drivers available.</p>
+              ) : (
+                <div className="rounded-md">
+                  {filteredDrivers.map((driver) => (
+                    <>
+                      {isOpen && (
+                        <Chip
+                          className="cursor-pointer m-2"
+                          variant={
+                            driver?.firstName === booking?.driverName
+                              ? "solid"
+                              : "flat"
+                          }
+                          color="primary"
+                          size="lg"
+                          key={driver?.id}
+                          onClick={() => {
+                            newAssignedBookingNotification(
+                              driver?.expoPushToken
+                            );
+                            handleAssignDriver(driver);
+                          }}
+                        >
+                          {driver?.firstName}
+                        </Chip>
+                      )}
+                    </>
+                  ))}
+                  <Chip
+                    className="cursor-pointer m-2"
+                    variant={"dot"}
+                    color="danger"
+                    size="lg"
+                    onClick={() => {
+                      handleRemoveDriver();
+                    }}
+                  >
+                    Un assign
+                  </Chip>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        )}
       </Modal>
     </>
   );

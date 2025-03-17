@@ -15,12 +15,16 @@ export default function Notes({ booking }) {
     <>
       <Modal size={"xl"} opened={opened} onClose={close} title="Booking Notes">
         <ModalBody>
-          <Body booking={booking} />
-          <Table
-            entries={booking.statusEntries}
-            booking={booking}
-            id={booking.id}
-          />
+          {opened && (
+            <>
+              <Body booking={booking} />
+              <Table
+                entries={booking.statusEntries}
+                booking={booking}
+                id={booking.id}
+              />
+            </>
+          )}
         </ModalBody>
       </Modal>
       <Tooltip label="Notes">

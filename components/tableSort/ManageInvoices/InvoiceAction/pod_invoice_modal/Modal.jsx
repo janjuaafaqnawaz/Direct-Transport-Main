@@ -37,7 +37,7 @@ export default function InvoicePOD({ id }) {
             <>
               <ModalHeader className="flex flex-col gap-1">POD</ModalHeader>
               <ModalBody>
-                <POD booking={booking} close={onClose} />
+                {isOpen && <POD booking={booking} close={onClose} />}
               </ModalBody>
             </>
           )}
