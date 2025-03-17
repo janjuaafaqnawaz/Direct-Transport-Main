@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import DropzoneButton from "@/components/Dropzone/index";
 import {
