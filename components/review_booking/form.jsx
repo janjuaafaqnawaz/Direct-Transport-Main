@@ -1,21 +1,16 @@
 "use client";
 
 import "./form.css";
-import { Alert } from "@mantine/core";
-import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Divider } from "@mantine/core";
 import Link from "next/link";
-import { PlacesAutocomplete, BookCheckout } from "@/components/Index";
-import ItemDimensions from "@/components/ItemDimensions";
-import ServicesFields from "@/components/fields/ServicesFields";
-import FrequentAddress from "@/components/fields/FrequentAddress";
-import CustomInput from "@/components/fields/CustomInput";
-import { initialFormData } from ".././static";
-import DateTime from "@/components/fields/DateTime";
-import { formatDate, formatTime } from "@/api/DateAndTime/format";
-import isPointInGeofence from "@/api/price_calculation/function/helper/isPointInGeofence";
 import toast from "react-hot-toast";
-import { ErrorOutline } from "@mui/icons-material";
+import AddressesSection from "./AddressesSection";
+import BasicDetailsSection from "./BasicDetailsSection";
+import isPointInGeofence from "@/api/price_calculation/function/helper/isPointInGeofence";
+
+import { useEffect, useState } from "react";
+import { initialFormData } from "../static";
+import { BookCheckout } from "@/components/Index";
+import { Button, ButtonGroup } from "@mantine/core";
 
 function Form({
   type,
@@ -192,216 +187,34 @@ function Form({
   return (
     <>
       <div className="container mx-auto mt-8">
-        <div className="box">
-          <h3>Job information</h3>
-          <p>
-            Account:
-            {selectedEmail?.name !== "" ? selectedEmail.name : user?.firstName}
-          </p>
-          <br />
-          <CustomInput
-            name="contact"
-            label="Contact"
-            value={formData.contact}
-            handleChange={handleChange}
-          />
-          <CustomInput
-            name="internalReference"
-            label="Internal Reference"
-            value={formData.internalReference}
-            handleChange={handleChange}
-          />
-          <br />
-          {noEmail ? (
-            <CustomInput
-              name="email"
-              label="Email"
-              value={formData.email}
-              handleChange={handleChange}
-            />
-          ) : null}
-          <br />
-          <div
-            style={{
-              padding: "20px",
-              backgroundColor: "#1582e1",
-              color: "white",
-              width: "100%",
-              borderRadius: 10,
-            }}
-          >
-            <p>
-              <strong>Please Note: </strong>
-              {type === "same_day" ? (
-                "Interstate/regional prices may vary from the original quote. Please wait for the job to be accepted and we will contact you if any changes are necessary."
-              ) : (
-                <>
-                  <br />
-                  1. Has to be booked before 12 noon <br />
-                  2. Deliveries will be carried out during normal business hours
-                  (7am - 5pm) <br />
-                  3. Goods must be ready for pickup at the time of the booking
-                  <br />
-                  4. Accurate dimensions and weights will be required for
-                  accurate pricing
-                </>
-              )}
-            </p>
+        <BasicDetailsSection
+          user={user}
+          type={type}
+          diseble={diseble}
+          noEmail={noEmail}
+          selectedEmail={selectedEmail}
+          formData={formData}
+          setFormData={setFormData}
+          setError={setError}
+          handleChange={handleChange}
+          handleDateChange={handleDateChange}
+        />
 
-            <p>
-              <strong>
-                Accurate measurements are necessary for accurate pricing.
-              </strong>
-            </p>
-          </div>
-          <Divider style={{ margin: "5.5rem 0" }} />
-        </div>
-        <div className="box">
-          <h3>Ready Date & Time</h3>
-          <DateTime
-            service={formData.service}
-            handle_date={(name, val) => handleDateChange(name, formatDate(val))}
-            handle_time={(name, val) => handleDateChange(name, formatTime(val))}
-            handleInvalid={(e) => setError(e)}
-          />
-          <h5 className="my-8">Service information</h5>
-          {type === "same_day" ? (
-            <ServicesFields
-              handleChange={(service) =>
-                setFormData({ ...formData, service: service })
-              }
-              value={formData.service}
-            />
-          ) : null}
-          <ItemDimensions
-            handleItems={(items) => setFormData({ ...formData, items: items })}
-            defaultItems={formData?.items}
-            diseble={diseble}
-          />
-        </div>
-        <div className="box">
-          <h3>Pickup Details</h3>
-          {locationsError && (
-            <Alert icon={<ErrorOutline />} className="w-full">
-              Please enter valid location
-            </Alert>
-          )}
-          <FrequentAddress
-            address={formData.address.Origin}
-            handleChange={(e) => handle_address("Origin", e)}
-            show={() => setShowFrequentOrigins(false)}
-            visible={edit}
-          />
-          <CustomInput
-            name="pickupCompanyName"
-            label="Company Name"
-            value={formData.pickupCompanyName}
-            handleChange={handleChange}
-          />
-          {edit && showFrequentOrigins ? (
-            <PlacesAutocomplete
-              onLocationSelect={(e) => handle_address("Origin", e, true)}
-              address={formData.address.Origin}
-              pickup={true}
-              handleCheckboxChange={(e) =>
-                setFormData({ ...formData, savePickAddress: e.target.checked })
-              }
-              checkbox={formData.savePickAddress}
-              saveOption={true}
-            />
-          ) : (
-            <CustomInput
-              value={formData.address.Origin.label}
-              handleChange={(e) =>
-                setFormData({
-                  ...formData,
-                  address: {
-                    ...formData.address,
-                    Destination: {
-                      ...formData.address.Origin,
-                      label: e.target.value,
-                    },
-                  },
-                })
-              }
-            />
-          )}
-
-          <CustomInput
-            name="pickupReference1"
-            label="Reference/Pickup Instruction"
-            value={formData.pickupReference1}
-            handleChange={handleChange}
-          />
-          <CustomInput
-            name="pickupPhone"
-            label="Phone number"
-            value={formData.pickupPhone}
-            handleChange={handleChange}
-          />
-        </div>
-        <div className="box">
-          <h3>Drop Details</h3>
-          {locationsError && (
-            <Alert icon={<ErrorOutline />} className="w-full">
-              Please enter valid location
-            </Alert>
-          )}
-          <FrequentAddress
-            address={formData.address.Destination}
-            handleChange={(e) => handle_address("Destination", e)}
-            show={() => setShowFrequentDestinations(false)}
-            visible={edit}
-          />
-          <CustomInput
-            name="dropCompanyName"
-            label="Company Name"
-            value={formData.dropCompanyName}
-            handleChange={handleChange}
-          />
-          {edit && showFrequentDestinations ? (
-            <PlacesAutocomplete
-              onLocationSelect={(e) => handle_address("Destination", e, true)}
-              address={formData.address.Destination}
-              handleCheckboxChange={(e) =>
-                setFormData({ ...formData, saveDropAddress: e.target.checked })
-              }
-              checkbox={formData.saveDropAddress}
-              saveOption={true}
-            />
-          ) : (
-            <CustomInput
-              value={formData.address.Destination.label}
-              handleChange={(e) =>
-                setFormData({
-                  ...formData,
-                  address: {
-                    ...formData.address,
-                    Destination: {
-                      ...formData.address.Destination,
-                      label: e.target.value,
-                    },
-                  },
-                })
-              }
-            />
-          )}
-          <CustomInput
-            name="deliveryIns"
-            label="Delivery Instructions"
-            value={formData.deliveryIns}
-            handleChange={handleChange}
-          />
-          <CustomInput
-            name="deliveryPhone"
-            label="Phone number"
-            value={formData.deliveryPhone}
-            handleChange={handleChange}
-          />
-        </div>
+        <AddressesSection
+          user={user}
+          edit={edit}
+          locationsError={locationsError}
+          formData={formData}
+          setFormData={setFormData}
+          handleChange={handleChange}
+          handle_address={handle_address}
+          showFrequentOrigins={showFrequentOrigins}
+          setShowFrequentOrigins={setShowFrequentOrigins}
+          showFrequentDestinations={showFrequentDestinations}
+          setShowFrequentDestinations={setShowFrequentDestinations}
+        />
       </div>
       <div
-        className="-mt-60"
         style={{
           width: "100%",
           display: "flex",
