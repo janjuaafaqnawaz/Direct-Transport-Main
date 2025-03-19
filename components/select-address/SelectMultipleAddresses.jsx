@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-export default function SelectMultipleAddresses() {
+export default function SelectMultipleAddresses({ handleAddresses }) {
   const [selectedAddresses, setSelectedAddresses] = useState([]);
   const [currentAddress, setCurrentAddress] = useState(null);
   const [reload, setReload] = useState(0);
@@ -23,7 +23,7 @@ export default function SelectMultipleAddresses() {
       !selectedAddresses.some((addr) => addr.label === currentAddress.label)
     ) {
       setSelectedAddresses([...selectedAddresses, currentAddress]);
-      setCurrentAddress(null);
+      handleAddresses([...selectedAddresses, currentAddress]);
     }
     setReload(reload + 1);
   };
@@ -48,7 +48,7 @@ export default function SelectMultipleAddresses() {
           <Button
             onClick={handleAddAddress}
             disabled={!currentAddress}
-            className="ml-6 mt-2"
+            className="ml-2 mt-2"
           >
             Add
           </Button>
