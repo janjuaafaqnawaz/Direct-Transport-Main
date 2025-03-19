@@ -61,11 +61,24 @@ function Form({
   const handleCheckOut = () => {
     if (locationsError) return toast.error("Please enter valid location ");
     if (error) return toast.error("Please enter valid date & time");
-    if (
-      !formData.address.Origin.coordinates ||
-      !formData.address.Destination.coordinates
-    )
+
+    const isSingleAddressValid = Boolean(
+      formData.address?.Origin?.coordinates &&
+        formData.address?.Destination?.coordinates
+    );
+
+    const isMultipleAddressValid = Boolean(
+      formData.address?.useMultipleAddresses &&
+        formData.address?.MultipleOrigin[0]?.coordinates &&
+        formData.address?.MultipleDestination[0]?.coordinates
+    );
+
+    // console.log("isSingleAddressValid:", isSingleAddressValid);
+    // console.log("isMultipleAddressValid:", isMultipleAddressValid);
+
+    if (!isSingleAddressValid && !isMultipleAddressValid) {
       return toast.error("Please enter address details");
+    }
 
     const requiredFields = [
       "Contact",
@@ -204,6 +217,7 @@ function Form({
           user={user}
           edit={edit}
           locationsError={locationsError}
+          handleRefresh={handleRefresh}
           formData={formData}
           setFormData={setFormData}
           handleChange={handleChange}

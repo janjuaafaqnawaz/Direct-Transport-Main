@@ -6,10 +6,12 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-export default function SelectMultipleAddresses({ handleAddresses }) {
-  const [selectedAddresses, setSelectedAddresses] = useState([]);
+export default function SelectMultipleAddresses({
+  value = [],
+  handleAddresses,
+  removeAddress,
+}) {
   const [currentAddress, setCurrentAddress] = useState(null);
-  const [reload, setReload] = useState(0);
 
   const handleAddressSelect = (location) => {
     if (location?.label) {
@@ -20,30 +22,20 @@ export default function SelectMultipleAddresses({ handleAddresses }) {
   const handleAddAddress = () => {
     if (
       currentAddress &&
-      !selectedAddresses.some((addr) => addr.label === currentAddress.label)
+      !value.some((addr) => addr.label === currentAddress.label)
     ) {
-      setSelectedAddresses([...selectedAddresses, currentAddress]);
-      handleAddresses([...selectedAddresses, currentAddress]);
+      handleAddresses([...value, currentAddress]);
+      setCurrentAddress(null); // Reset input after adding
     }
-    setReload(reload + 1);
-  };
-
-  const removeAddress = (labelToRemove) => {
-    setSelectedAddresses(
-      selectedAddresses.filter((address) => address.label !== labelToRemove)
-    );
   };
 
   return (
-    <div className="mb-6  w-full">
-      <div className=" ">
+    <div className="mb-6 w-full">
+      <div>
         <p className="text-sm font-medium">Select Multiple Addresses</p>
-        <div className="flex items-center ">
+        <div className="flex items-center">
           <div className="flex-1">
-            <PlacesAutocomplete
-              key={reload}
-              onLocationSelect={handleAddressSelect}
-            />
+            <PlacesAutocomplete onLocationSelect={handleAddressSelect} />
           </div>
           <Button
             onClick={handleAddAddress}
@@ -55,10 +47,10 @@ export default function SelectMultipleAddresses({ handleAddresses }) {
         </div>
       </div>
 
-      {selectedAddresses.length > 0 && (
-        <div className="space-y-1 w-full ">
-          <div className="flex space-y-1 flex-col w-full">
-            {selectedAddresses.map((address, index) => (
+      {value.length > 0 && (
+        <div className="space-y-1 w-full">
+          <div className="flex flex-col space-y-1 w-full">
+            {value.map((address, index) => (
               <Badge
                 key={index}
                 className="flex w-full items-center gap-1 py-2 px-3 bg-gray-200 text-black"

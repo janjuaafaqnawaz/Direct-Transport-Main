@@ -1,6 +1,6 @@
 import "./form.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "@mantine/core";
 import { Chip } from "@nextui-org/react";
 import { ErrorOutline } from "@mui/icons-material";
@@ -14,6 +14,7 @@ export default function AddressesSection({
   user,
   edit,
   locationsError,
+  handleRefresh,
   formData,
   setFormData,
   handleChange,
@@ -25,33 +26,61 @@ export default function AddressesSection({
 }) {
   const [showMultipleAddresses, setShowMultipleAddresses] = useState(false);
 
+  useEffect(() => {
+    if (formData.address.useMultipleAddresses) {
+      setShowMultipleAddresses(true);
+    } else {
+      setShowMultipleAddresses(false);
+    }
+  }, []);
+
   const toggleMultipleAddresses = () => {
     setShowMultipleAddresses((prev) => !prev);
   };
 
-  const toggleChip = () => (
-    <Chip
-      className="rounded-md"
-      color="primary"
-      onClick={toggleMultipleAddresses}
-    >
-      {showMultipleAddresses ? "Single Address" : "Multiple Addresses"}
-    </Chip>
-  );
+  const toggleChip = () => {
+    // handleRefresh();
+    return (
+      <Chip
+        className="rounded-md"
+        color="primary"
+        onClick={toggleMultipleAddresses}
+      >
+        {showMultipleAddresses ? "Single Address" : "Multiple Addresses"}
+      </Chip>
+    );
+  };
 
   const handleMultipleAddresses = (address, type) => {
-    console.log(address, type);
-    
     setFormData({
       ...formData,
       address: {
         ...formData.address,
         Origin: {},
         Destination: {},
+        useMultipleAddresses: true,
         [`Multiple${type}`]: address,
       },
     });
   };
+
+  const handleRemoveAddress = (labelToRemove, type) => {
+    setFormData((prevData) => {
+      const updatedAddresses = prevData.address[`Multiple${type}`]?.filter(
+        (addr) => addr.label !== labelToRemove
+      );
+  
+      return {
+        ...prevData,
+        address: {
+          ...prevData.address, // Preserve existing addresses
+          [`Multiple${type}`]: updatedAddresses,
+          useMultipleAddresses: updatedAddresses?.length > 0, // Disable multiple mode if no addresses remain
+        },
+      };
+    });
+  };
+  
 
   return (
     <>
@@ -113,6 +142,8 @@ export default function AddressesSection({
         ) : (
           user.role === "admin" && (
             <SelectMultipleAddresses
+              removeAddress={(label) => handleRemoveAddress(label, "Origin")}
+              value={formData.address.MultipleOrigin}
               handleAddresses={(address) =>
                 handleMultipleAddresses(address, "Origin")
               }
@@ -192,6 +223,10 @@ export default function AddressesSection({
         ) : (
           user.role === "admin" && (
             <SelectMultipleAddresses
+              removeAddress={(label) =>
+                handleRemoveAddress(label, "Destination")
+              }
+              value={formData.address.MultipleDestination}
               handleAddresses={(address) =>
                 handleMultipleAddresses(address, "Destination")
               }
