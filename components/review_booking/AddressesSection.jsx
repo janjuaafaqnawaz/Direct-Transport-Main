@@ -2,7 +2,7 @@ import "./form.css";
 
 import { useEffect, useState } from "react";
 import { Alert } from "@mantine/core";
-import { Chip } from "@nextui-org/react";
+import { Chip, Switch } from "@nextui-org/react";
 import { ErrorOutline } from "@mui/icons-material";
 import { PlacesAutocomplete } from "@/components/Index";
 
@@ -34,20 +34,17 @@ export default function AddressesSection({
     }
   }, []);
 
-  const toggleMultipleAddresses = () => {
-    setShowMultipleAddresses((prev) => !prev);
-  };
-
   const toggleChip = () => {
     // handleRefresh();
     return (
-      <Chip
-        className="rounded-md"
-        color="primary"
-        onClick={toggleMultipleAddresses}
-      >
-        {showMultipleAddresses ? "Single Address" : "Multiple Addresses"}
-      </Chip>
+      <div className="h-10">
+        <Switch
+          isSelected={showMultipleAddresses}
+          onValueChange={setShowMultipleAddresses}
+        >
+          Multiple Addresses
+        </Switch>
+      </div>
     );
   };
 
@@ -69,7 +66,7 @@ export default function AddressesSection({
       const updatedAddresses = prevData.address[`Multiple${type}`]?.filter(
         (addr) => addr.label !== labelToRemove
       );
-  
+
       return {
         ...prevData,
         address: {
@@ -80,13 +77,12 @@ export default function AddressesSection({
       };
     });
   };
-  
 
   return (
     <>
       <div className="box">
-        <h3>Pickup Details</h3>
         {toggleChip()}
+        <h3>Pickup Details</h3>
         {locationsError && (
           <Alert icon={<ErrorOutline />} className="w-full">
             Please enter valid location
@@ -165,9 +161,9 @@ export default function AddressesSection({
         />
       </div>
 
-      <div className="box">
+      <div className="box mt-10">
         <h3>Drop Details</h3>
-        {toggleChip()}
+        {/* {toggleChip()} */}
 
         {locationsError && (
           <Alert icon={<ErrorOutline />} className="w-full">

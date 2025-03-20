@@ -53,10 +53,10 @@ export default function SelectMultipleAddresses({
             {value.map((address, index) => (
               <Badge
                 key={index}
-                className="flex w-full items-center gap-1 py-2 px-3 bg-gray-200 text-black"
+                className="flex w-full items-center gap-1 py-2 px-3 "
               >
                 <span className="text-sm">
-                  ({index + 1}) {address.label}
+                  {String.fromCharCode(65 + index)}. {address.label}
                 </span>
                 <Button
                   variant="ghost"
