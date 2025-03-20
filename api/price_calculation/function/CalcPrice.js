@@ -1,21 +1,22 @@
-import distanceValueKm from "./helper/distance_in_km";
-import calculateItemsVolume from "./helper/item_volume";
+import toast from "react-hot-toast";
+import TruckPricing from "./truck_pricing";
+import { fetchTollsData } from "@/api/fetchTolls";
+import LongDistancePricing from "./long_distance_pricing";
+
+import GstCharges from "./helper/gst_charges";
+import toFixedSafe from "./helper/toFixedSafe";
 import countItemsByType from "./helper/items_count";
+import ServiceCharges from "./helper/service_charges";
+import calculateItemsVolume from "./helper/item_volume";
+import correctReturnType from "./helper/correctReturnType";
+import isPointInGeofence from "./helper/isPointInGeofence";
 import calculateBasePrice from "./helper/calculateBasePrice";
 import overCorrectSmallReturnType from "./helper/overCorrectSmallReturnType";
-import isPointInGeofence from "./helper/isPointInGeofence";
-import ServiceCharges from "./helper/service_charges";
-import GstCharges from "./helper/gst_charges";
 import determineReturnAndServiceTypes from "./helper/determineReturnAndServiceTypes";
+
 import determinePriceByPallet from "./determine_price_by_item/determinePriceByPallet";
-import determineLadderRackPipesPrice from "./determine_price_by_item/determineLadderRackPipesPrice";
 import determinePriceBySkid from "./determine_price_by_item/determinePriceBySkid";
-import { fetchTollsData } from "@/api/fetchTolls";
-import TruckPricing from "./truck_pricing";
-import LongDistancePricing from "./long_distance_pricing";
-import toast from "react-hot-toast";
-import correctReturnType from "./helper/correctReturnType";
-import toFixedSafe from "./helper/toFixedSafe";
+import determineLadderRackPipesPrice from "./determine_price_by_item/determineLadderRackPipesPrice";
 
 export default async function CalcPrice({
   distanceData,
