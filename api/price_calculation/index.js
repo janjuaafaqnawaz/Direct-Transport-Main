@@ -16,13 +16,10 @@ export default async function ProcessPrice(formData) {
     const gst = priceSettings?.same_day?.gst?.GST;
     const long_distance = priceSettings?.same_day?.long_distance;
 
-    const distance = await CalcDistanceDynamically(formData?.address);
-    console.log(distance);
-    const distanceData = distance?.rows[0]?.elements[0]?.distance;
+    const distanceData = await CalcDistanceDynamically(formData?.address);
 
     const booking = await CalcPrice({
       distanceData,
-      distance,
       rate,
       min_rate,
       gst,

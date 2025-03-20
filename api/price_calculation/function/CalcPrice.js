@@ -37,7 +37,14 @@ export default async function CalcPrice({
   let requestQuote = false;
   let returnTypeBackup = "";
 
-  const distance = await distanceValueKm(distanceData);
+  const distance = distanceData?.totalDistanceKM;
+  if (!distance) {
+    toast.error("Distance not found. Please try again later.");
+    setTimeout(() => {
+      navigate("/ClientServices");
+    }, 4000);
+  }
+
   const {
     max_volume,
     total_weight,
