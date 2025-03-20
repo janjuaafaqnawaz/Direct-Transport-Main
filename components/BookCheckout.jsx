@@ -39,11 +39,16 @@ export default function BookCheckout({
   const [invoice, setInvoice] = useState(formData);
   const [creating, setCreating] = useState(false);
 
+  console.log(formData.address);
+
   // Process booking data on mount
   useEffect(() => {
     const processBooking = async () => {
       try {
+        console.log("start processing");
+
         const processedData = await ProcessPrice(formData, fetchTolls);
+        console.log("Processing completed", processedData);
         setInvoice(processedData);
       } catch (error) {
         console.error("Error processing booking:", error);

@@ -22,8 +22,6 @@ export default async function CalcPrice({
   rate,
   min_rate,
   gst,
-  originStr,
-  destinationStr,
   formData,
   priceSettings,
   long_distance,
@@ -171,8 +169,6 @@ export default async function CalcPrice({
     },
 
     path_details: {
-      originStr,
-      destinationStr,
       requestBody,
     },
   });
