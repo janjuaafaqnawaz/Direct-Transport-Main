@@ -198,7 +198,7 @@ export default async function CalcPrice({
     returnTypeBackup,
     requestQuote,
     palletSpaces,
-    distanceData: distanceData,
+    distanceData,
     serviceCharges,
     distance,
     ...formData,

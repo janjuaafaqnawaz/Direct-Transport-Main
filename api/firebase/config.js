@@ -1,5 +1,6 @@
 "use client";
 import { initializeApp } from "firebase/app";
+import { getAuth, signInWithCustomToken } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
@@ -14,6 +15,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const realtimeDb = getDatabase(app);
+const auth = getAuth(app);
 
 // Firebase Configuration for Location-Tracking App
 const firebaseConfigOFL = {
@@ -24,6 +26,30 @@ const firebaseConfigOFL = {
   messagingSenderId: "476599892713",
   appId: "1:476599892713:web:5a647dc2a720e89c9e8e78",
 };
+
+async function authenticate(apiKey) {
+  try {
+    const response = await fetch(
+      `https://getaccesstoken-luo7djln7q-uc.a.run.app/?apiKey=${apiKey}`
+    );
+    const data = await response.json();
+    console.log({ data });
+
+    if (data.token) {
+      await signInWithCustomToken(auth, data.token);
+      console.log("Authenticated successfully!");
+    } else {
+      console.error("Failed authentication:", data.error);
+    }
+  } catch (error) {
+    console.error("Error authenticating:", error);
+  }
+}
+
+// 🔹 Call Authentication After Initialization
+(async () => {
+  await authenticate(firebaseConfig.apiKey);
+})();
 
 const appOFL = initializeApp(firebaseConfigOFL, "locationTrackingApp");
 
