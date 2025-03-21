@@ -4,7 +4,7 @@ import { getAuth, signInWithCustomToken } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  apiKey: "AIzaSyAXYJck4kQxh4hop3BblpVhrgYDKcXSsIc",
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
