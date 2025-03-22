@@ -11,17 +11,47 @@ import JobInquiryIcon from "@mui/icons-material/Help";
 import PriceJobIcon from "@mui/icons-material/MonetizationOn";
 import AddressesIcon from "@mui/icons-material/LocationOn";
 import InvoicesIcon from "@mui/icons-material/Receipt";
-import { Image } from "@nextui-org/react";
 import { IconTruckDelivery } from "@tabler/icons-react";
+
+const clearSiteData = async () => {
+  try {
+    // Clear Cache Storage
+    if ("caches" in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((cache) => caches.delete(cache)));
+    }
+
+    // Clear LocalStorage and SessionStorage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Clear IndexedDB
+    if (window.indexedDB) {
+      const databases = await indexedDB.databases();
+      databases.forEach((db) => {
+        if (db.name) {
+          indexedDB.deleteDatabase(db.name);
+        }
+      });
+    }
+  } catch (err) {
+    console.error("Error clearing site data:", err);
+  }
+};
 
 export default function ClientServices() {
   const router = useRouter();
   const [userRole, setUserRole] = useState([]);
 
   useEffect(() => {
-    const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
-    const role = userDoc.role || null;
-    setUserRole(role);
+    try {
+      const userDoc = JSON.parse(localStorage.getItem("userDoc")) || {};
+      const role = userDoc.role || null;
+      setUserRole(role);
+    } catch (error) {
+      clearSiteData();
+      console.log(error);
+    }
   }, []);
 
   const logoutUser = async () => {
