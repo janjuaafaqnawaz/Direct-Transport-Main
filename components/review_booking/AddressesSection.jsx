@@ -81,7 +81,7 @@ export default function AddressesSection({
   return (
     <>
       <div className="box">
-        {/* {toggleChip()} */}
+        {toggleChip()}
         <h3>Pickup Details</h3>
         {locationsError && (
           <Alert icon={<ErrorOutline />} className="w-full">

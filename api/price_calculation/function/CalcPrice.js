@@ -56,9 +56,18 @@ export default async function CalcPrice({
   } = await calculateItemsVolume(items);
   const itemCounts = await countItemsByType(items);
 
-  const { isOriginInside, isDestinationInside } = await isPointInGeofence(
-    address
+  const { origins, destinations } = await isPointInGeofence(address);
+
+  // If you need to check if at least one origin is inside the geofence
+  const isOriginInside = origins.some((origin) => origin.isInside);
+
+  // If you need to check if at least one destination is inside the geofence
+  const isDestinationInside = destinations.some(
+    (destination) => destination.isInside
   );
+
+  console.log("Origin Inside:", isOriginInside);
+  console.log("Destination Inside:", isDestinationInside);
 
   if (booking_type === "same_day") {
     ({ price, returnType, returnTypeBackup } =
