@@ -29,7 +29,9 @@ export default async function ProcessPrice(formData) {
       booking_type,
     });
 
-    return booking;
+    console.log("Booking distanceData:", distanceData);
+
+    return { ...booking, distanceData };
   } catch (error) {
     notify("something went wrong please try again later");
     console.log(error);

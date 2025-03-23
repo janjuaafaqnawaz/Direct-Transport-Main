@@ -83,13 +83,13 @@ export function Columns({ isArchived, hideAction }) {
       field: "pickupSuburb",
       headerName: "Pickup Suburb",
       width: 100,
-      valueGetter: (value, row) => row?.pickupSuburb,
+      valueGetter: (value, row) => row?.pickupSuburb || "Not Available",
     },
     {
       field: "deliverySuburb",
       headerName: "Delivery Suburb",
       width: 100,
-      valueGetter: (value, row) => row?.deliverySuburb,
+      valueGetter: (value, row) => row?.deliverySuburb || "Not Available",
     },
     {
       field: "totalPriceWithGST",

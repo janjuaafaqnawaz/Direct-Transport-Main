@@ -78,7 +78,8 @@ export default function BookCheckout({
     setCreating(true);
 
     try {
-      const { savePickAddress, saveDropAddress, address, date } = invoice;
+      const { distanceData, savePickAddress, saveDropAddress, address, date } =
+        invoice;
 
       if (savePickAddress) await handleAddressSave(address?.Origin);
       if (saveDropAddress) await handleAddressSave(address?.Destination);
@@ -94,7 +95,11 @@ export default function BookCheckout({
         pickupSuburb,
         deliverySuburb,
         dateTimestamp,
+        distanceData,
       };
+
+      console.log("Submitting booking:", delivery);
+      
 
       const id = await postInvoice(delivery, "place_bookings", selectedEmail);
 
