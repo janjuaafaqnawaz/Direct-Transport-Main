@@ -2,16 +2,13 @@ import CalcPrice from "./CalcPrice";
 import userPriceSettings from "@/api/price_calculation/function/helper/userPriceSettings";
 
 export default async function ProcessPrice(formData) {
+  console.log(formData);
   try {
     if (!formData) {
       throw new Error("formData is required and must be an object.");
     }
 
-    if (
-      !formData.service ||
-      !formData.returnType ||
-      typeof formData.distance !== "number"
-    ) {
+    if (!formData.service || !formData.returnType || !formData.distance) {
       throw new Error(
         "formData is missing required fields or has invalid types."
       );
@@ -23,7 +20,7 @@ export default async function ProcessPrice(formData) {
     }
 
     const booking = await CalcPrice({
-      formData,
+      formData: { ...formData, distance: Number(formData.distance) },
       priceSettings,
     });
 
