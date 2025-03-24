@@ -18,6 +18,7 @@ import { PhotoView } from "react-photo-view";
 import { useDisclosure } from "@mantine/hooks";
 import { Modal, ScrollArea } from "@mantine/core";
 import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
+import JourneyDetails from "@/components/common/JourneyDetails";
 
 export function ImgsDialog({ imgs }) {
   const [opened, { open, close }] = useDisclosure(false); // Manage modal state
@@ -80,16 +81,96 @@ function BookingTable({ bookings }) {
     (a, b) => b.createdAtStandardized - a.createdAtStandardized
   );
 
-  const dates = bookings.map((booking) => {
-    return {
-      id: booking.id,
-      createdAt: formatToSydneyTime(booking?.createdAt),
-      createdAtStandardized: formatToSydneyTime(booking?.createdAtStandardized),
-      ready: booking.date,
-    };
-  });
+  // const dates = bookings.map((booking) => {
+  //   return {
+  //     id: booking.id,
+  //     createdAt: formatToSydneyTime(booking?.createdAt),
+  //     createdAtStandardized: formatToSydneyTime(booking?.createdAtStandardized),
+  //     ready: booking.date,
+  //   };
+  // });
 
-  console.log(dates);
+  function BookingTableBody() {
+    return (
+      <TableBody>
+        {sortedBookings?.map((booking, index) => {
+          console.log(
+            bookings.forEach((b) =>
+              console.log(
+                "Booking ID:",
+                b?.docId,
+                "Distance Data:",
+                b?.distanceData
+              )
+            )
+          );
+          return (
+            <BookingTableBodyRow
+              key={booking?.docId + Date.now}
+              booking={booking}
+              index={index}
+            />
+          );
+        })}
+      </TableBody>
+    );
+  }
+  function BookingTableBodyRow({ booking, index }) {
+    const [opened, { open, close }] = useDisclosure(false);
+
+    const driverUploadedImages = [
+      ...(booking?.images ?? []),
+      ...(booking?.pickupImages ?? []),
+    ].filter((img) => typeof img === "string");
+
+    return (
+      <TableRow>
+        <TableCell>{index + 1}</TableCell>
+        <TableCell>{booking?.docId}</TableCell>
+        <TableCell>
+          {formatToSydneyTime(booking?.createdAtStandardized)}
+        </TableCell>
+        {booking?.address?.useMultipleAddresses &&
+        booking?.distanceData.steps ? (
+          <>
+            <Modal opened={opened} onClose={close} size="xl">
+              <ScrollArea className="flex-1">
+                <JourneyDetails invoice={booking} />
+              </ScrollArea>
+            </Modal>
+
+            <TableCell>
+              <Button className="w-full m-1" variant="ghost" onClick={open}>
+                View Journey
+              </Button>
+            </TableCell>
+            <TableCell />
+          </>
+        ) : (
+          <>
+            <TableCell>{booking?.address?.Origin?.label ?? "N/A"}</TableCell>
+            <TableCell>
+              {booking?.address?.Destination?.label ?? "N/A"}
+            </TableCell>
+          </>
+        )}
+
+        <TableCell>{booking?.service}</TableCell>
+        <TableCell>{booking?.currentStatus || "Pending"}</TableCell>
+        <TableCell>
+          {booking?.progressInformation?.pickedup || "Pending"}
+        </TableCell>
+        <TableCell>
+          {booking?.progressInformation?.delivered || "Pending"}
+        </TableCell>
+        <TableCell>${booking?.totalPrice}</TableCell>
+        <TableCell>{calculateTotalQuantity(booking)}</TableCell>
+        <TableCell>
+          <ImgsDialog imgs={driverUploadedImages} />
+        </TableCell>
+      </TableRow>
+    );
+  }
 
   return (
     <Table>
@@ -109,39 +190,7 @@ function BookingTable({ bookings }) {
           <TableHead>POD</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
-        {sortedBookings?.map((booking, index) => {
-          const driverUploadedImages = [
-            ...(booking?.images ?? []),
-            ...(booking?.pickupImages ?? []),
-          ].filter((img) => typeof img === "string");
-
-          return (
-            <TableRow key={booking?.docId + Date.now}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{booking?.docId}</TableCell>
-              <TableCell>
-                {formatToSydneyTime(booking?.createdAtStandardized)}
-              </TableCell>
-              <TableCell>{booking?.address?.Origin?.label}</TableCell>
-              <TableCell>{booking?.address?.Destination?.label}</TableCell>
-              <TableCell>{booking?.service}</TableCell>
-              <TableCell>{booking?.currentStatus || "Pending"}</TableCell>
-              <TableCell>
-                {booking?.progressInformation?.pickedup || "Pending"}
-              </TableCell>
-              <TableCell>
-                {booking?.progressInformation?.delivered || "Pending"}
-              </TableCell>
-              <TableCell>${booking?.totalPrice}</TableCell>
-              <TableCell>{calculateTotalQuantity(booking)}</TableCell>
-              <TableCell>
-                <ImgsDialog imgs={driverUploadedImages} />
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
+      <BookingTableBody />
     </Table>
   );
 }

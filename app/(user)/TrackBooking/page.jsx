@@ -66,10 +66,18 @@ export default function Page() {
 
   const handleSubmit = async () => {
     setLoading(true);
+
+    // Ensure fromDate and toDate are valid
+    if (!formData.fromDate || !formData.toDate) {
+      alert("Please select a valid date range.");
+      setLoading(false);
+      return;
+    }
+
     const fromDate = new Date(formData.fromDate);
     const toDate = new Date(formData.toDate);
-    const fromTimestamp = Timestamp.fromDate(fromDate);
-    const toTimestamp = Timestamp.fromDate(toDate);
+    // const fromTimestamp = Timestamp.fromDate(fromDate);
+    // const toTimestamp = Timestamp.fromDate(toDate);
 
     try {
       const bookings = await getBookingsBetweenDates(
@@ -80,14 +88,14 @@ export default function Page() {
         role
       );
 
-      if (!bookings.length && !bookings2.length) {
+      if (!bookings.length) {
         alert("Not Found");
       } else {
         setBookings(bookings);
         setShow(true);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching bookings:", error);
     } finally {
       setLoading(false);
     }

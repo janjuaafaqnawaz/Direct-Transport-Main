@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Text, Center } from "@mantine/core";
 import { PhotoView } from "react-photo-view";
 import { Image } from "@nextui-org/react";
+import JourneyDetails from "@/components/common/JourneyDetails";
 
 const renderSection = (title, details) => (
   <Container size="lg">
@@ -177,6 +178,8 @@ const InvoiceDetails = ({ invoice, admin }) => {
     ...(Array.isArray(invoice?.images) ? invoice.images : []),
     ...(Array.isArray(invoice?.pickupImages) ? invoice.pickupImages : []),
   ].filter((img) => typeof img === "string");
+  console.log(invoice);
+  
 
   return (
     <section>
@@ -184,8 +187,15 @@ const InvoiceDetails = ({ invoice, admin }) => {
         BOOKING DETAILS
       </Center>
       {renderSection("Basic Information", basicInfo)}
-      {renderSection("Address Information", addressInfo)}
+      {!invoice?.address?.useMultipleAddresses &&
+        renderSection("Address Information", addressInfo)}
       {renderSection("Prices Information", pricesInfo)}
+
+      <Container size={"xl"}>
+        <div className="mx-14">
+          <JourneyDetails invoice={invoice} minimal={true} />
+        </div>
+      </Container>
 
       <Container size={"lg"}>
         <ItemDimensions

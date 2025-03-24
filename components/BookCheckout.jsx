@@ -24,6 +24,7 @@ import Loading from "./Loading";
 import DimensionsTable from "./ItemDimensions/DimensionsTable";
 import StripeWrapper from "@/components/stripe/StripeWrapper";
 import "@mantine/dates/styles.css";
+import JourneyDetails from "@/components/common/JourneyDetails";
 
 export default function BookCheckout({
   formData,
@@ -99,7 +100,6 @@ export default function BookCheckout({
       };
 
       console.log("Submitting booking:", delivery);
-      
 
       const id = await postInvoice(delivery, "place_bookings", selectedEmail);
 
@@ -123,14 +123,14 @@ export default function BookCheckout({
 
   return (
     <Container
-      size="sm"
+      size="md"
       style={{
         borderRadius: "1.5rem",
         padding: "2.5rem",
         boxShadow: "0 10px 30px rgba(0, 0, 0, 0.08)",
         background: "linear-gradient(to bottom, #ffffff, #f9fafb)",
       }}
-      className="container my-10"
+      className="my-10"
     >
       <div className="space-y-1">
         <div className="text-center mb-8">
@@ -158,38 +158,46 @@ export default function BookCheckout({
         ])}
 
         {/* Pickup and Drop-off Information */}
-        {renderDetails("Pickup and Drop-off Information", [
-          {
-            icon: <LocationOn />,
-            label: "Pickup Company Name",
-            value: invoice.pickupCompanyName,
-          },
-          {
-            icon: <LocationOn />,
-            label: "Pickup Address",
-            value: invoice.address?.Origin.label,
-          },
-          {
-            icon: <LocationOn />,
-            label: "Drop Company Name",
-            value: invoice.dropCompanyName,
-          },
-          {
-            icon: <LocationOn />,
-            label: "Drop Address",
-            value: invoice.address?.Destination.label,
-          },
-          {
-            icon: <AccessTime />,
-            label: "Reference",
-            value: invoice.pickupReference1,
-          },
-          {
-            icon: <AccessTime />,
-            label: "Delivery Instructions",
-            value: invoice.deliveryIns,
-          },
-        ])}
+
+        <JourneyDetails invoice={invoice} minimal={true} />
+
+        <div className="h-4" />
+
+        {renderDetails(
+          "Pickup and Drop-off Information",
+          [
+            {
+              icon: <LocationOn />,
+              label: "Pickup Company Name",
+              value: invoice.pickupCompanyName,
+            },
+            !invoice.address.useMultipleAddresses && {
+              icon: <LocationOn />,
+              label: "Pickup Address",
+              value: invoice.address?.Origin.label,
+            },
+            {
+              icon: <LocationOn />,
+              label: "Drop Company Name",
+              value: invoice.dropCompanyName,
+            },
+            !invoice.address.useMultipleAddresses && {
+              icon: <LocationOn />,
+              label: "Drop Address",
+              value: invoice.address?.Destination.label,
+            },
+            {
+              icon: <AccessTime />,
+              label: "Reference",
+              value: invoice.pickupReference1,
+            },
+            {
+              icon: <AccessTime />,
+              label: "Delivery Instructions",
+              value: invoice.deliveryIns,
+            },
+          ].filter((item) => item)
+        )}
 
         {/* Pricing Information */}
         <div>
