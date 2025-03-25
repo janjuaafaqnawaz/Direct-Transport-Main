@@ -126,7 +126,7 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
               <Text className="font-semibold">Job No.</Text>
               <Text>{invoice.docId}</Text>
             </Group>
-            <JourneyDetails invoice={invoice} />
+            {/* <JourneyDetails invoice={invoice} /> */}
             <Group grow wrap="nowrap" align="flex-end">
               <Text className="font-semibold">Service:</Text>
               <Group grow wrap="nowrap" align="flex-end">
@@ -147,7 +147,16 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
                 className="w-64"
               />
             </Group>
-            {!formData?.address?.useMultipleAddresses && (
+            {formData?.address?.useMultipleAddresses ? (
+              formData?.address?.MultipleOrigin?.map((item, index) => (
+                <Group key={index} grow wrap="nowrap" align="flex-end">
+                  <Text className="font-semibold">
+                    Pickup Address {String.fromCharCode(65 + index)}:
+                  </Text>
+                  <TextInput value={item?.label} className="w-64" />
+                </Group>
+              ))
+            ) : (
               <Group grow wrap="nowrap" align="flex-end">
                 <Text className="font-semibold">Pickup Address:</Text>
                 <TextInput
@@ -181,11 +190,20 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
                 className="w-64"
               />
             </Group>
-            {!formData?.address?.useMultipleAddresses && (
+            {formData?.address?.useMultipleAddresses ? (
+              formData?.address?.MultipleDestination?.map((item, index) => (
+                <Group key={index} grow wrap="nowrap" align="flex-end">
+                  <Text className="font-semibold">
+                    Delivery Address {String.fromCharCode(65 + index)}:
+                  </Text>
+                  <TextInput value={item?.label} className="w-64" />
+                </Group>
+              ))
+            ) : (
               <Group grow wrap="nowrap" align="flex-end">
                 <Text className="font-semibold">Delivery Address:</Text>
                 <TextInput
-                  value={formData.address.Destination.label}
+                  value={formData?.address?.Destination?.label}
                   onChange={handleChangeAddressLabel("Destination")}
                   className="w-64"
                 />
