@@ -40,6 +40,24 @@ export function RowsWithIds({ invoice }) {
 
   return rowsWithIds;
 }
+
+const getStatusColor = (status) => {
+  switch (status.toLowerCase()) {
+    case "delivered":
+      return "#000000"; // Black
+    case "allocated":
+      return "#d90429"; // Red
+    case "picked up":
+      return "#008000"; // Green
+    case "pending":
+      return "#0000FF"; // Blue
+    case "cancelled":
+      return "#f77f00"; // Yellow
+    default:
+      return "#808080"; // Gray (Default for unknown statuses)
+  }
+};
+
 export function Columns({ isArchived, hideAction }) {
   return [
     {
@@ -106,7 +124,13 @@ export function Columns({ isArchived, hideAction }) {
       headerName: "Status",
       width: 100,
       renderCell: (params) => (
-        <Chip size="sm" color="primary">
+        <Chip
+          size="sm"
+          style={{
+            backgroundColor: getStatusColor(params?.row?.currentStatus),
+            color: "#fff",
+          }}
+        >
           {toCapitalize(params?.row?.currentStatus) || "Pending"}
         </Chip>
       ),
