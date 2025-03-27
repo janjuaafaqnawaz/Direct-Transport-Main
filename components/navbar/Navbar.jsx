@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { fetchUserData } from "@/api/firebase/functions/auth";
 import { AdminProvider } from "@/context/AdminProvider";
+import BookingManagerPopup from "../booking-manager-popup/BookingManagerPopup"
 
 const getUserRole = () => {
   if (typeof window !== "undefined") {
@@ -70,6 +71,7 @@ const Navbar = () => {
         marginTop: 20,
       }}
     >
+      {role === "admin" && <BookingManagerPopup />}
       <Link href={userPagesToRender ? "https://directtransport.com.au" : "/"}>
         <Image
           src={

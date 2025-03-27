@@ -12,7 +12,7 @@ import {
 import { db } from "@/context/AdminProvider";
 import BookingScreen from "./components/Screen"
 
-export default function Page() {
+export default function BookingManagerPopup() {
   const [bookings, setBookings] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const collectionName = "deriver_bookings_status";
