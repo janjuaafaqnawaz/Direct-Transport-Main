@@ -15,12 +15,12 @@ export default function BookingList({ bookings, onSelectBooking }) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 bg-white">
       {bookings.map((booking) => (
         <div
           key={booking.id}
           onClick={() => onSelectBooking(booking)}
-          className="group cursor-pointer rounded-lg border bg-card p-3 transition-all hover:bg-accent hover:shadow-md"
+          className="bg-white group cursor-pointer rounded-lg border bg-card p-3 transition-all hover:bg-accent hover:shadow-md"
         >
           <div className="flex items-center justify-between">
             <div className="flex-1">

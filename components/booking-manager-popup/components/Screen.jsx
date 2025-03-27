@@ -76,7 +76,7 @@ export default function BookingScreen({
           },
         }}
         className={cn(
-          "fixed bottom-4 right-4 z-50 w-80 rounded-lg bg-card shadow-xl border transition-all duration-300 overflow-hidden",
+          "bg-white fixed bottom-4 right-4 z-50 w-80 rounded-lg bg-card shadow-xl border transition-all duration-300 overflow-hidden",
           hasNewBooking && "border-primary"
         )}
         style={{
