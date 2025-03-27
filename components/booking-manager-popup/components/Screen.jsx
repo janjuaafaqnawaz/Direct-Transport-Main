@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { X, Package, Bell } from 'lucide-react';
+import { X, Package, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BookingList from "./booking-list";
 import BookingModal from "./booking-modal";
@@ -12,7 +12,6 @@ export default function BookingScreen({
   setSelectedBooking,
   bookings,
 }) {
-  const [isMinimized, setIsMinimized] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [hasNewBooking, setHasNewBooking] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
@@ -21,21 +20,17 @@ export default function BookingScreen({
   // Detect new bookings
   useEffect(() => {
     if (bookings.length > prevBookingsLength.current) {
-      // New booking detected
-      setHasNewBooking(true);
-      setNotificationCount(bookings.length - prevBookingsLength.current);
-      
-      // Auto-show the panel when new bookings arrive
       setIsVisible(true);
-      
-      // Reset the notification after 5 seconds
+
+      setHasNewBooking(true);
+
       const timer = setTimeout(() => {
         setHasNewBooking(false);
       }, 5000);
-      
+
       return () => clearTimeout(timer);
     }
-    
+
     prevBookingsLength.current = bookings.length;
   }, [bookings]);
 
@@ -55,17 +50,6 @@ export default function BookingScreen({
         >
           <Package size={18} />
           <span>Show Bookings</span>
-          
-          {/* Notification badge */}
-          {notificationCount > 0 && (
-            <motion.div 
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"
-            >
-              {notificationCount}
-            </motion.div>
-          )}
         </button>
       </motion.div>
     );
@@ -78,14 +62,18 @@ export default function BookingScreen({
         animate={{
           opacity: 1,
           y: 0,
-          boxShadow: hasNewBooking 
-            ? "0 0 0 rgba(79, 70, 229, 0.4), 0 0 15px rgba(79, 70, 229, 0.3)" 
-            : "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
+          boxShadow: hasNewBooking
+            ? "0 0 0 rgba(79, 70, 229, 0.4), 0 0 15px rgba(79, 70, 229, 0.3)"
+            : "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         }}
-        transition={{ 
-          type: "spring", 
+        transition={{
+          type: "spring",
           stiffness: 300,
-          boxShadow: { duration: 1.5, repeat: hasNewBooking ? Infinity : 0, repeatType: "reverse" }
+          boxShadow: {
+            duration: 1.5,
+            repeat: hasNewBooking ? Infinity : 0,
+            repeatType: "reverse",
+          },
         }}
         className={cn(
           "fixed bottom-4 right-4 z-50 w-80 rounded-lg bg-card shadow-xl border transition-all duration-300 overflow-hidden",
@@ -96,10 +84,12 @@ export default function BookingScreen({
         }}
       >
         {/* Header */}
-        <div className={cn(
-          "flex items-center justify-between p-3 text-primary-foreground transition-colors duration-500",
-          hasNewBooking ? "bg-primary/90 animate-pulse" : "bg-primary"
-        )}>
+        <div
+          className={cn(
+            "flex items-center justify-between p-3 text-primary-foreground transition-colors duration-500",
+            hasNewBooking ? "bg-primary/90 animate-pulse" : "bg-primary"
+          )}
+        >
           <div className="flex items-center gap-2">
             {hasNewBooking ? (
               <motion.div
@@ -115,7 +105,7 @@ export default function BookingScreen({
             <p className="font-medium text-lg text-white">
               Booking Manager
               {hasNewBooking && (
-                <motion.span 
+                <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
@@ -137,23 +127,20 @@ export default function BookingScreen({
         </div>
 
         {/* Content */}
-        {!isMinimized && (
-          <div className="max-h-[calc(80vh-3.5rem)] overflow-auto p-3">
-            {bookings.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                <Package size={40} className="mb-2 opacity-20" />
-                <p>No recent bookings</p>
-              </div>
-            ) : (
-              <BookingList
-                bookings={bookings}
-                onSelectBooking={setSelectedBooking}
-                hasNewBooking={hasNewBooking}
-                newBookingsCount={notificationCount}
-              />
-            )}
-          </div>
-        )}
+        <div className="max-h-[calc(80vh-3.5rem)] overflow-auto p-3">
+          {bookings.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+              <Package size={40} className="mb-2 opacity-20" />
+              <p>No recent bookings</p>
+            </div>
+          ) : (
+            <BookingList
+              bookings={bookings}
+              onSelectBooking={setSelectedBooking}
+              hasNewBooking={hasNewBooking}
+            />
+          )}
+        </div>
 
         {/* Modal */}
         {selectedBooking && (
