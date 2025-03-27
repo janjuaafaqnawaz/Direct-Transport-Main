@@ -14,7 +14,7 @@ import FixPriceModal from "./InvoiceAction/edit_invoice_modal/FixPriceModal";
 
 const toCapitalize = (str) => {
   if (!str) return "";
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  return str?.charAt(0)?.toUpperCase() + str?.slice(1)?.toLowerCase();
 };
 
 const parseDeliveredDate = (date) => {
@@ -42,19 +42,17 @@ export function RowsWithIds({ invoice }) {
 }
 
 const getStatusColor = (status) => {
-  switch (status.toLowerCase()) {
+  switch (status?.toLowerCase()) {
     case "delivered":
-      return "#000000"; // Black
+      return "#000000";
     case "allocated":
-      return "#d90429"; // Red
-    case "picked up":
-      return "#008000"; // Green
-    case "pending":
-      return "#0000FF"; // Blue
+      return "#d90429";
+    case "pickedup":
+      return "#008000";
     case "cancelled":
-      return "#f77f00"; // Yellow
+      return "#f77f00";
     default:
-      return "#808080"; // Gray (Default for unknown statuses)
+      return "#0000FF";
   }
 };
 
