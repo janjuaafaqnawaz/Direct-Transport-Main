@@ -29,6 +29,11 @@ export default function Page({ params }) {
       setEmails(uniqueUsers);
     };
     fetchEmails();
+    setSelectedEmail({
+      email: "",
+      admin: false,
+      name: "",
+    });
   }, []);
 
   const handleEmailChange = (value) => {

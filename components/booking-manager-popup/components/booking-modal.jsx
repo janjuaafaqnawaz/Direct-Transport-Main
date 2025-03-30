@@ -9,10 +9,16 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@nextui-org/react";
+import { deleteDocument } from "@/api/firebase/functions/upload";
 
 export default function BookingModal({ booking, onClose }) {
   const data = booking?.booking;
 
+  const handleMarkRead = async () => {
+    await deleteDocument("deriver_bookings_status", booking.bookingId);
+    onClose();
+  };
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="bg-white max-w-3xl max-h-[90vh] overflow-hidden">
@@ -25,7 +31,7 @@ export default function BookingModal({ booking, onClose }) {
           </div>
         </DialogHeader>
 
-        <ScrollArea className="h-[75vh] pr-4">
+        <ScrollArea className="h-[72vh] pr-4">
           <div className="space-y-6">
             {/* Booking Information */}
             <div className="rounded-lg border bg-card p-4">
@@ -123,6 +129,7 @@ export default function BookingModal({ booking, onClose }) {
             )}
           </div>
         </ScrollArea>
+        <Button color="primary" size="lg" className="mb-2" onPress={handleMarkRead}>Mark Read</Button>
       </DialogContent>
     </Dialog>
   );

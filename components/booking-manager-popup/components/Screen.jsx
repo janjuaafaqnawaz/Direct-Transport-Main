@@ -14,8 +14,8 @@ export default function BookingScreen({
 }) {
   const [isVisible, setIsVisible] = useState(true);
   const [hasNewBooking, setHasNewBooking] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(0);
   const prevBookingsLength = useRef(bookings.length);
+  const audioRef = useRef(null);
 
   // Detect new bookings
   useEffect(() => {
@@ -33,6 +33,10 @@ export default function BookingScreen({
 
     prevBookingsLength.current = bookings.length;
   }, [bookings]);
+
+  useEffect(() => {
+    audioRef.current.play();
+  }, [hasNewBooking]);
 
   if (!isVisible) {
     return (
@@ -57,6 +61,8 @@ export default function BookingScreen({
 
   return (
     <AnimatePresence>
+      <audio ref={audioRef} src="/sound/notification.wav" preload="auto" />
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{

@@ -11,21 +11,9 @@ export default function SelectMultipleAddresses({
   handleAddresses,
   removeAddress,
 }) {
-  const [currentAddress, setCurrentAddress] = useState(null);
-
-  const handleAddressSelect = (location) => {
-    if (location?.label) {
-      setCurrentAddress(location);
-    }
-  };
-
-  const handleAddAddress = () => {
-    if (
-      currentAddress &&
-      !value.some((addr) => addr.label === currentAddress.label)
-    ) {
-      handleAddresses([...value, currentAddress]);
-      setCurrentAddress(null); // Reset input after adding
+  const handleAddAddress = (location) => {
+    if (location && !value.some((addr) => addr.label === location.label)) {
+      handleAddresses([...value, location]);
     }
   };
 
@@ -35,15 +23,8 @@ export default function SelectMultipleAddresses({
         <p className="text-sm font-medium">Select Multiple Addresses</p>
         <div className="flex items-center">
           <div className="flex-1">
-            <PlacesAutocomplete onLocationSelect={handleAddressSelect} />
+            <PlacesAutocomplete onLocationSelect={handleAddAddress} />
           </div>
-          <Button
-            onClick={handleAddAddress}
-            disabled={!currentAddress}
-            className="ml-2 mt-2"
-          >
-            Add
-          </Button>
         </div>
       </div>
 
