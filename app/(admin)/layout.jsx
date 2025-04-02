@@ -42,11 +42,7 @@ export default function RootLayout({ children }) {
         <ScrollArea>
           <Stats />
           {children}
-          {API ? (
-            <Script
-              src={`https://maps.googleapis.com/maps/api/js?key=${API}=places`}
-            />
-          ) : null}
+        
         </ScrollArea>
       </ScrollShadow>
     </AdminProvider>

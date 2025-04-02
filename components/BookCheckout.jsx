@@ -82,8 +82,12 @@ export default function BookCheckout({
       const { distanceData, savePickAddress, saveDropAddress, address, date } =
         invoice;
 
-      if (savePickAddress) await handleAddressSave(address?.Origin);
-      if (saveDropAddress) await handleAddressSave(address?.Destination);
+      const isMultipleAddresses = !address?.useMultipleAddresses;
+
+      if (isMultipleAddresses && savePickAddress)
+        await handleAddressSave(address?.Origin);
+      if (isMultipleAddresses && saveDropAddress)
+        await handleAddressSave(address?.Destination);
 
       const pickupSuburb = await getSuburbByLatLng(address?.Origin?.label);
       const deliverySuburb = await getSuburbByLatLng(
