@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef } from "react";
 import { X, Package, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useDrag } from "react-use-gesture";
+import { useSpring, animated } from "react-spring";
 import BookingList from "./booking-list";
 import BookingModal from "./booking-modal";
 import { cn } from "@/lib/utils";
@@ -12,50 +14,55 @@ export default function BookingScreen({
   setSelectedBooking,
   bookings,
 }) {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [hasNewBooking, setHasNewBooking] = useState(false);
   const prevBookingsLength = useRef(bookings.length);
   const audioRef = useRef(null);
+
+  // Position state for dragging
+  const [{ x, y }, set] = useSpring(() => ({ x: 0, y: 0 }));
+
+  const bind = useDrag(({ offset: [dx, dy] }) => set({ x: dx, y: dy }));
 
   // Detect new bookings
   useEffect(() => {
     if (bookings.length > prevBookingsLength.current) {
       setIsVisible(true);
-
       setHasNewBooking(true);
-
-      const timer = setTimeout(() => {
-        setHasNewBooking(false);
-      }, 5000);
-
+      const timer = setTimeout(() => setHasNewBooking(false), 5000);
       return () => clearTimeout(timer);
     }
-
     prevBookingsLength.current = bookings.length;
   }, [bookings]);
 
   useEffect(() => {
-    audioRef.current.play();
+    audioRef?.current?.play();
   }, [hasNewBooking]);
+
+  if (!bookings?.length > 0) return;
 
   if (!isVisible) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="fixed bottom-4 right-4 z-50"
-      >
-        <button
-          onClick={() => setIsVisible(true)}
-          className={cn(
-            "flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-lg hover:bg-primary/90 transition-all relative",
-            hasNewBooking && "animate-pulse"
-          )}
-        >
-          <Package size={18} />
-          <span>Show Bookings</span>
-        </button>
-      </motion.div>
+      <AnimatePresence>
+        <animated.div {...bind()}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed bottom-4 right-4 z-50"
+          >
+            <button
+              onClick={() => setIsVisible(true)}
+              className={cn(
+                "flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-primary-foreground shadow-lg hover:bg-primary/90 transition-all relative",
+                hasNewBooking && "animate-pulse"
+              )}
+            >
+              <Package size={18} />
+              <span>Show Bookings</span>
+            </button>
+          </motion.div>
+        </animated.div>
+      </AnimatePresence>
     );
   }
 
@@ -63,31 +70,13 @@ export default function BookingScreen({
     <AnimatePresence>
       <audio ref={audioRef} src="/sound/notification.wav" preload="auto" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{
-          opacity: 1,
-          y: 0,
-          boxShadow: hasNewBooking
-            ? "0 0 0 rgba(79, 70, 229, 0.4), 0 0 15px rgba(79, 70, 229, 0.3)"
-            : "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          boxShadow: {
-            duration: 1.5,
-            repeat: hasNewBooking ? Infinity : 0,
-            repeatType: "reverse",
-          },
-        }}
+      <animated.div
+        {...bind()}
+        style={{ x, y }}
         className={cn(
-          "bg-white fixed bottom-4 right-4 z-50 w-80 rounded-lg bg-card shadow-xl border transition-all duration-300 overflow-hidden",
+          "bg-white fixed bottom-4 right-4 z-50 w-80 rounded-lg bg-card shadow-xl border transition-all duration-300 overflow-hidden cursor-grab",
           hasNewBooking && "border-primary"
         )}
-        style={{
-          width: "350px",
-        }}
       >
         {/* Header */}
         <div
@@ -155,7 +144,7 @@ export default function BookingScreen({
             onClose={() => setSelectedBooking(null)}
           />
         )}
-      </motion.div>
+      </animated.div>
     </AnimatePresence>
   );
 }
