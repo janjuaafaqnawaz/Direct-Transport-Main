@@ -56,21 +56,29 @@ export default function PdfButton({
         />
       );
     }
-    return selectedLayout === "Layout2" ? (
+    return (
       <PDFLayout2
         datesRange={datesRange}
         invoices={bookings}
         user={user}
         pdfId={pdfId}
       />
-    ) : (
-      <PDFLayout1
-        datesRange={datesRange}
-        invoices={bookings}
-        user={user}
-        pdfId={pdfId}
-      />
     );
+    // return selectedLayout === "Layout2" ? (
+    //   <PDFLayout2
+    //     datesRange={datesRange}
+    //     invoices={bookings}
+    //     user={user}
+    //     pdfId={pdfId}
+    //   />
+    // ) : (
+    //   <PDFLayout1
+    //     datesRange={datesRange}
+    //     invoices={bookings}
+    //     user={user}
+    //     pdfId={pdfId}
+    //   />
+    // );
   }, [driverLayout, selectedLayout, bookings, user, pdfId]);
 
   const handleUpload = async () => {
@@ -108,12 +116,12 @@ export default function PdfButton({
 
   return (
     <>
-      {!driverLayout && (
+      {/* {!driverLayout && (
         <LayoutSelector
           selectedLayout={selectedLayout}
           setSelectedLayout={setSelectedLayout}
         />
-      )}
+      )} */}
 
       {bookingCount > 0 && (
         <div className="flex justify-center space-x-4">

@@ -220,6 +220,9 @@ export default function MyDocument({ datesRange, invoices, user, pdfId }) {
                       </Text>
                     </View>
                     <View style={styles.tableCol}>
+                      <Text style={styles.tableCellHeader}>Ref </Text>
+                    </View>
+                    <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>
                         {addSpaces(booking?.internalReference || "")}
                       </Text>

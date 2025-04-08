@@ -160,6 +160,9 @@ export default function PDFLayout2({ datesRange, invoices, user, pdfId }) {
               <Text style={styles.tableCellHeader}>TO </Text>
             </View>
             <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Ref </Text>
+            </View>
+            <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Job Code</Text>
             </View>
             <View style={styles.tableColHeader}>
@@ -213,6 +216,9 @@ export default function PDFLayout2({ datesRange, invoices, user, pdfId }) {
                     </View>
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>{destinationLabel}</Text>
+                    </View>{" "}
+                    <View style={styles.tableCol}>
+                      {booking?.pickupReference1 || ""}
                     </View>
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>{booking.returnType}</Text>
