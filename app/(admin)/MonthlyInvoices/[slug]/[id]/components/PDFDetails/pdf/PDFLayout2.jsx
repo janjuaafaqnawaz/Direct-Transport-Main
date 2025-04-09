@@ -19,8 +19,6 @@ export default function PDFLayout2({ datesRange, invoices, user, pdfId }) {
     totalUnloading,
   } = getTotalInvoicePrice(invoices);
 
-  console.log({ totalPrice, totalGst, totalTolls, totalUnloading });
-
   const restrictLength = (str, maxLength) =>
     str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
 
@@ -41,7 +39,7 @@ export default function PDFLayout2({ datesRange, invoices, user, pdfId }) {
       result += char;
       count++;
 
-      if (count === 10) {
+      if (count === 8) {
         result += " ";
         count = 0;
       }
@@ -218,7 +216,9 @@ export default function PDFLayout2({ datesRange, invoices, user, pdfId }) {
                       <Text style={styles.tableCell}>{destinationLabel}</Text>
                     </View>{" "}
                     <View style={styles.tableCol}>
-                      {booking?.pickupReference1 || ""}
+                      <Text style={styles.tableCell}>
+                        {addSpaces(booking?.pickupReference1 || "#")}
+                      </Text>
                     </View>
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>{booking.returnType}</Text>
