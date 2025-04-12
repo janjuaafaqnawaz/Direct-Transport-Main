@@ -18,6 +18,8 @@ export default async function ProcessPrice(formData) {
 
     const distanceData = await CalcDistanceDynamically(formData?.address);
 
+    const { pickupSuburb, deliverySuburb } = distanceData;
+
     const booking = await CalcPrice({
       distanceData,
       rate,
@@ -31,7 +33,12 @@ export default async function ProcessPrice(formData) {
 
     console.log("Booking distanceData:", distanceData);
 
-    return { ...booking, distanceData };
+    return {
+      ...booking,
+      distanceData,
+      pickupSuburb: pickupSuburb || null,
+      deliverySuburb: deliverySuburb || null,
+    };
   } catch (error) {
     notify("something went wrong please try again later");
     console.log(error);

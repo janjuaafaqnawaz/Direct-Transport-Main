@@ -1,5 +1,7 @@
 "use server";
 
+import getSuburbByLatLng from "@/api/getSuburbByLatLng";
+
 export default async function calculateSingleCoords(address, apiKey) {
   const key = apiKey;
 
@@ -29,16 +31,14 @@ export default async function calculateSingleCoords(address, apiKey) {
     const distanceKM = (distanceMeters / 1000).toFixed(2); // Convert meters to KM
     const durationText = data.rows[0].elements[0].duration.text; // Time required
 
+    const pickupSuburb = await getSuburbByLatLng(address?.Origin?.label);
+    const deliverySuburb = await getSuburbByLatLng(address?.Destination?.label);
+
     return {
       totalDistanceKM: distanceKM,
       totalDuration: durationText,
-      details: {
-        from: data.origin_addresses[0],
-        to: data.destination_addresses[0],
-        distance: `${distanceKM} km`,
-        duration: durationText,
-      },
-      readablePath: `${data.origin_addresses[0]} → ${data.destination_addresses[0]} (${distanceKM} km, ${durationText})`,
+      pickupSuburb,
+      deliverySuburb,
     };
   } catch (error) {
     console.error("Error fetching distance data:", error);

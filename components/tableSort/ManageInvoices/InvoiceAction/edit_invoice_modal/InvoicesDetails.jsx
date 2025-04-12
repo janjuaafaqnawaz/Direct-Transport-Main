@@ -23,6 +23,8 @@ import { PaidTwoTone } from "@mui/icons-material";
 import { sendCustomNotification } from "@/server/sendCustomNotification";
 import useAdminContext from "@/context/AdminProvider";
 import JourneyDetails from "@/components/common/JourneyDetails";
+import { CardContent } from "@/components/ui/card";
+import { Separator } from "@radix-ui/react-select";
 
 export default function InvoicesDetails({ invoice, admin, onClose }) {
   const { allDrivers, loading } = useAdminContext();
@@ -107,7 +109,51 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
     }
   };
 
-  console.log(formData.address);
+  const renderSuburbs = () => {
+    const suburbs = invoice?.distanceData?.suburbs;
+
+    if (!suburbs || !suburbs.length) return null;
+
+    const originSuburbs = suburbs.filter((s) => s.type === "origin");
+    const deliverySuburbs = suburbs.filter((s) => s.type === "destination");
+
+    const renderList = (items, offset = 0) =>
+      items.map((suburbData, index) => {
+        const letter = String.fromCharCode(65 + index + offset); // A, B, C...
+        return (
+          <div key={letter} className="flex items-start   py-1">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-xs font-medium text-slate-700">
+              {letter}
+            </div>
+            <div>
+              <span className="font-medium">{suburbData.suburb}</span>{" "}
+            </div>
+          </div>
+        );
+      });
+
+    return (
+      <div className="overflow-hidden ">
+        {originSuburbs.length > 0 && (
+          <div className="p-4">
+            <Text className="font-semibold"> Pickup Suburbs</Text>
+            <div>{renderList(originSuburbs)}</div>
+          </div>
+        )}
+
+        {originSuburbs.length > 0 && deliverySuburbs.length > 0 && (
+          <Separator />
+        )}
+
+        {deliverySuburbs.length > 0 && (
+          <div className="p-4">
+            <Text className="font-semibold"> Delivery Suburbs</Text>
+            <div>{renderList(deliverySuburbs, originSuburbs.length)}</div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -138,6 +184,7 @@ export default function InvoicesDetails({ invoice, admin, onClose }) {
                 </Chip>
               </Group>
             </Group>
+            {renderSuburbs()}
             <Divider my="sm" />
             <Group grow wrap="nowrap" align="flex-end">
               <Text className="font-semibold">Pickup Company Name :</Text>

@@ -1,4 +1,5 @@
 "use server";
+import getSuburbByLatLng from "@/api/getSuburbByLatLng";
 
 export default async function calculateMultipleCoords(address, apiKey) {
   const key = apiKey;
@@ -15,6 +16,7 @@ export default async function calculateMultipleCoords(address, apiKey) {
       ...address.MultipleOrigin.map((loc) => ({
         label: loc.label,
         coordinates: loc.coordinates,
+        type: "origin",
       }))
     );
   }
@@ -25,6 +27,7 @@ export default async function calculateMultipleCoords(address, apiKey) {
       ...address.MultipleDestination.map((loc) => ({
         label: loc.label,
         coordinates: loc.coordinates,
+        type: "destination",
       }))
     );
   }
@@ -39,14 +42,11 @@ export default async function calculateMultipleCoords(address, apiKey) {
   }
 
   let totalDistance = 0;
-  let steps = [];
-  let readablePath = [];
 
+  // Distance calculation
   for (let i = 0; i < locations.length - 1; i++) {
     const origin = `${locations[i].coordinates.lat},${locations[i].coordinates.lng}`;
-    const destination = `${locations[i + 1].coordinates.lat},${
-      locations[i + 1].coordinates.lng
-    }`;
+    const destination = `${locations[i + 1].coordinates.lat},${locations[i + 1].coordinates.lng}`;
 
     const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&units=metric&key=${key}`;
 
@@ -54,27 +54,9 @@ export default async function calculateMultipleCoords(address, apiKey) {
       const response = await fetch(url);
       const data = await response.json();
 
-      console.log("API Response:", data); // Debugging
-
       if (data.status === "OK" && data.rows[0].elements[0].status === "OK") {
         const distanceKM = data.rows[0].elements[0].distance.value / 1000; // Convert meters to KM
-        const durationText = data.rows[0].elements[0].duration.text; // Travel time
         totalDistance += distanceKM;
-
-        // Add step details
-        steps.push({
-          from: locations[i].label,
-          to: locations[i + 1].label,
-          distance: `${distanceKM.toFixed(2)} km`,
-          duration: durationText,
-        });
-
-        // Add readable path
-        readablePath.push(
-          `${locations[i].label} → ${
-            locations[i + 1].label
-          } (${distanceKM.toFixed(2)} km, ${durationText})`
-        );
       } else {
         console.error("Error in API response:", data);
         throw new Error("Failed to fetch distance data from Google Maps API");
@@ -85,9 +67,28 @@ export default async function calculateMultipleCoords(address, apiKey) {
     }
   }
 
+  // Fetch suburbs for all locations (use label, not coordinates)
+  const suburbPromises = locations.map(async (loc) => {
+    let suburb = await getSuburbByLatLng(loc.label);
+    if (!suburb) {
+      console.warn("No suburb found for:", loc.label);
+      suburb = "Unknown";
+    }
+
+    return {
+      label: loc.label,
+      type: loc.type,
+      coordinates: loc.coordinates,
+      suburb,
+    };
+  });
+
+  const suburbs = await Promise.all(suburbPromises);
+
+  console.log({ suburbs });
+
   return {
     totalDistanceKM: totalDistance.toFixed(2),
-    steps,
-    readablePath: readablePath.join(" → "),
+    suburbs,
   };
 }

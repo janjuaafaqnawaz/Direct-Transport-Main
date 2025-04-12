@@ -99,13 +99,24 @@ export function Columns({ isArchived, hideAction }) {
       field: "pickupSuburb",
       headerName: "Pickup Suburb",
       width: 100,
-      valueGetter: (value, row) => row?.pickupSuburb || "Not Available",
+      valueGetter: (value, row) =>
+        row?.pickupSuburb ||
+        row?.distanceData?.suburbs[0]?.suburb ||
+        "Not Available",
     },
     {
       field: "deliverySuburb",
       headerName: "Delivery Suburb",
       width: 100,
-      valueGetter: (value, row) => row?.deliverySuburb || "Not Available",
+      valueGetter: (value, row) => {
+        const no = row?.address?.MultipleOrigin?.length || 0 - 1;
+
+        return (
+          row?.deliverySuburb ||
+          row?.distanceData?.suburbs[no]?.suburb ||
+          "Not Available"
+        );
+      },
     },
     {
       field: "totalPriceWithGST",

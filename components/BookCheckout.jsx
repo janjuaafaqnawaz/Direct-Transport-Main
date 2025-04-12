@@ -13,7 +13,6 @@ import { Text, Button, Container, ActionIcon } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { Timestamp } from "firebase/firestore";
 import toast from "react-hot-toast";
-import getSuburbByLatLng from "@/api/getSuburbByLatLng";
 import {
   addFrequentAddress,
   postInvoice,
@@ -89,16 +88,10 @@ export default function BookCheckout({
       if (isMultipleAddresses && saveDropAddress)
         await handleAddressSave(address?.Destination);
 
-      const pickupSuburb = await getSuburbByLatLng(address?.Origin?.label);
-      const deliverySuburb = await getSuburbByLatLng(
-        address?.Destination?.label
-      );
       const dateTimestamp = convertToTimestamp(date);
 
       const delivery = {
         ...invoice,
-        pickupSuburb,
-        deliverySuburb,
         dateTimestamp,
         distanceData,
       };

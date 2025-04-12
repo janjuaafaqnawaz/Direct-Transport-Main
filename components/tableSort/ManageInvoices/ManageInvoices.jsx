@@ -6,6 +6,9 @@ import { RowsWithIds, Columns } from "./Columns";
 import { Box } from "@mui/material";
 
 export default function ManageInvoices({ isArchived, hideAction, invoice }) {
+  console.log(invoice);
+  
+  
   const rowsWithIds = useMemo(() => RowsWithIds({ invoice }), [invoice]);
   const columns = useMemo(
     () => Columns({ isArchived, hideAction }),
