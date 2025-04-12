@@ -22,6 +22,7 @@ function Form({
   noEmail,
   fetchTolls,
   selectedEmail,
+  resetSelectedEmail,
 }) {
   // -------------------------------State
 
@@ -39,6 +40,8 @@ function Form({
       try {
         const user = JSON.parse(localStorage.getItem("userDoc")) || {} || null;
         setUser(user);
+        setFormData(form || initialFormData);
+        resetSelectedEmail();
       } catch (error) {
         console.error("Error fetching data: ", error);
       }
@@ -211,6 +214,7 @@ function Form({
           setError={setError}
           handleChange={handleChange}
           handleDateChange={handleDateChange}
+          resetSelectedEmail={resetSelectedEmail}
         />
 
         <AddressesSection
@@ -235,6 +239,7 @@ function Form({
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "column",
+          marginTop: 60,
         }}
       >
         <ButtonGroup orientation="vertical" className="gap-[2px]">

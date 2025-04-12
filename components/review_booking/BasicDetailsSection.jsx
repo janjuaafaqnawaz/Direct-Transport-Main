@@ -8,6 +8,8 @@ import ServicesFields from "@/components/fields/ServicesFields";
 
 import { formatDate, formatTime } from "@/api/DateAndTime/format";
 import { Divider } from "@mui/material";
+import { Button, ButtonGroup, Tooltip } from "@nextui-org/react";
+import { ResetIcon } from "@radix-ui/react-icons";
 
 export default function BasicDetailsSection({
   user,
@@ -20,6 +22,7 @@ export default function BasicDetailsSection({
   setError,
   handleChange,
   handleDateChange,
+  resetSelectedEmail,
 }) {
   return (
     <>
@@ -27,7 +30,25 @@ export default function BasicDetailsSection({
         <h3>Job information</h3>
         <p>
           Account:
-          {selectedEmail?.name !== "" ? selectedEmail.name : user?.firstName}
+          {selectedEmail && (
+            <ButtonGroup className="ml-2">
+              {user.role === "admin" && selectedEmail?.name !== "" && (
+                <Button
+                  onClick={resetSelectedEmail}
+                  variant="flat"
+                  size="sm"
+                  isIconOnly
+                >
+                  <ResetIcon />
+                </Button>
+              )}
+              <Button variant="flat" size="sm">
+                {selectedEmail?.name !== ""
+                  ? selectedEmail.name
+                  : user?.firstName}
+              </Button>
+            </ButtonGroup>
+          )}
         </p>
         <br />
         <CustomInput

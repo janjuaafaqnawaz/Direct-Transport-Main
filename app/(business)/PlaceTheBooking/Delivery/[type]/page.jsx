@@ -6,14 +6,18 @@ import Form from "@/components/review_booking/form";
 import { Autocomplete, Container } from "@mantine/core";
 import { getUsersEmailAndNames } from "@/api/firebase/functions/fetch";
 
+const initSelectedEmail = {
+  email: "",
+  admin: false,
+  name: "",
+};
+
 export default function Page({ params }) {
   const [user, setUser] = useState(null);
   const [emails, setEmails] = useState([]);
-  const [selectedEmail, setSelectedEmail] = useState({
-    email: "",
-    admin: false,
-    name: "",
-  });
+  const [selectedEmail, setSelectedEmail] = useState(initSelectedEmail);
+
+  const resetSelectedEmail = () => setSelectedEmail(initSelectedEmail);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userDoc")) || null;
@@ -26,14 +30,10 @@ export default function Page({ params }) {
         (user, index, self) =>
           index === self.findIndex((u) => u.name === user.name)
       );
-      setEmails(uniqueUsers);
+      setEmails(uniqueUsers.filter((user) => user.role !== "driver"));
     };
     fetchEmails();
-    setSelectedEmail({
-      email: "",
-      admin: false,
-      name: "",
-    });
+    resetSelectedEmail();
   }, []);
 
   const handleEmailChange = (value) => {
@@ -59,7 +59,12 @@ export default function Page({ params }) {
           />
         </Container>
       )}
-      <Form type={params.type} edit={true} selectedEmail={selectedEmail} />
+      <Form
+        type={params.type}
+        edit={true}
+        selectedEmail={selectedEmail}
+        resetSelectedEmail={resetSelectedEmail}
+      />
     </>
   );
 }
