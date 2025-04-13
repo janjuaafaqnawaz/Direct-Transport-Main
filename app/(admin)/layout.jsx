@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
     auth();
   }, [nav]);
 
-  const API = "AIzaSyACXmi5Hwi2SRE_VqmYqSI7gdLOa9neomg";
+  if (loading) return;
 
   return (
     <AdminProvider>
@@ -42,7 +42,6 @@ export default function RootLayout({ children }) {
         <ScrollArea>
           <Stats />
           {children}
-        
         </ScrollArea>
       </ScrollShadow>
     </AdminProvider>
