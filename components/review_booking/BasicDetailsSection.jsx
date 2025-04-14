@@ -10,9 +10,11 @@ import { formatDate, formatTime } from "@/api/DateAndTime/format";
 import { Divider } from "@mui/material";
 import { Button, ButtonGroup, Tooltip } from "@nextui-org/react";
 import { ResetIcon } from "@radix-ui/react-icons";
+import { useEffect, useState } from "react";
 
 export default function BasicDetailsSection({
   user,
+  setUser,
   type,
   diseble,
   noEmail,
@@ -31,7 +33,7 @@ export default function BasicDetailsSection({
         <p>
           Account:
           {selectedEmail && (
-            <ButtonGroup className="ml-2">
+            <ButtonGroup onClick={resetSelectedEmail} className="ml-2">
               {user.role === "admin" && selectedEmail?.name !== "" && (
                 <Button
                   onClick={resetSelectedEmail}

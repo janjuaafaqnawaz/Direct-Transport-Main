@@ -112,8 +112,7 @@ export default function BookCheckout({
       setCreating(false);
     }
   };
-
-  // Render loading state
+   // Render loading state
   if (loading) {
     return <Loading />;
   }

@@ -415,6 +415,7 @@ async function getUsersEmailAndNames() {
     const documents = querySnapshot.docs.map((doc) => ({
       email: doc.data().email,
       name: doc.data().firstName,
+      role: doc.data().role,
     }));
 
     return documents;

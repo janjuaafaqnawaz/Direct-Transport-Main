@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { initialFormData } from "../static";
 import { BookCheckout } from "@/components/Index";
 import { Button, ButtonGroup } from "@mantine/core";
+import { verifyAuth } from "@/api/firebase/functions/auth";
 
 function Form({
   type,
@@ -38,7 +39,7 @@ function Form({
   useEffect(() => {
     async function fetchData() {
       try {
-        const user = JSON.parse(localStorage.getItem("userDoc")) || {} || null;
+        const user = await verifyAuth();
         setUser(user);
         setFormData(form || initialFormData);
         resetSelectedEmail();
@@ -205,6 +206,7 @@ function Form({
       <div className="container mx-auto mt-8">
         <BasicDetailsSection
           user={user}
+          setUser={setUser}
           type={type}
           diseble={diseble}
           noEmail={noEmail}

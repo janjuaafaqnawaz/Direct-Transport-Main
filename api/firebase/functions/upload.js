@@ -182,7 +182,7 @@ async function addFrequentAddress(address, disabledReload) {
         if (!disabledReload) {
           window.location.reload();
         }
-        
+
         return true;
       } else {
         console.log(`Address already exists.`);
