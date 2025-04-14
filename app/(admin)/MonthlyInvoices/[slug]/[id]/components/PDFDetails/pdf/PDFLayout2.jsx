@@ -217,7 +217,7 @@ export default function PDFLayout2({ datesRange, invoices, user, pdfId }) {
                     </View>{" "}
                     <View style={styles.tableCol}>
                       <Text style={styles.tableCell}>
-                        {addSpaces(booking?.pickupReference1 || "#")}
+                        {addSpaces(booking?.internalReference || "#")}
                       </Text>
                     </View>
                     <View style={styles.tableCol}>
