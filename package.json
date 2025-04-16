@@ -52,7 +52,7 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "browser-image-compression": "^2.0.2",
-    "caniuse-lite": "^1.0.30001699",
+    "caniuse-lite": "^1.0.30001713",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
