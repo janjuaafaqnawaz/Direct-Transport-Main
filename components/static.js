@@ -4,7 +4,10 @@ import PriceJobIcon from "@mui/icons-material/MonetizationOn";
 import AddressesIcon from "@mui/icons-material/LocationOn";
 import InvoicesIcon from "@mui/icons-material/Receipt";
 import { getFormattedDateStr } from "@/api/DateAndTime/index";
-import { formattedDateCurrent } from "@/api/DateAndTime/format";
+import {
+  formattedDateCurrent,
+  formattedTimeCurrent,
+} from "@/api/DateAndTime/format";
 
 const clientServiceslinks = [
   {
@@ -172,7 +175,7 @@ const businessPages = [
 
 const authPages = [
   { link: "/Signin", label: "Sign In" },
-  { link:"https://directtransport.com.au/account-opening/", label: "Sign Up" },
+  { link: "https://directtransport.com.au/account-opening/", label: "Sign Up" },
 ];
 
 const statuses = [
@@ -214,7 +217,7 @@ const initialFormData = {
   email: "",
   service: "Standard",
   date: formattedDateCurrent,
-  time: "12:00 AM",
+  time: formattedTimeCurrent,
   dropReference1: "",
   pickupReference1: "",
   items: [],
