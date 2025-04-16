@@ -100,7 +100,7 @@ export function Columns({ isArchived, hideAction }) {
       headerName: "Pickup Suburb",
       width: 100,
       valueGetter: (value, row) => {
-        const originSuburbs = row?.suburbs?.filter((s) => s.type === "origin");
+        const originSuburbs = row?.distanceData?.suburbs?.filter((s) => s.type === "origin");
         return (
           row?.pickupSuburb || originSuburbs?.[0]?.suburb || "Not Available"
         );
@@ -111,7 +111,7 @@ export function Columns({ isArchived, hideAction }) {
       headerName: "Delivery Suburb",
       width: 100,
       valueGetter: (value, row) => {
-        const deliverySuburbs = row?.suburbs?.filter(
+        const deliverySuburbs = row?.distanceData?.suburbs?.filter(
           (s) => s.type === "destination"
         );
         return (
