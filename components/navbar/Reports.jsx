@@ -57,23 +57,31 @@ export default function Reports() {
         return;
       }
 
-      // const abc = filteredBookings.map((booking) => [
-      //   booking.totalPriceWithGST,
-      //   booking.totalTollsCost,
-      //   booking.id,
-      //   booking.returnType,
-      // ]);
-      // console.log(abc);
+      // const cleaned = filteredBookings.map((b) => {
+      //   const price = Number(
+      //     b.totalPriceWithGST?.toString().replace(/,/g, "") || "0"
+      //   );
+      //   const tolls = Number(
+      //     b.totalTollsCost?.toString().replace(/,/g, "") || "0"
+      //   );
+      //   return { id: b.id, price, tolls, total: price + tolls };
+      // });
+      // console.table(cleaned);
 
       setBookings(filteredBookings);
 
-      const total = filteredBookings.reduce(
-        (sum, booking) =>
-          sum +
-          (Number(booking?.totalPriceWithGST) +
-            Number(booking?.totalTollsCost || 0)),
-        0
-      );
+      const total = filteredBookings.reduce((sum, booking) => {
+        const price =
+          Number(
+            booking?.totalPriceWithGST?.toString().replace(/,/g, "").trim()
+          ) || 0;
+        const tolls =
+          Number(
+            booking?.totalTollsCost?.toString().replace(/,/g, "").trim()
+          ) || 0;
+        return sum + price + tolls;
+      }, 0);
+
       setTotalPrice(total.toFixed(2));
     } catch (error) {
       console.error(error);
