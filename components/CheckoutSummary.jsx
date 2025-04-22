@@ -1,12 +1,15 @@
 "use client";
 
-import { ActionIcon, Container, Text, Button } from "@mantine/core";
+import { ActionIcon, Container, Text } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import { AccountCircle, LocationOn, AttachMoney } from "@mui/icons-material";
 import Loading from "./Loading";
 import DimensionsTable from "@/components/ItemDimensions/DimensionsTable";
 import ProcessPrice from "@/api/price_calculation";
 import { useRouter } from "next/navigation";
+import { Button } from "@nextui-org/react";
+import { postCustomIdDoc } from "@/api/firebase/functions/upload";
+import toast from "react-hot-toast";
 
 const renderDetails = (title, details) => (
   <div>
@@ -163,7 +166,6 @@ const CheckoutSummary = ({ formData, action, updatedForm }) => {
                 ).toFixed(2),
             },
           ])}
-
       <DimensionsTable
         items={invoice?.items}
         diseble={true}
@@ -174,26 +176,33 @@ const CheckoutSummary = ({ formData, action, updatedForm }) => {
       <br />
       <Button
         fullWidth
-        variant="filled"
-        color="green"
-        mt={2}
+        className="mb-1"
+        color="primary"
         onClick={() => {
           action("checkout"), updatedForm(invoice);
         }}
-        marginTop="lg"
-        style={{ borderRadius: "8px" }}
       >
         Confirm Booking
       </Button>
+
       <Button
         fullWidth
-        variant="filled"
-        color="red"
-        mt={2}
-        marginTop="lg"
-        style={{ borderRadius: "8px" }}
-        onClick={() => action("")}
+        className="mb-1"
+        color="secondary"
+        onClick={async () => {
+          const toastId = toast.loading("Saving Quote...");
+          updatedForm(invoice);
+          await postCustomIdDoc(invoice, "saved_quotes", generateSQId());
+          toast.success("Quote Saved Successfully " + invoice?.docId, {
+            id: toastId,
+          });
+          router.push("/MyQuotes");
+        }}
       >
+        Save Quote
+      </Button>
+
+      <Button fullWidth color="danger" onClick={() => action("")}>
         Back
       </Button>
     </Container>
@@ -201,3 +210,8 @@ const CheckoutSummary = ({ formData, action, updatedForm }) => {
 };
 
 export default CheckoutSummary;
+
+function generateSQId() {
+  const randomNumber = Math.floor(100000 + Math.random() * 900000); // ensures it's always 6 digits
+  return `SQ${randomNumber}`;
+}

@@ -167,6 +167,27 @@ async function getCollection(collectionName) {
   }
 }
 
+async function getMyDocs(collectionName) {
+  const user = JSON.parse(localStorage.getItem("userDoc"));
+  if (!user) {
+    notify("You're not logged in");
+    return [];
+  }
+
+  try {
+    const q = query(
+      collection(db, collectionName),
+      where("userEmail", "==", user.email)
+    );
+    const querySnapshot = await getDocs(q);
+    const documents = querySnapshot.docs.map((doc) => doc.data());
+    return documents;
+  } catch (error) {
+    notify("Something went wrong fetching");
+    return [];
+  }
+}
+
 async function getDrivers() {
   try {
     const q = query(collection(db, "users"), where("role", "==", "driver"));
@@ -471,6 +492,7 @@ const fetchBookingsBetweenDates = async (datesRange, user) => {
 };
 
 export {
+  getMyDocs,
   fetchDocById,
   fetchFrequentAddresses,
   fetchPlace_booking,

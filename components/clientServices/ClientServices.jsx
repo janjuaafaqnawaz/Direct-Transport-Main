@@ -12,6 +12,7 @@ import PriceJobIcon from "@mui/icons-material/MonetizationOn";
 import AddressesIcon from "@mui/icons-material/LocationOn";
 import InvoicesIcon from "@mui/icons-material/Receipt";
 import { IconTruckDelivery } from "@tabler/icons-react";
+import { Quote } from "lucide-react";
 
 const clearSiteData = async () => {
   try {
@@ -71,6 +72,12 @@ export default function ClientServices() {
       description: "Track your recent bookings",
       link: "/TrackBooking",
       icon: <TrackBookingIcon className="size-10" />,
+    },
+    {
+      title: "My Quotes",
+      description: "Go to My Quotes",
+      link: "/MyQuotes",
+      icon: <Quote className="size-10" />,
     },
     userRole === "business" || userRole === "admin"
       ? {
