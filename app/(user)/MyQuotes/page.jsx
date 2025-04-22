@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { verifyAuth } from "@/api/firebase/functions/auth";
 import { getMyDocs } from "@/api/firebase/functions/fetch";
 import {
   Loader2,
@@ -25,24 +24,22 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import Form from "@/components/review_booking/form";
 import { deleteDocument } from "@/api/firebase/functions/upload";
-import { ScrollArea } from "@mantine/core";
 
 export default function SavedQuotes() {
   const [user, setUser] = useState(null);
   const [myQuotes, setMyQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedQuote, setExpandedQuote] = useState(null);
-  const [activeTab, setActiveTab] = useState("all");
+  const [selectedQuote, setSelectedQuote] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const user = await verifyAuth();
-        setUser(user);
+        // const user = await verifyAuth();
+        // setUser(user);
 
         const quotes = await getMyDocs("saved_quotes");
         if (quotes.length > 0) {
@@ -74,8 +71,8 @@ export default function SavedQuotes() {
   };
 
   const handleSelect = (quote) => {
+    setSelectedQuote(quote);
     toast.success(`Quote ${quote.id} selected`);
-    toast.success(`You will be use this feature soon.`);
     // Implement your selection logic here
   };
 
@@ -83,12 +80,23 @@ export default function SavedQuotes() {
     setExpandedQuote(expandedQuote === id ? null : id);
   };
 
-  const filteredQuotes =
-    activeTab === "all"
-      ? myQuotes
-      : activeTab === "new"
-      ? myQuotes.filter((q) => q.isNew)
-      : myQuotes.filter((q) => !q.isNew);
+  if (selectedQuote) {
+    return (
+      <Form
+        type={selectedQuote.type}
+        form={selectedQuote}
+        cat={"place_job"}
+        edit={false}
+        action={(e) => {
+          setSelectedQuote(null);
+        }}
+        back={true}
+        diseble={true}
+        fetchTolls={true}
+        selectedEmail={""}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -104,8 +112,8 @@ export default function SavedQuotes() {
   }
 
   return (
-    <ScrollArea className="h-full w-full">
-      <div className="container mx-auto py-6 px-4 max-w-7xl">
+    <div className="  w-full">
+      <div className="  mx-auto py-6 px-4 max-w-7xl">
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Saved Quotes</h1>
@@ -114,24 +122,10 @@ export default function SavedQuotes() {
             </p>
           </div>
 
-          <Tabs
-            defaultValue="all"
-            className="w-full sm:w-auto"
-            onValueChange={setActiveTab}
-          >
-            <TabsList className="grid w-full grid-cols-3 sm:w-[300px]">
-              <TabsTrigger value="all">All ({myQuotes.length})</TabsTrigger>
-              <TabsTrigger value="new">
-                New ({myQuotes.filter((q) => q.isNew).length})
-              </TabsTrigger>
-              <TabsTrigger value="processed">
-                Processed ({myQuotes.filter((q) => !q.isNew).length})
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <Button>All ({myQuotes.length})</Button>
         </div>
 
-        {filteredQuotes.length === 0 ? (
+        {myQuotes.length === 0 ? (
           <div className="rounded-lg border border-dashed p-12 text-center">
             <TruckIcon className="mx-auto h-12 w-12 text-muted-foreground/50" />
             <h3 className="mt-4 text-lg font-semibold">No quotes found</h3>
@@ -141,7 +135,7 @@ export default function SavedQuotes() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredQuotes.map((quote) => (
+            {myQuotes.map((quote, index) => (
               <Card
                 key={quote.docId}
                 className={`overflow-hidden transition-all duration-200 hover:shadow-md ${
@@ -170,11 +164,8 @@ export default function SavedQuotes() {
                         </p>
                       </div>
                     </div>
-                    <Badge
-                      variant={quote.isNew ? "default" : "outline"}
-                      className="ml-auto"
-                    >
-                      {quote.isNew ? "New" : "Processed"}
+                    <Badge variant={"default"} className="ml-auto">
+                      {index + 1}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -256,8 +247,14 @@ export default function SavedQuotes() {
                     </div>
 
                     {expandedQuote === quote.docId && (
-                      <div className="mt-2 space-y-4 rounded-lg bg-muted/30 p-3 text-sm">
-                        <div>
+                      <div
+                        className={`mt-2 transition-all duration-300 overflow-hidden ${
+                          expandedQuote === quote.docId
+                            ? "max-h-[1000px]"
+                            : "max-h-0"
+                        }`}
+                      >
+                        <div className="space-y-4 rounded-lg bg-muted/30 p-3 text-sm">
                           <h4 className="mb-2 font-medium">Items</h4>
                           <div className="space-y-2">
                             {quote.items.map((item, idx) => (
@@ -391,6 +388,6 @@ export default function SavedQuotes() {
           </div>
         )}
       </div>
-    </ScrollArea>
+    </div>
   );
 }
