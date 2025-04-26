@@ -188,6 +188,33 @@ async function getMyDocs(collectionName) {
   }
 }
 
+async function getMyQuotes(collectionName) {
+  const user = JSON.parse(localStorage.getItem("userDoc"));
+  if (!user) {
+    notify("You're not logged in");
+    return [];
+  }
+
+  try {
+    const now = new Date();
+    const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000);
+
+    const q = query(
+      collection(db, collectionName),
+      where("userEmail", "==", user.email),
+      where("createdAt", ">=", Timestamp.fromDate(fortyEightHoursAgo))
+    );
+
+    const querySnapshot = await getDocs(q);
+    const documents = querySnapshot.docs.map((doc) => doc.data());
+    return documents;
+  } catch (error) {
+    notify("Something went wrong fetching");
+    console.log(error);
+    return [];
+  }
+}
+
 async function getDrivers() {
   try {
     const q = query(collection(db, "users"), where("role", "==", "driver"));
@@ -512,4 +539,5 @@ export {
   fetchMyPdfsOfDoc,
   getBookingsOnlyBetweenDates,
   fetchBookingsBetweenDates,
+  getMyQuotes,
 };

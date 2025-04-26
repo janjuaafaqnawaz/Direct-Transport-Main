@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { getMyDocs } from "@/api/firebase/functions/fetch";
+import { getMyQuotes } from "@/api/firebase/functions/fetch";
 import {
   Loader2,
   ChevronDown,
@@ -15,8 +15,8 @@ import {
   Package,
   TruckIcon,
   Info,
+  RefreshCcw,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -26,6 +26,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Form from "@/components/review_booking/form";
 import { deleteDocument } from "@/api/firebase/functions/upload";
+import { Button, ButtonGroup } from "@nextui-org/react";
 
 export default function SavedQuotes() {
   const [user, setUser] = useState(null);
@@ -34,28 +35,28 @@ export default function SavedQuotes() {
   const [expandedQuote, setExpandedQuote] = useState(null);
   const [selectedQuote, setSelectedQuote] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // const user = await verifyAuth();
-        // setUser(user);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      // const user = await verifyAuth();
+      // setUser(user);
 
-        const quotes = await getMyDocs("saved_quotes");
-        if (quotes.length > 0) {
-          setMyQuotes(quotes);
-        } else {
-          setMyQuotes([]);
-          toast.error("No quotes found");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("Failed to load quotes");
-      } finally {
-        setLoading(false);
+      const quotes = await getMyQuotes("saved_quotes");
+      if (quotes.length > 0) {
+        setMyQuotes(quotes);
+      } else {
+        setMyQuotes([]);
+        toast.error("No quotes found");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to load quotes");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -122,7 +123,12 @@ export default function SavedQuotes() {
             </p>
           </div>
 
-          <Button>All ({myQuotes.length})</Button>
+          <ButtonGroup>
+            <Button color="primary">All ({myQuotes.length}) </Button>
+            <Button color="primary" isIconOnly onClick={fetchData}>
+              <RefreshCcw size={15} />
+            </Button>
+          </ButtonGroup>
         </div>
 
         {myQuotes.length === 0 ? (
@@ -195,16 +201,29 @@ export default function SavedQuotes() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-muted-foreground">
-                          Distance
-                        </p>
-                        <p className="font-medium">{quote.distance} km</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Tolls Cost
+                          Price
                         </p>
                         <p className="text-xs">
-                          ${quote.totalTollsCost.toFixed(2)}
+                          ${Number.parseFloat(quote.totalPrice).toFixed(2)}
                         </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          GST
+                        </p>
+                        <p className="text-xs">${quote.gst.toFixed(2)}</p>
+
+                        {quote?.totalTollsCost &&
+                          quote?.totalTollsCost !== 0 &&
+                          quote?.totalTollsCost !== "" && (
+                            <>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Tolls
+                              </p>
+                              <p className="text-xs">
+                                ${quote.totalTollsCost.toFixed(2)}
+                              </p>
+                            </>
+                          )}
                       </div>
                     </div>
 
@@ -223,6 +242,29 @@ export default function SavedQuotes() {
                       </div>
                     </div>
 
+                    <div
+                      className={`mt-2 mx-2 transition-all duration-300 overflow-hidden max-h-[1000px]`}
+                    >
+                      <div className="space-y-4 rounded-lg bg-muted/30 p-3 text-sm">
+                        <div className="space-y-2">
+                          {quote.items.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="flex justify-between rounded-md bg-background p-2 text-xs"
+                            >
+                              <span>
+                                {item.qty}x {item.type}
+                              </span>
+                              <span>
+                                {item.length}x{item.width}x{item.height}m,{" "}
+                                {item.weight}kg
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-xs text-muted-foreground">
@@ -232,139 +274,15 @@ export default function SavedQuotes() {
                           ${quote.totalPriceWithGST.toFixed(2)}
                         </p>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => toggleExpand(quote.docId)}
-                      >
-                        {expandedQuote === quote.docId ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <Info className="h-4 w-4" />
-                        )}
-                      </Button>
                     </div>
-
-                    {expandedQuote === quote.docId && (
-                      <div
-                        className={`mt-2 transition-all duration-300 overflow-hidden ${
-                          expandedQuote === quote.docId
-                            ? "max-h-[1000px]"
-                            : "max-h-0"
-                        }`}
-                      >
-                        <div className="space-y-4 rounded-lg bg-muted/30 p-3 text-sm">
-                          <h4 className="mb-2 font-medium">Items</h4>
-                          <div className="space-y-2">
-                            {quote.items.map((item, idx) => (
-                              <div
-                                key={idx}
-                                className="flex justify-between rounded-md bg-background p-2 text-xs"
-                              >
-                                <span>
-                                  {item.qty}x {item.type}
-                                </span>
-                                <span>
-                                  {item.length}x{item.width}x{item.height}m,{" "}
-                                  {item.weight}kg
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <h4 className="mb-1 font-medium">Origin</h4>
-                            <div className="space-y-1 text-xs">
-                              <p>Company: {quote.pickupCompanyName || "N/A"}</p>
-                              <p>
-                                Reference: {quote.pickupReference1 || "N/A"}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div>
-                            <h4 className="mb-1 font-medium">Destination</h4>
-                            <div className="space-y-1 text-xs">
-                              <p>Company: {quote.dropCompanyName || "N/A"}</p>
-                              <p>Reference: {quote.dropReference1 || "N/A"}</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h4 className="mb-1 font-medium">Price Breakdown</h4>
-                          <div className="space-y-1 text-xs">
-                            <div className="flex justify-between">
-                              <span>Base Price:</span>
-                              <span>
-                                $
-                                {Number.parseFloat(quote.totalPrice).toFixed(2)}
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>GST:</span>
-                              <span>${quote.gst.toFixed(2)}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Tolls:</span>
-                              <span>${quote.totalTollsCost.toFixed(2)}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Service Charges:</span>
-                              <span>${quote.serviceCharges.toFixed(2)}</span>
-                            </div>
-                            <div className="flex justify-between font-medium">
-                              <span>Total:</span>
-                              <span>${quote.totalPriceWithGST.toFixed(2)}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h4 className="mb-1 font-medium">Additional Info</h4>
-                          <div className="space-y-1 text-xs">
-                            <p>Pallet Spaces: {quote.palletSpaces}</p>
-                            <p>
-                              Delivery Instructions:{" "}
-                              {quote.deliveryIns || "None"}
-                            </p>
-                            <p>
-                              Internal Reference:{" "}
-                              {quote.internalReference || "N/A"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </CardContent>
 
                 <CardFooter className="flex justify-between bg-muted/50 p-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8"
-                    onClick={() => toggleExpand(quote.docId)}
-                  >
-                    {expandedQuote === quote.docId ? (
-                      <>
-                        <ChevronUp className="mr-1 h-3.5 w-3.5" />
-                        <span className="text-xs">Hide Details</span>
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="mr-1 h-3.5 w-3.5" />
-                        <span className="text-xs">View Details</span>
-                      </>
-                    )}
-                  </Button>
-
-                  <div className="flex gap-2">
+                  <ButtonGroup fullWidth>
                     <Button
-                      variant="destructive"
+                      variant="flat"
+                      color="danger"
                       size="sm"
                       className="h-8"
                       onClick={() => handleDelete(quote.docId)}
@@ -373,7 +291,8 @@ export default function SavedQuotes() {
                       <span className="text-xs">Delete</span>
                     </Button>
                     <Button
-                      variant="default"
+                      variant="solid"
+                      color="primary"
                       size="sm"
                       className="h-8"
                       onClick={() => handleSelect(quote)}
@@ -381,7 +300,7 @@ export default function SavedQuotes() {
                       <CheckCircle className="mr-1 h-3.5 w-3.5" />
                       <span className="text-xs">Select</span>
                     </Button>
-                  </div>
+                  </ButtonGroup>
                 </CardFooter>
               </Card>
             ))}
