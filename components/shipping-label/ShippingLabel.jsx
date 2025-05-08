@@ -9,8 +9,7 @@ export default function ShippingLabel({
   shipTo,
   from,
   orderId,
-  weight,
-  dimensions,
+  items = [], // Default to empty array
   shippingDate,
   remarks = "NO REMARKS",
 }) {
@@ -61,6 +60,14 @@ export default function ShippingLabel({
     window.location.reload();
   };
 
+  // Calculate total weight
+  const totalWeight = items.reduce((sum, item) => sum + (item.weight || 0), 0);
+
+  // Generate dimensions string for all items
+  const dimensionsList = items
+    .map((item) => `${item.length}cm x ${item.width}cm x ${item.height}cm`)
+    .join(", ");
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
       <div className="flex items-center justify-between">
@@ -83,7 +90,6 @@ export default function ShippingLabel({
           <Button onClick={handlePrint}>Print</Button>
         </div>
       </div>
-
       <Card className="p-0 overflow-hidden">
         <div
           ref={labelRef}
@@ -137,15 +143,45 @@ export default function ShippingLabel({
                   <span className="font-bold text-gray-700">ORDER ID:</span>
                   <span className="float-right">{orderId}</span>
                 </div>
-                <div className="p-3 border-r-2 border-b-2 border-black">
-                  <span className="font-bold text-gray-700">WEIGHT:</span>
-                  <span className="float-right">{weight}</span>
+
+                <div>
+                  {items.length > 0 && (
+                    <div className="border-b-2 border-r-2 border-black p-4">
+                      <div className="font-bold text-gray-700 mb-2">
+                        DIMENSIONS:
+                      </div>
+                      <div className="space-y-2">
+                        {items.map((item, index) => (
+                          <div key={index} className="text-sm">
+                            <p>
+                              {index + 1}. {item.type} {item.length}cm ×{" "}
+                              {item.width}
+                              cm × {item.height}cm
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="p-3 border-r-2 border-b-2 border-black">
-                  <span className="font-bold text-gray-700">DIMENSIONS:</span>
-                  <span className="float-right">{dimensions}</span>
+                <div>
+                  {items.length > 0 && (
+                    <div className="border-b-2 border-r-2 border-black p-4">
+                      <span className="font-bold text-gray-700">WEIGHT:</span>
+                      <div className="space-y-2">
+                        {items.map((item, index) => (
+                          <div key={index} className="text-sm">
+                            <p>
+                              {index + 1}. {item.type} {item.weight || 0} KG
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="p-3 border-r-2 border-b-2  border-black">
+
+                <div className="p-3 border-r-2 border-b-2 border-black">
                   <span className="font-bold text-gray-700">
                     SHIPPING DATE:
                   </span>
@@ -153,7 +189,7 @@ export default function ShippingLabel({
                 </div>
               </div>
               {/* Remarks Section */}
-              <div className="p-4 flex flex-col">
+              <div className="p-4 flex flex-col border-b-2 border-black ">
                 <div className="font-bold text-gray-700 mb-2">REMARKS:</div>
                 <div>{remarks}</div>
               </div>

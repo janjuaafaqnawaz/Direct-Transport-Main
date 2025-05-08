@@ -54,8 +54,7 @@ export default function Print({ invoice, iconButton }) {
               country: "Australia",
             }}
             orderId={invoice?.docId}
-            weight={`${invoice?.items[0]?.weight} KG`}
-            dimensions={`${invoice?.items[0]?.length}cm x ${invoice?.items[0]?.width}cm x ${invoice?.items[0]?.height}cm`}
+            items={invoice?.items}
             shippingDate={invoice?.date}
             remarks={invoice?.deliveryIns || "NO REMARKS"}
           />
@@ -63,9 +62,9 @@ export default function Print({ invoice, iconButton }) {
       </Modal>
 
       {iconButton ? (
-        <Tooltip label="Notes">
-          <ActionIcon mx={1} onClick={open} size="xl">
-            <Printer className="mr-2 h-4 w-4" />
+        <Tooltip label="Label">
+          <ActionIcon mx={1}  onClick={open} size="xl">
+            <Printer />
           </ActionIcon>
         </Tooltip>
       ) : (

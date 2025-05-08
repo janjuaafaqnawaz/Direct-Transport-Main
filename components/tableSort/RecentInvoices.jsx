@@ -111,11 +111,11 @@ export default function RecentInvoices({ place_booking }) {
       <TableCell>
         <Print invoice={row} />
       </TableCell>
-      <TableCell>
+      {/* <TableCell>
         {userDoc && userDoc?.tracking && (
           <TrackDriver customBtn={true} booking={row} />
         )}
-      </TableCell>
+      </TableCell> */}
       <TableCell>
         <PdfButton invoice={row} />
       </TableCell>
@@ -166,7 +166,7 @@ export default function RecentInvoices({ place_booking }) {
               <TableHead>Status</TableHead>
               <TableHead>View</TableHead>
               <TableHead>Label</TableHead>
-              <TableHead>Track</TableHead>
+              {/* <TableHead>Track</TableHead> */}
               <TableHead>Download Invoice</TableHead>
             </TableRow>
           </TableHeader>
