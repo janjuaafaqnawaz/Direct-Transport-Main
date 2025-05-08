@@ -43,7 +43,7 @@ export const validateFutureDateTime = (invoice) => {
   // --- 4. Handle Errors ---
   if (errorMessages.length > 0) {
     console.error("Validation Failed:");
-    errorMessages.forEach((msg) => alert(msg));
+    errorMessages.forEach((msg) => console.log(msg));
     return false;
   }
 

@@ -25,6 +25,7 @@ import StripeWrapper from "@/components/stripe/StripeWrapper";
 import "@mantine/dates/styles.css";
 import JourneyDetails from "@/components/common/JourneyDetails";
 import { validateFutureDateTime } from "@/utils/validateFutureDateTime";
+import { formatDateCurr, formatTimeCurr } from "@/api/DateAndTime/format";
 
 export default function BookCheckout({
   formData,
@@ -76,7 +77,18 @@ export default function BookCheckout({
 
   // Handle booking submission
   const handleSubmit = async () => {
-    if (!validateFutureDateTime(invoice)) return;
+    let invoiceDate = invoice?.date;
+    let invoiceTime = invoice?.time;
+
+    if (!validateFutureDateTime(invoice)) {
+      invoiceDate = formatDateCurr(new Date());
+      invoiceTime = formatTimeCurr(new Date());
+      console.log(
+        "Invalid date or time. Using current date and time.",
+        formatDateCurr(new Date()),
+        formatTimeCurr(new Date())
+      );
+    }
 
     setCreating(true);
 
@@ -97,6 +109,8 @@ export default function BookCheckout({
         ...invoice,
         dateTimestamp,
         distanceData,
+        date: invoiceDate,
+        time: invoiceTime,
       };
 
       console.log("Submitting booking:", delivery);

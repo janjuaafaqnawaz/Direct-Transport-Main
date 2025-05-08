@@ -1,4 +1,4 @@
-function formatDateCurr(date) {
+export function formatDateCurr(date) {
   const day = date.getDate().toString().padStart(2, "0");
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear();
@@ -6,7 +6,7 @@ function formatDateCurr(date) {
   return `${day}/${month}/${year}`;
 }
 
-function formatTimeCurr(date) {
+export function formatTimeCurr(date) {
   let hours = date.getHours();
   const minutes = date.getMinutes();
   const ampm = hours >= 12 ? "PM" : "AM";
