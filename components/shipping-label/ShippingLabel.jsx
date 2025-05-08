@@ -147,6 +147,23 @@ export default function ShippingLabel({
                 <div>
                   {items.length > 0 && (
                     <div className="border-b-2 border-r-2 border-black p-4">
+                      <span className="font-bold text-gray-700">WEIGHT:</span>
+                      <div className="space-y-2">
+                        {items.map((item, index) => (
+                          <div key={index} className="text-sm">
+                            <p>
+                              {index + 1}. {item.type} {item.weight || 0} KG
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  {items.length > 0 && (
+                    <div className="border-b-2 border-r-2 border-black p-4">
                       <div className="font-bold text-gray-700 mb-2">
                         DIMENSIONS:
                       </div>
@@ -157,22 +174,6 @@ export default function ShippingLabel({
                               {index + 1}. {item.type} {item.length}cm ×{" "}
                               {item.width}
                               cm × {item.height}cm
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  {items.length > 0 && (
-                    <div className="border-b-2 border-r-2 border-black p-4">
-                      <span className="font-bold text-gray-700">WEIGHT:</span>
-                      <div className="space-y-2">
-                        {items.map((item, index) => (
-                          <div key={index} className="text-sm">
-                            <p>
-                              {index + 1}. {item.type} {item.weight || 0} KG
                             </p>
                           </div>
                         ))}
