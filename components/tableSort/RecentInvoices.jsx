@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+// import Print from "../shipping-label/Print";
 import { parse } from "date-fns";
 
 export default function RecentInvoices({ place_booking }) {
@@ -105,6 +106,7 @@ export default function RecentInvoices({ place_booking }) {
             <Eye className="mr-2 h-4 w-4" />
             View
           </Button>
+          {/* <Print /> */}
           {userDoc && userDoc?.tracking && (
             <TrackDriver customBtn={true} booking={row} />
           )}
