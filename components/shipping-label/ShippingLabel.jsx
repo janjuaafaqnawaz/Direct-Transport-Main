@@ -3,7 +3,6 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MultiSelect } from "@mantine/core";
 
 export default function ShippingLabel({
   shipTo,
@@ -54,11 +53,21 @@ export default function ShippingLabel({
   return (
     <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Shipping Label Preview</h2>
+        <h2 className="text-2xl  font-bold">Shipping Label Preview</h2>
         <div className="flex items-center gap-4">
-          <Button onClick={() => setPaperSize("A4")}>A4</Button>
-          <Button onClick={() => setPaperSize("A6")}>A6</Button>
-          <Button color="yellow" >Selected: {paperSize}</Button>
+          <Button
+            className={paperSize === "A4" && "bg-green-400 hover:bg-green-500"}
+            onClick={() => setPaperSize("A4")}
+          >
+            A4
+          </Button>
+          <Button
+            className={paperSize === "A6" && "bg-green-400 hover:bg-green-500"}
+            onClick={() => setPaperSize("A6")}
+          >
+            A6
+          </Button>
+          {/* <Button>Selected: {paperSize}</Button> */}
           <Button onClick={generatePDF}>Export PDF</Button>
         </div>
       </div>
@@ -72,61 +81,64 @@ export default function ShippingLabel({
               : "w-full max-w-md mx-auto aspect-[105/148]"
           }`}
         >
-          <div className="grid grid-cols-2 h-full border-b-2 border-black">
-            {/* Ship To Section */}
-            <div className="p-4 border-r-2 border-black">
-              <div className="inline-block bg-black text-white px-3 py-1 font-bold mb-3">
-                SHIP TO:
+          <div>
+            <div className="grid grid-cols-2 h-full border-b-2 border-black">
+              {/* Ship To Section */}
+              <div className="p-4 border-r-2 border-black">
+                <div className="inline-block bg-black text-white px-3 py-1 font-bold mb-3">
+                  SHIP TO:
+                </div>
+                <div className="space-y-1">
+                  <p className="font-medium text-lg">{shipTo.name}</p>
+                  <p>{shipTo.address1},</p>
+                  {shipTo.address2 && <p>{shipTo.address2},</p>}
+                  <p>
+                    {shipTo.city}, {shipTo.postalCode}, {shipTo.country}
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="font-medium text-lg">{shipTo.name}</p>
-                <p>{shipTo.address1},</p>
-                {shipTo.address2 && <p>{shipTo.address2},</p>}
-                <p>
-                  {shipTo.city}, {shipTo.postalCode}, {shipTo.country}
-                </p>
+
+              {/* From Section */}
+              <div className="p-4">
+                <div className="text-gray-700 font-bold mb-3">FROM:</div>
+                <div className="space-y-1">
+                  <p className="font-medium">{from.name}</p>
+                  <p>{from.address1},</p>
+                  {from.address2 && <p>{from.address2},</p>}
+                  <p>
+                    {from.city}, {from.postalCode}, {from.country}
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* From Section */}
-            <div className="p-4">
-              <div className="text-gray-700 font-bold mb-3">FROM:</div>
-              <div className="space-y-1">
-                <p className="font-medium">{from.name}</p>
-                <p>{from.address1},</p>
-                {from.address2 && <p>{from.address2},</p>}
-                <p>
-                  {from.city}, {from.postalCode}, {from.country}
-                </p>
+            {/* Order Details */}
+            <div className="grid grid-cols-2 h-auto">
+              <div className="flex flex-col">
+                <div className="p-3 border-r-2 border-b-2 border-black">
+                  <span className="font-bold text-gray-700">ORDER ID:</span>
+                  <span className="float-right">{orderId}</span>
+                </div>
+                <div className="p-3 border-r-2 border-b-2 border-black">
+                  <span className="font-bold text-gray-700">WEIGHT:</span>
+                  <span className="float-right">{weight}</span>
+                </div>
+                <div className="p-3 border-r-2 border-b-2 border-black">
+                  <span className="font-bold text-gray-700">DIMENSIONS:</span>
+                  <span className="float-right">{dimensions}</span>
+                </div>
+                <div className="p-3 border-r-2 border-b-2  border-black">
+                  <span className="font-bold text-gray-700">
+                    SHIPPING DATE:
+                  </span>
+                  <span className="float-right">{shippingDate}</span>
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Order Details */}
-          <div className="grid grid-cols-2 h-auto">
-            <div className="flex flex-col">
-              <div className="p-3 border-r-2 border-b-2 border-black">
-                <span className="font-bold text-gray-700">ORDER ID:</span>
-                <span className="float-right">{orderId}</span>
+              {/* Remarks Section */}
+              <div className="p-4 flex flex-col">
+                <div className="font-bold text-gray-700 mb-2">REMARKS:</div>
+                <div>{remarks}</div>
               </div>
-              <div className="p-3 border-r-2 border-b-2 border-black">
-                <span className="font-bold text-gray-700">WEIGHT:</span>
-                <span className="float-right">{weight}</span>
-              </div>
-              <div className="p-3 border-r-2 border-b-2 border-black">
-                <span className="font-bold text-gray-700">DIMENSIONS:</span>
-                <span className="float-right">{dimensions}</span>
-              </div>
-              <div className="p-3 border-r-2 border-black">
-                <span className="font-bold text-gray-700">SHIPPING DATE:</span>
-                <span className="float-right">{shippingDate}</span>
-              </div>
-            </div>
-
-            {/* Remarks Section */}
-            <div className="p-4 flex flex-col">
-              <div className="font-bold text-gray-700 mb-2">REMARKS:</div>
-              <div>{remarks}</div>
             </div>
           </div>
         </div>
