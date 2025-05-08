@@ -106,11 +106,15 @@ export default function RecentInvoices({ place_booking }) {
             <Eye className="mr-2 h-4 w-4" />
             View
           </Button>
-          {/* <Print invoice={row} /> */}
-          {userDoc && userDoc?.tracking && (
-            <TrackDriver customBtn={true} booking={row} />
-          )}
         </div>
+      </TableCell>
+      <TableCell>
+        <Print invoice={row} />
+      </TableCell>
+      <TableCell>
+        {userDoc && userDoc?.tracking && (
+          <TrackDriver customBtn={true} booking={row} />
+        )}
       </TableCell>
       <TableCell>
         <PdfButton invoice={row} />
@@ -161,6 +165,8 @@ export default function RecentInvoices({ place_booking }) {
               <TableHead>Invoice</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>View</TableHead>
+              <TableHead>Label</TableHead>
+              <TableHead>Track</TableHead>
               <TableHead>Download Invoice</TableHead>
             </TableRow>
           </TableHeader>

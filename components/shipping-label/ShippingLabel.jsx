@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useRef } from "react";
@@ -50,6 +51,16 @@ export default function ShippingLabel({
     pdf.save(`shipping-label-${orderId}.pdf`);
   };
 
+  const handlePrint = () => {
+    const printContents = labelRef.current.innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    window.location.reload();
+  };
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
       <div className="flex items-center justify-between">
@@ -69,6 +80,7 @@ export default function ShippingLabel({
           </Button>
           {/* <Button>Selected: {paperSize}</Button> */}
           <Button onClick={generatePDF}>Export PDF</Button>
+          <Button onClick={handlePrint}>Print</Button>
         </div>
       </div>
 
@@ -82,7 +94,13 @@ export default function ShippingLabel({
           }`}
         >
           <div>
-            <div className="grid grid-cols-2 h-full border-b-2 border-black">
+            <img
+              src={"/dts-logo.png"}
+              alt="logo"
+              style={{ width: "40%", height: "auto" }}
+              className="mx-auto my-4 mb-2"
+            />
+            <div className="grid grid-cols-2 h-full border-b-2 border-t-2 border-black">
               {/* Ship To Section */}
               <div className="p-4 border-r-2 border-black">
                 <div className="inline-block bg-black text-white px-3 py-1 font-bold mb-3">
