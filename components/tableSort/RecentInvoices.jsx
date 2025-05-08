@@ -106,7 +106,7 @@ export default function RecentInvoices({ place_booking }) {
             <Eye className="mr-2 h-4 w-4" />
             View
           </Button>
-          <Print invoice={row} />
+          {/* <Print invoice={row} /> */}
           {userDoc && userDoc?.tracking && (
             <TrackDriver customBtn={true} booking={row} />
           )}
