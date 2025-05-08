@@ -24,6 +24,7 @@ import DimensionsTable from "./ItemDimensions/DimensionsTable";
 import StripeWrapper from "@/components/stripe/StripeWrapper";
 import "@mantine/dates/styles.css";
 import JourneyDetails from "@/components/common/JourneyDetails";
+import { validateFutureDateTime } from "@/utils/validateFutureDateTime";
 
 export default function BookCheckout({
   formData,
@@ -75,6 +76,8 @@ export default function BookCheckout({
 
   // Handle booking submission
   const handleSubmit = async () => {
+    if (!validateFutureDateTime(invoice)) return;
+
     setCreating(true);
 
     try {
@@ -112,7 +115,7 @@ export default function BookCheckout({
       setCreating(false);
     }
   };
-   // Render loading state
+  // Render loading state
   if (loading) {
     return <Loading />;
   }
