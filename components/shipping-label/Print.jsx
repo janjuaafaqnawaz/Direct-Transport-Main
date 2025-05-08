@@ -1,6 +1,7 @@
 import { useDisclosure } from "@mantine/hooks";
-import { Modal, Button } from "@mantine/core";
+import { Modal, Button, Tooltip, ActionIcon } from "@mantine/core";
 import ShippingLabel from "./ShippingLabel";
+import { Printer } from "lucide-react";
 
 const shippingData = {
   shipTo: {
@@ -26,7 +27,7 @@ const shippingData = {
   remarks: "NO REMARKS",
 };
 
-export default function Print({ invoice }) {
+export default function Print({ invoice, iconButton }) {
   const [opened, { open, close }] = useDisclosure(false);
   console.log(invoice);
 
@@ -34,34 +35,45 @@ export default function Print({ invoice }) {
     <>
       <Modal opened={opened} size={"xl"} onClose={close} title="Print">
         {/* Modal content */}
-        <ShippingLabel
-          shipTo={{
-            name: invoice.address.Destination.name,
-            address1: invoice.address.Destination.label,
-            address2: "",
-            city: invoice.address.Destination.address.city,
-            postalCode: "4127", // This seems to be the postcode for Springwood QLD
-            country: invoice.address.Destination.address.country,
-          }}
-          from={{
-            name: invoice.address.Origin.name,
-            address1: invoice.address.Origin.label,
-            address2: "",
-            city: invoice.pickupSuburb,
-            postalCode: "2138", // Rhodes NSW postcode
-            country: "Australia",
-          }}
-          orderId={invoice.docId}
-          weight={`${invoice.items[0].weight} KG`}
-          dimensions={`${invoice.items[0].length}cm x ${invoice.items[0].width}cm x ${invoice.items[0].height}cm`}
-          shippingDate={invoice.date}
-          remarks={invoice.deliveryIns || "NO REMARKS"}
-        />
+        {opened && (
+          <ShippingLabel
+            shipTo={{
+              name: invoice?.address?.Destination?.name,
+              address1: invoice?.address?.Destination?.label,
+              address2: "",
+              city: invoice?.address?.Destination?.address?.city,
+              postalCode: "", // This seems to be the postcode for Springwood QLD
+              country: invoice?.address?.Destination?.address?.country,
+            }}
+            from={{
+              name: invoice?.address?.Origin?.name,
+              address1: invoice?.address?.Origin?.label,
+              address2: "",
+              city: invoice?.pickupSuburb,
+              postalCode: "", // Rhodes NSW postcode
+              country: "Australia",
+            }}
+            orderId={invoice?.docId}
+            weight={`${invoice?.items[0]?.weight} KG`}
+            dimensions={`${invoice?.items[0]?.length}cm x ${invoice?.items[0]?.width}cm x ${invoice?.items[0]?.height}cm`}
+            shippingDate={invoice?.date}
+            remarks={invoice?.deliveryIns || "NO REMARKS"}
+          />
+        )}
       </Modal>
 
-      <Button variant="default" onClick={open}>
-        Print
-      </Button>
+      {iconButton ? (
+        <Tooltip label="Notes">
+          <ActionIcon mx={1} onClick={open} size="xl">
+            <Printer className="mr-2 h-4 w-4" />
+          </ActionIcon>
+        </Tooltip>
+      ) : (
+        <Button variant="Label" onClick={open}>
+          <Printer />
+          Print
+        </Button>
+      )}
     </>
   );
 }

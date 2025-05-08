@@ -11,6 +11,7 @@ import { Chip } from "@nextui-org/react";
 import Notes from "./InvoiceAction/notes/Notes";
 import formatToSydneyTime from "@/lib/utils/formatToSydneyTime";
 import FixPriceModal from "./InvoiceAction/edit_invoice_modal/FixPriceModal";
+import Print from "@/components/shipping-label/Print";
 
 const toCapitalize = (str) => {
   if (!str) return "";
@@ -100,7 +101,9 @@ export function Columns({ isArchived, hideAction }) {
       headerName: "Pickup Suburb",
       width: 100,
       valueGetter: (value, row) => {
-        const originSuburbs = row?.distanceData?.suburbs?.filter((s) => s.type === "origin");
+        const originSuburbs = row?.distanceData?.suburbs?.filter(
+          (s) => s.type === "origin"
+        );
         return (
           row?.pickupSuburb || originSuburbs?.[0]?.suburb || "Not Available"
         );
@@ -161,6 +164,7 @@ export function Columns({ isArchived, hideAction }) {
           <Tooltip label="Pick Status">
             <StatusDropdown booking={params.row} />
           </Tooltip>
+          <Print invoice={params.row} iconButton={true} />
           <FixPriceModal booking={params.row || ""} />
           <Tooltip label="Assign Driver">
             <Assigned booking={params.row || ""} />

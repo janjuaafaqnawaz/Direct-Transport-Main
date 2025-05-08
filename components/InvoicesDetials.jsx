@@ -5,6 +5,7 @@ import { Container, Text, Center } from "@mantine/core";
 import { PhotoView } from "react-photo-view";
 import { Image } from "@nextui-org/react";
 import JourneyDetails from "@/components/common/JourneyDetails";
+import Print from "./shipping-label/Print";
 
 const renderSection = (title, details) => (
   <Container size="lg">
@@ -73,6 +74,7 @@ const InvoiceDetails = ({ invoice, admin }) => {
 
   const basicInfo = [
     { label: "User Name", value: userName },
+    { label: "Label", value: <Print invoice={invoice} /> },
     { label: "Time", value: time },
     { label: "Service", value: service },
     {
@@ -179,7 +181,6 @@ const InvoiceDetails = ({ invoice, admin }) => {
     ...(Array.isArray(invoice?.pickupImages) ? invoice.pickupImages : []),
   ].filter((img) => typeof img === "string");
   console.log(invoice);
-  
 
   return (
     <section>
