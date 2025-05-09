@@ -84,7 +84,7 @@ export default function RecentInvoices({ place_booking }) {
       <TableCell>{row.docId}</TableCell>
       <TableCell>{row.date}</TableCell>
       <TableCell>
-        $
+        $$
         {(
           Number(row?.totalPriceWithGST || 0) + Number(row?.totalTollsCost || 0)
         ).toFixed(2)}
